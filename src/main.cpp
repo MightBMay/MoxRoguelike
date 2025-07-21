@@ -30,12 +30,21 @@ int main()
     auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
     window.setFramerateLimit(144);
 
-    sf::Texture& bg_tex = sf::Texture("../assets/sprites/cardboard.png");
+  /*  sf::Texture& bg_tex = sf::Texture("../assets/sprites/cardboard.png");
     bg_tex.setRepeated(true);
-    sf::Sprite& bg_spr = sf::Sprite(bg_tex, { {0,0 },{5000,5000} });
+    sf::Sprite& bg_spr = sf::Sprite(bg_tex, { {0,0 },{5000,5000} });*/
+    
+    std::shared_ptr<GameObject> Background =
+        std::make_shared<GameObject>(
+            "../assets/sprites/cardboard.png",
+            sf::IntRect{ {0,0},{1920,1080} }
+        );
+    Background->getSprite()->SetRepeated(true);
 
-    sf::Texture& player_tex = sf::Texture("../assets/sprites/gun.png");
-    sf::Sprite& player_spr = sf::Sprite(player_tex, { {0,0 },{600,500} });
+    Drawing::AddDrawable(-10, Background->getSprite());
+      
+   
+
 
     std::shared_ptr<GameObject> Player;
     CreatePlayer(Player);

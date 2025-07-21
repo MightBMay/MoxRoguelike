@@ -26,6 +26,10 @@ public:
     ~MSprite() {
     }
 
+
+    void SetRepeated(bool value) {
+        textureRef->setRepeated(value);
+    }
     
 
     static std::shared_ptr<sf::Texture> LoadTexture(const std::string& path) {
