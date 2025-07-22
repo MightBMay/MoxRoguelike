@@ -1,9 +1,18 @@
 #include "GameObject.h"
+#include "Component.h"
 
-GameObject::GameObject(const std::string& path, const sf::IntRect& rect): sprite(std::make_shared<MSprite>(path, rect)) {
-
+GameObject::GameObject(const std::string& path, const sf::IntRect& rect)
+    : GameObject() // Delegate to default constructor first
+{
+    sprite = std::make_shared<MSprite>(path, rect);
 }
 
+GameObject::GameObject() { GameObjectManager::getInstance().add(this); };
+
+GameObject::~GameObject() {
+    GameObjectManager::getInstance().remove(this);
+    components.clear();
+}
 
 // Transform methods
 void GameObject::setPosition(float x, float y) {
@@ -15,8 +24,7 @@ void GameObject::setPosition(float x, float y) {
 
 void GameObject::move(float offsetX, float offsetY) {
     setPosition(position.x + offsetX, position.y + offsetY);
-    std::cout << "Moved object: (" << position.x <<", "<<position.y<<')' << std::endl;
-    
+   
 }
 
 void GameObject::setRotation(float angle) {
@@ -80,4 +88,96 @@ void GameObject::updateTransform() const {
     transform.rotate(sf::degrees(rotation));
     transform.scale(scale);
     transformNeedsUpdate = false;
+}
+
+
+void GameObject::Destroy(std::shared_ptr<GameObject>& gameObject) {
+    if (!gameObject) return;
+    GameObjectManager::getInstance().remove(gameObject.get());
+    gameObject->sprite->Destroy();
+    gameObject.reset();
+}
+
+
+
+// manager
+GameObjectManager& GameObjectManager::getInstance() {
+    static GameObjectManager instance;
+    return instance;
+}
+
+void GameObjectManager::add(GameObject* obj, int renderLayer) {
+    if (!obj || std::find(gameObjects_.begin(), gameObjects_.end(), obj) != gameObjects_.end())
+        return;
+    gameObjects_.push_back(obj);
+    renderLayers_[0].push_back(obj); // Default layer 0
+}
+
+void GameObjectManager::remove(GameObject* obj) {
+    if (!obj) return;
+
+    // Remove from main list
+    gameObjects_.erase(
+        std::remove(gameObjects_.begin(), gameObjects_.end(), obj),
+        gameObjects_.end()
+    );
+
+    // Remove from all layers
+    for (auto& [layer, objects] : renderLayers_) {
+        objects.erase(
+            std::remove(objects.begin(), objects.end(), obj),
+            objects.end()
+        );
+    }
+}
+
+void GameObjectManager::clearAll() {
+    gameObjects_.clear();
+    renderLayers_.clear();
+}
+
+void GameObjectManager::updateAll(float deltaTime) {
+    // Use a copy for thread safety
+    auto objects = gameObjects_;
+    for (auto* obj : objects) {
+        if (obj && obj->isActive()) {
+            obj->update(deltaTime);
+        }
+    }
+}
+
+void GameObjectManager::renderAll(sf::RenderTarget& target) {
+    for (auto& [layer, objects] : renderLayers_) {
+        for (auto* obj : objects) {
+            if (obj) {
+                obj->draw(target, sf::RenderStates::Default);
+            }
+        }
+    }
+}
+
+void GameObjectManager::setRenderLayer(GameObject* obj, int newLayer) {
+    if (!obj) return;
+
+    // Remove from all current layers
+    for (auto& [layer, objects] : renderLayers_) {
+        objects.erase(
+            std::remove(objects.begin(), objects.end(), obj),
+            objects.end()
+        );
+    }
+
+    // Add to new layer
+    renderLayers_[newLayer].push_back(obj);
+}
+
+int GameObjectManager::getRenderLayer(GameObject* obj) const {
+    if (!obj) return 0;
+
+    for (const auto& [layer, objects] : renderLayers_) {
+        if (std::find(objects.begin(), objects.end(), obj) != objects.end()) {
+            return layer;
+        }
+    }
+    return 0;
 }
