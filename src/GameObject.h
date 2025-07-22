@@ -115,6 +115,14 @@ public:
     const sf::Vector2f& getScale() const { return scale; }
     const sf::Transform& getTransform() const;
     const bool isActive()const { return _isActive; }
+    bool hasComponents() const { return !components.empty(); }
+
+
+    void handleEvent(const std::optional<sf::Event>& event) {
+        for (auto& component : components) {
+            component->ProcessEvent(event);
+        }
+    }
 
     // Drawing
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -129,7 +137,6 @@ private:
     sf::Vector2f scale{ 1.f, 1.f };
     
     bool _isActive = true;
-
     mutable sf::Transform transform;
     mutable bool transformNeedsUpdate = true;
 
@@ -157,6 +164,9 @@ public:
     void updateAll(float deltaTime);
     void renderAll(sf::RenderTarget& target);
 
+    void processEvent(const std::optional<sf::Event>& event);
+
+
     // Layer management
     void setRenderLayer(GameObject* obj, int newLayer);
     int getRenderLayer(GameObject* obj) const;
@@ -164,6 +174,8 @@ public:
 private:
     GameObjectManager() = default;
     ~GameObjectManager() = default;
+
+
 
     std::vector<GameObject*> gameObjects_;
     std::map<int, std::vector<GameObject*>> renderLayers_;

@@ -7,31 +7,63 @@
 #include "GameObject.h"
 
 #include "Player_Movement.h"
+#include "EnemyMovement.h"
 
-#define ASSETPATH "../assets/sprites/"
 
 
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, GameObjectManager& manager) {
 	player = std::make_shared<GameObject>(
 		"../assets/sprites/gun.png",
-		sf::IntRect{ {0, 0}, {600, 500} }
+		sf::IntRect{ {0, 0}, {128, 128} }
 	);
-	player->setOrigin(300, 250);
+	player->setOrigin(64,64);
 	player->setPosition(960, 540);
 	pmove = player->addComponent<PlayerMovement>();
-	manager.setRenderLayer(player.get(), 1);
+	manager.setRenderLayer(player.get(), 3);
+
+	EnemyMovement::SetPlayer(player);
+	
+
+}
+
+void CreateTestEnemy(std::shared_ptr<GameObject>& enemy, GameObjectManager& manager) {
+	enemy = std::make_shared<GameObject>(
+		"../assets/sprites/twig.png",
+		sf::IntRect{ {0,0},{128,150} }
+	);
+	enemy->setOrigin(64, 75);
+	enemy->addComponent<EnemyMovement>();
+	manager.setRenderLayer(enemy.get(), 1);
+
+	
 }
 
 
-
 int main() {
-	auto window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "CMake SFML Project"); // make window
+#pragma region create window
+	auto window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	window.setFramerateLimit(144); // cap fps
-	sf::Clock clock; // used for deltatime
+#pragma endregion
+
+#pragma region create delta time dt_clock
+	sf::Clock dt_clock; 
 	sf::Time Delta_Timer;
 
-	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
+#pragma endregion
+
+#pragma region FPS logging
+	sf::Clock fpsClock;// s.e
+	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	int frameCount = 0;
+	const sf::Time updateInterval = sf::seconds(0.25f); 
+#pragma endregion
+
+auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
+
+#pragma region make background
+
+
 
 	std::shared_ptr<GameObject> Background = std::make_shared<GameObject>( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
@@ -39,27 +71,77 @@ int main() {
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	manager.add(Background.get(), -10); // move to layer -10 to stay behind things.
+#pragma endregion
 
-
+#pragma region make player
 	std::shared_ptr<GameObject> Player; // declare player
 	PlayerMovement* p_move; // get pointer to player's movement component.
 	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
 
+#pragma endregion
 
+	std::shared_ptr<GameObject> enemy;
+	CreateTestEnemy(enemy, manager);
 
 
 	while (window.isOpen()) {
-		Delta_Timer = clock.restart();
+		Delta_Timer = dt_clock.restart();
 		float deltaTime = Delta_Timer.asSeconds();
 
 		// Event handling (unchanged)
 		while (const std::optional event = window.pollEvent()) {
+			
+			
 			if (event->is<sf::Event::Closed>()) {
 				window.close();
 			}
 
+			/* unused atm, moved the input stuff to their own component.
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 				
+
+
+			}
+			else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
+				
+			}
+			*/
+		
+
+			manager.processEvent(event); //Sends event to ALL gameobjects. easy but kinda inefficient, improve later.
+
+
+		}
+
+		// Update and render
+		manager.updateAll(deltaTime); // call update() on all gameobjects
+		window.clear(); 
+		manager.renderAll(window); // draw all gameobjects with sprites to window.
+
+
+#pragma region FPS logging
+		timeSinceLastUpdate += fpsClock.restart();
+		frameCount++;
+
+		if (timeSinceLastUpdate >= updateInterval) {
+			float fps = frameCount / timeSinceLastUpdate.asSeconds();
+			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+
+			frameCount = 0;
+			timeSinceLastUpdate = sf::Time::Zero;
+		}
+
+#pragma endregion
+
+		window.display(); // display drawn image.
+	}
+}
+
+
+/*
+* 
+* destruction and re creation of player example.
+
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
 						if (Player) {
 							GameObject::Destroy(Player);
@@ -70,49 +152,12 @@ int main() {
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
 						if (!Player) {
 							CreatePlayer(Player, p_move, manager);
-							Player->addComponent<PlayerMovement>();
+
 							std::cout << "no";
 						}std::cout << "yes";
 					}
-					
-					if (p_move) {
-					
-						// Handle movement keys
-						switch (keyPressed->scancode) { 
-						case sf::Keyboard::Scancode::Up:    p_move->direction.y = -1; break;
-						case sf::Keyboard::Scancode::Down:  p_move->direction.y = 1;  break;
-						case sf::Keyboard::Scancode::Left:  p_move->direction.x = -1; break;
-						case sf::Keyboard::Scancode::Right: p_move->direction.x = 1;  break;
-						default: break;
-						}
-					
-					}
-
-			}
-			else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-				if (p_move) {
-					switch (keyReleased->scancode) { // if up AND down are released, y must be 0. if left AND right are released, x must be 0.
-					case sf::Keyboard::Scancode::Up:
-					case sf::Keyboard::Scancode::Down:    p_move->direction.y = 0; break;
-					case sf::Keyboard::Scancode::Left:
-					case sf::Keyboard::Scancode::Right:   p_move->direction.x = 0; break;
-					default: break;
-					}
-				}
-			}
 
 
-			if (p_move) {
-				std::cout << p_move->direction.x <<", "<<p_move-> direction.y << std::endl;
-			}
-		}
 
-		// Update and render
-		manager.updateAll(deltaTime);
-		window.clear();
-		manager.renderAll(window); // Replaces Drawing::DrawAll()
-		window.display();
-	}
-}
-
+*/
 

@@ -37,7 +37,6 @@ public:
     }
 
     const void Destroy() {
-        Drawing::RemoveDrawable(shared_from_this());
         TextureManager::releaseTexture(texturePath);
     
     }

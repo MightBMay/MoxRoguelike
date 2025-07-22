@@ -156,6 +156,15 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
     }
 }
 
+
+void GameObjectManager::processEvent(const std::optional<sf::Event>& event) {
+    for (auto* obj : gameObjects_) {
+        if (obj && obj->isActive() && obj->hasComponents()) {
+            obj->handleEvent(event);
+        }
+    }
+}
+
 void GameObjectManager::setRenderLayer(GameObject* obj, int newLayer) {
     if (!obj) return;
 
