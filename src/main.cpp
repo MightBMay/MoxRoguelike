@@ -93,8 +93,16 @@ auto& enemyManager = EnemyManager::getInstance();
 	PlayerMovement* p_move; // get pointer to player's movement component.
 	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
 
+
+	std::shared_ptr<GameObject> tempMarker = std::make_shared<GameObject>(
+		"../assets/sprites/gun.png",
+		sf::IntRect{ {0,0},{128,128} }
+	);
+	tempMarker->setOrigin(64, 64);
+	tempMarker->setPosition(960, 540);
+	manager.setRenderLayer(tempMarker.get(), 11);
 #pragma endregion
-	for(int i=0;i<1000;i++)
+	for(int i=0;i<500;i++)
 		CreateTestEnemy(manager, enemyManager);
 
 
@@ -114,7 +122,11 @@ auto& enemyManager = EnemyManager::getInstance();
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 				
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-					
+					auto temp = enemyManager.GetWithinRange(sf::Vector2f{ 960,540 }, 10000.0f);
+					std::cout << temp.size() << '\n';
+					for (auto& enemy : temp) {
+						enemyManager.remove(enemy, true);
+					}
 				}
 
 			}/* unused atm, moved the input stuff to their own component.
@@ -130,7 +142,8 @@ auto& enemyManager = EnemyManager::getInstance();
 		}
 
 		// Update and render
-		manager.updateAll(deltaTime); // call update() on all gameobjects
+		manager.updateAll(deltaTime); // call updatme() on all gameobjects
+		
 		window.clear(); 
 		manager.renderAll(window); // draw all gameobjects with sprites to window.
 

@@ -1,5 +1,7 @@
 #include "EnemyManager.h"
 #include "GameObject.h"
+#include "EnemyMovement.h"
+
 
 
 EnemyManager& EnemyManager::getInstance() {
@@ -66,4 +68,22 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
         GameObjectManager::getInstance().remove(obj.get());
 }
 
-
+/// <summary>
+/// Returns list of enemies within radius units^2 from position. REMEMBER RADIUS IS SQUARED
+/// </summary>
+/// <param name="position"></param>
+/// <param name="radius"></param>
+/// <returns></returns>
+std::vector<std::shared_ptr<GameObject>> EnemyManager::GetWithinRange(sf::Vector2f position, float radius) {
+    std::vector<std::shared_ptr<GameObject>> inRange;
+    for (auto& enemy : enemyObjects_) {
+        if ((position - enemy->getPosition()).lengthSquared() < radius)
+            inRange.push_back(enemy);
+    }
+    return inRange;
+}
+std::vector<std::shared_ptr<GameObject>> 
+EnemyManager::GetWithinRange(sf::FloatRect rect) {
+    std::vector<std::shared_ptr<GameObject>> inRange;
+    return inRange;
+}

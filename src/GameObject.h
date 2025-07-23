@@ -73,7 +73,6 @@ public:
             componentTypeMap.erase(it);
             return true;
         }
-        std::cout << " Component not found" << std::endl;
         return false;
     }
 

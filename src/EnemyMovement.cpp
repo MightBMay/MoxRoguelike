@@ -12,9 +12,8 @@ void EnemyMovement::init() {
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
 	// we need a seperate manager for enemies to store their shared_ptr's.
 }
-EnemyMovement::~EnemyMovement() { // FIX THIS PROBABLY !!! 
-	EnemyManager::getInstance().remove(parent->shared_from_this(), false);// remove this enemy from vector,
-																		// which should be only reference, thus destroying.
+void EnemyMovement::Destroy() {
+	EnemyManager::getInstance().remove(parent->shared_from_this(), false);
 }
 
 void EnemyMovement::SetPlayer(std::weak_ptr<GameObject> player) {

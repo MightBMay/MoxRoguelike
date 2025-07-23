@@ -1,7 +1,8 @@
 #pragma once
-
+#include <SFML/Graphics.hpp>
 #include <memory>
 #include <vector>
+
 
 class GameObject;
 
@@ -18,6 +19,11 @@ public:
 	int count() {
 		return enemyObjects_.size();
 	}
+
+	std::vector<std::shared_ptr<GameObject>> GetWithinRange(sf::Vector2f position, float radius);
+	std::vector<std::shared_ptr<GameObject>> GetWithinRange(sf::FloatRect rect);
+
+
 private:
 	EnemyManager() = default;
 	~EnemyManager() = default;
