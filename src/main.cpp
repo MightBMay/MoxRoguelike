@@ -2,13 +2,15 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "Utility.h"
+
 #include "TextureManager.h"
 #include "MSprite.h"
 #include "GameObject.h"
 
+#include "EnemyManager.h"
 #include "Player_Movement.h"
 #include "EnemyMovement.h"
-
 
 
 
@@ -27,15 +29,27 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 
 }
 
-void CreateTestEnemy(std::shared_ptr<GameObject>& enemy, GameObjectManager& manager) {
-	enemy = std::make_shared<GameObject>(
+void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
+	static std::weak_ptr<GameObject> player = EnemyMovement::GetPlayer();
+	std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>(
 		"../assets/sprites/twig.png",
 		sf::IntRect{ {0,0},{128,150} }
 	);
-	enemy->setOrigin(64, 75);
-	enemy->addComponent<EnemyMovement>();
-	manager.setRenderLayer(enemy.get(), 1);
 
+	enemy->setOrigin(64, 75);
+	auto enemyMove = enemy->addComponent<EnemyMovement>();
+	enemyMove->init();
+	
+	
+
+	sf::Vector2f playerPos = player.lock()->getPosition();
+	enemy->setPosition(
+		playerPos+
+		sf::Vector2f{rng::getFloat(-2000, 2000), rng::getFloat(-800, 800)}
+	
+	);
+
+	manager.setRenderLayer(enemy.get(), 1);
 	
 }
 
@@ -61,6 +75,7 @@ int main() {
 
 auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 
+auto& enemyManager = EnemyManager::getInstance();
 #pragma region make background
 
 
@@ -79,9 +94,8 @@ auto& manager = GameObjectManager::getInstance(); // manager allows access to al
 	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
 
 #pragma endregion
-
-	std::shared_ptr<GameObject> enemy;
-	CreateTestEnemy(enemy, manager);
+	for(int i=0;i<1000;i++)
+		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window.isOpen()) {
@@ -96,12 +110,14 @@ auto& manager = GameObjectManager::getInstance(); // manager allows access to al
 				window.close();
 			}
 
-			/* unused atm, moved the input stuff to their own component.
+			
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 				
+				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
+					
+				}
 
-
-			}
+			}/* unused atm, moved the input stuff to their own component.
 			else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
 				
 			}

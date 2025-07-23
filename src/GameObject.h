@@ -17,7 +17,7 @@
 class Component;
 class GameObjectManager;
 
-class GameObject {
+class GameObject : public std::enable_shared_from_this<GameObject>{
 public:
     // Constructors
     GameObject();

@@ -1,16 +1,31 @@
 #pragma once
 #include "EnemyMovement.h"
+#include "EnemyManager.h"
 #include "GameObject.h"
 
 std::weak_ptr<GameObject> EnemyMovement::_player;
 
-void EnemyMovement::SetPlayer(std::shared_ptr<GameObject> player) {
-	_player = player;
+
+void EnemyMovement::init() {
+	EnemyManager::getInstance().add(parent->shared_from_this());
+	// upon adding enemymovement, this gameobject becomes an enemy.
+	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
+	// we need a seperate manager for enemies to store their shared_ptr's.
 }
-void EnemyMovement::update(float deltatime) {
+EnemyMovement::~EnemyMovement() { // FIX THIS PROBABLY !!! 
+	EnemyManager::getInstance().remove(parent->shared_from_this(), false);// remove this enemy from vector,
+																		// which should be only reference, thus destroying.
+}
+
+void EnemyMovement::SetPlayer(std::weak_ptr<GameObject> player) {
+	_player = player; // called once near player creation to assign a target.
+}
+void EnemyMovement::update(float deltatime) { 
 	if (auto player = _player.lock()) {
 		sf::Vector2f playerPos = player->getPosition();
-		direction = (playerPos - parent->getPosition()).normalized();
+		sf::Vector2f newDirection = (playerPos - parent->getPosition());
+		if(newDirection.lengthSquared() > 0) // avoids normalizing zero vector, which crashes.
+			direction = newDirection.normalized();
 		parent->move(direction * speed * deltatime);
 	}
 	else {
