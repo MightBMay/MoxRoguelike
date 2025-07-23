@@ -76,6 +76,10 @@ public:
         return false;
     }
 
+    void removeAllComponents() {
+        components.clear();
+    }
+
     void update(float deltaTime) {
         for (auto& component : components) {
             component->update(deltaTime);

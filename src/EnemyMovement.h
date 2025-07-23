@@ -14,7 +14,7 @@ public:
 	static std::weak_ptr<GameObject> GetPlayer() { return _player; }
 
 	void Destroy() override;
-
+	
 	virtual void init() override;
 	void update(float deltatime) override;
 	virtual void ProcessEvent(const std::optional<sf::Event>& event) {};

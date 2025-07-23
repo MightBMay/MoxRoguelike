@@ -10,7 +10,6 @@ GameObject::GameObject(const std::string& path, const sf::IntRect& rect)
 GameObject::GameObject() { GameObjectManager::getInstance().add(this); };
 
 GameObject::~GameObject() {
-    GameObjectManager::getInstance().remove(this);
     components.clear();
 }
 

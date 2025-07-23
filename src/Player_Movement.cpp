@@ -3,13 +3,7 @@
 #include <math.h>
 
 void PlayerMovement::update(float deltatime) {
-
-
-
-
-
-
-	if (direction.lengthSquared() < 0.15f) return; // only move if direction held.
+	if (direction.lengthSquared() < 0.15f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
 }
 

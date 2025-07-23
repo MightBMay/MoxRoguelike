@@ -5,10 +5,13 @@
 #include "Utility.h"
 
 #include "TextureManager.h"
+#include "EnemyManager.h"
+#include "Projectile.h"
+
 #include "MSprite.h"
 #include "GameObject.h"
 
-#include "EnemyManager.h"
+
 #include "Player_Movement.h"
 #include "EnemyMovement.h"
 
@@ -19,13 +22,13 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} }
 	);
-	player->setOrigin(64,64);
+	player->setOrigin(64, 64);
 	player->setPosition(960, 540);
 	pmove = player->addComponent<PlayerMovement>();
 	manager.setRenderLayer(player.get(), 3);
 
 	EnemyMovement::SetPlayer(player);
-	
+
 
 }
 
@@ -39,18 +42,18 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	enemy->setOrigin(64, 75);
 	auto enemyMove = enemy->addComponent<EnemyMovement>();
 	enemyMove->init();
-	
-	
+
+
 
 	sf::Vector2f playerPos = player.lock()->getPosition();
 	enemy->setPosition(
-		playerPos+
-		sf::Vector2f{rng::getFloat(-2000, 2000), rng::getFloat(-800, 800)}
-	
+		playerPos +
+		sf::Vector2f{ rng::getFloat(-2000, 2000), rng::getFloat(-800, 800) }
+
 	);
 
 	manager.setRenderLayer(enemy.get(), 1);
-	
+
 }
 
 
@@ -61,7 +64,7 @@ int main() {
 #pragma endregion
 
 #pragma region create delta time dt_clock
-	sf::Clock dt_clock; 
+	sf::Clock dt_clock;
 	sf::Time Delta_Timer;
 
 #pragma endregion
@@ -70,12 +73,17 @@ int main() {
 	sf::Clock fpsClock;// s.e
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 	int frameCount = 0;
-	const sf::Time updateInterval = sf::seconds(0.25f); 
+	const sf::Time updateInterval = sf::seconds(0.25f);
 #pragma endregion
 
-auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
+	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 
-auto& enemyManager = EnemyManager::getInstance();
+	auto& enemyManager = EnemyManager::getInstance();
+
+	auto& projectilePool = ProjectilePool::getInstance();
+	projectilePool.init(256);
+
+
 #pragma region make background
 
 
@@ -93,58 +101,47 @@ auto& enemyManager = EnemyManager::getInstance();
 	PlayerMovement* p_move; // get pointer to player's movement component.
 	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
 
-
-	std::shared_ptr<GameObject> tempMarker = std::make_shared<GameObject>(
-		"../assets/sprites/gun.png",
-		sf::IntRect{ {0,0},{128,128} }
-	);
-	tempMarker->setOrigin(64, 64);
-	tempMarker->setPosition(960, 540);
-	manager.setRenderLayer(tempMarker.get(), 11);
 #pragma endregion
-	for(int i=0;i<500;i++)
+	for (int i = 0; i < 500; i++)
 		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window.isOpen()) {
 		Delta_Timer = dt_clock.restart();
 		float deltaTime = Delta_Timer.asSeconds();
-
 		// Event handling (unchanged)
 		while (const std::optional event = window.pollEvent()) {
-			
-			
+
+
 			if (event->is<sf::Event::Closed>()) {
 				window.close();
 			}
 
-			
+
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-				
+
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-					auto temp = enemyManager.GetWithinRange(sf::Vector2f{ 960,540 }, 10000.0f);
-					std::cout << temp.size() << '\n';
-					for (auto& enemy : temp) {
-						enemyManager.remove(enemy, true);
-					}
+					projectilePool.make<Projectile>(0, sf::Vector2f(1, 1), 10000);
+
+				}/* unused atm, moved the input stuff to their own component.
+				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
+
 				}
+				*/
 
-			}/* unused atm, moved the input stuff to their own component.
-			else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-				
+
+
+
+
 			}
-			*/
-		
-
 			manager.processEvent(event); //Sends event to ALL gameobjects. easy but kinda inefficient, improve later.
-
 
 		}
 
 		// Update and render
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
-		
-		window.clear(); 
+
+		window.clear();
 		manager.renderAll(window); // draw all gameobjects with sprites to window.
 
 
@@ -168,7 +165,7 @@ auto& enemyManager = EnemyManager::getInstance();
 
 
 /*
-* 
+*
 * destruction and re creation of player example.
 
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {

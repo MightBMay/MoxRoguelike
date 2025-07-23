@@ -7,8 +7,8 @@ class GameObject;
 class Component {
 public:
     GameObject* parent = nullptr; // Set by GameObject when added
-
-    virtual void init() {}       // Called when component is added
+    //if initialization is needed
+    virtual void init() {} 
     virtual void update(float deltaTime) = 0;
     virtual void Destroy() = 0;
     virtual ~Component() = default;
