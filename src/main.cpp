@@ -7,6 +7,7 @@
 #include "TextureManager.h"
 #include "EnemyManager.h"
 #include "Projectile.h"
+#include "Weapon.h"
 
 #include "MSprite.h"
 #include "GameObject.h"
@@ -15,7 +16,7 @@
 #include "Player_Movement.h"
 #include "EnemyMovement.h"
 
-
+sf::RenderWindow window;
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, GameObjectManager& manager) {
 	player = std::make_shared<GameObject>(
@@ -26,6 +27,15 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 	player->setPosition(960, 540);
 	pmove = player->addComponent<PlayerMovement>();
 	manager.setRenderLayer(player.get(), 3);
+
+
+	
+	player->addComponent<Weapon<Projectile>>(
+		std::make_shared<WeaponStats>(1, 250, 500, 32, 1)
+	);
+
+
+
 
 	EnemyMovement::SetPlayer(player);
 
@@ -59,7 +69,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 
 int main() {
 #pragma region create window
-	auto window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
+	window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	window.setFramerateLimit(144); // cap fps
 #pragma endregion
 
@@ -88,6 +98,9 @@ int main() {
 	PlayerMovement* p_move; // get pointer to player's movement component.
 	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
 	projectilePool.init(256, Player);
+
+
+
 #pragma endregion
 
 
@@ -103,8 +116,8 @@ int main() {
 	manager.setRenderLayer(Background.get(), -10); // move to layer -10 to stay behind things.
 #pragma endregion
 
-	for (int i = 0; i < 500; i++)
-		CreateTestEnemy(manager, enemyManager);
+	//for (int i = 0; i < 500; i++)
+		//CreateTestEnemy(manager, enemyManager);
 
 
 	while (window.isOpen()) {
@@ -123,8 +136,7 @@ int main() {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
 
-					sf::Vector2f direction = getMouseWorldPos(window, window.getDefaultView()) - Player->getPosition();
-					projectilePool.make<Projectile>(250, direction.normalized(), 500, 32);
+
 
 				}/* unused atm, moved the input stuff to their own component.
 				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
