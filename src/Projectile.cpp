@@ -1,11 +1,11 @@
 #include "Projectile.h"
 #include "GameObject.h"
-#include "EnemyMovement.h"
+#include "Enemy.h"
 #include "EnemyManager.h"
 
 
 Projectile::Projectile(float speed, sf::Vector2f direction, float range, float radius) :
-    speed(speed), direction(direction.normalized()), range(range*range), projectileRadius(radius*radius) {}
+    speed(speed), direction(direction.normalized()), range(range), projectileRadius(radius) {}
 
 void Projectile::init() {
     parent->setSprite(getSpritePath()); // load the correct sprite for the projectile
@@ -46,6 +46,7 @@ void ProjectilePool::init(size_t initial_size, std::weak_ptr<GameObject> player)
         auto obj = std::make_unique<GameObject>();
         obj->setActive(false);
         pool_.push_back(std::move(obj));
+        GameObjectManager::getInstance().setRenderLayer(obj.get(), 4);
     }
 }
 

@@ -14,7 +14,7 @@
 
 
 #include "Player_Movement.h"
-#include "EnemyMovement.h"
+#include "Enemy.h"
 
 std::shared_ptr<sf::RenderWindow> window;
 
@@ -26,7 +26,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 	player->setOrigin(64, 64);
 	player->setPosition(960, 540);
 	pmove = player->addComponent<PlayerMovement>();
-	manager.setRenderLayer(player.get(), 3);
+	manager.setRenderLayer(player.get(), 5);
 
 
 	
@@ -38,20 +38,20 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 
 
 
-	EnemyMovement::SetPlayer(player);
+	Enemy::SetPlayer(player);
 
 
 }
 
 void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
-	static std::weak_ptr<GameObject> player = EnemyMovement::GetPlayer();
+	static std::weak_ptr<GameObject> player = Enemy::GetPlayer();
 	std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>(
 		"../assets/sprites/twig.png",
 		sf::IntRect{ {0,0},{128,150} }
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<EnemyMovement>();
+	auto enemyMove = enemy->addComponent<Enemy>(80, 32);
 	enemyMove->init();
 
 
@@ -118,8 +118,8 @@ int main() {
 	manager.setRenderLayer(Background.get(), -10); // move to layer -10 to stay behind things.
 #pragma endregion
 
-	//for (int i = 0; i < 500; i++)
-		//CreateTestEnemy(manager, enemyManager);
+	for (int i = 0; i < 500; i++)
+		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
