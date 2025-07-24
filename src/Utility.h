@@ -1,5 +1,14 @@
 #pragma once
 #include <random>
+#include <cmath> 
+#include <SFML/Graphics.hpp>
+
+constexpr float PI = 3.14159265358979323846f;
+
+float vectorToAngle(const sf::Vector2f& movementVector);
+
+sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& view);
+
 
 class rng {
 public:

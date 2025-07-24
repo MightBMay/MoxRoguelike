@@ -81,7 +81,14 @@ int main() {
 	auto& enemyManager = EnemyManager::getInstance();
 
 	auto& projectilePool = ProjectilePool::getInstance();
-	projectilePool.init(256);
+	
+
+#pragma region make player
+	std::shared_ptr<GameObject> Player; // declare player
+	PlayerMovement* p_move; // get pointer to player's movement component.
+	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
+	projectilePool.init(256, Player);
+#pragma endregion
 
 
 #pragma region make background
@@ -93,15 +100,9 @@ int main() {
 		sf::IntRect{ {0,0},{1920,1080} }
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
-	manager.add(Background.get(), -10); // move to layer -10 to stay behind things.
+	manager.setRenderLayer(Background.get(), -10); // move to layer -10 to stay behind things.
 #pragma endregion
 
-#pragma region make player
-	std::shared_ptr<GameObject> Player; // declare player
-	PlayerMovement* p_move; // get pointer to player's movement component.
-	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
-
-#pragma endregion
 	for (int i = 0; i < 500; i++)
 		CreateTestEnemy(manager, enemyManager);
 
@@ -121,7 +122,9 @@ int main() {
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-					projectilePool.make<Projectile>(0, sf::Vector2f(1, 1), 10000);
+
+					sf::Vector2f direction = getMouseWorldPos(window, window.getDefaultView()) - Player->getPosition();
+					projectilePool.make<Projectile>(250, direction.normalized(), 500, 32);
 
 				}/* unused atm, moved the input stuff to their own component.
 				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {

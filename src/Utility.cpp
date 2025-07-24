@@ -1,7 +1,35 @@
 #include "Utility.h"
 #include <chrono>
 
-// Static engine initialization
+
+
+float vectorToAngle(const sf::Vector2f& movementVector) {
+    // Calculate the angle in radians using atan2
+    // Note: atan2 takes (y, x) but we're using (x, -y) to get the correct orientation
+    float angleRad = std::atan2(movementVector.x, -movementVector.y);
+
+    // Convert to degrees
+    float angleDeg = angleRad * (180.0f / PI);
+
+    // Ensure the angle is in the 0-360 range
+    if (angleDeg < 0) {
+        angleDeg += 360.0f;
+    }
+
+    return angleDeg;
+}
+
+
+sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& view) {
+    sf::Vector2i mousePixelPos = sf::Mouse::getPosition(window);
+
+    // Convert to world coordinates using the current view
+    return window.mapPixelToCoords(mousePixelPos, view);
+}
+
+
+
+
 std::mt19937& rng::getEngine() {
     static std::mt19937 engine(std::random_device{}());
     return engine;

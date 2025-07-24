@@ -4,13 +4,16 @@
 #include "EnemyManager.h"
 
 
-Projectile::Projectile(float speed, sf::Vector2f direction, float range) :
-    speed(speed), direction(direction), range(range) {}
+Projectile::Projectile(float speed, sf::Vector2f direction, float range, float radius) :
+    speed(speed), direction(direction.normalized()), range(range*range), projectileRadius(radius*radius) {}
 
 void Projectile::init() {
-    // Regular initialization (called automatically when added)
-    parent->setSprite(getSpritePath());
-    startPos = parent->getPosition();
+    parent->setSprite(getSpritePath()); // load the correct sprite for the projectile
+    startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
+    parent->setPosition(startPos); // actually move projectile to the player position as well.
+
+    parent->setRotation( vectorToAngle(direction) );
+
 }
 
 
@@ -18,25 +21,23 @@ void Projectile::init() {
 void Projectile::update(float deltaTime) {
     parent->move(direction * speed * deltaTime);
     auto curPos = parent->getPosition();
+   
+    if ((curPos - startPos).lengthSquared() >= range)
+        ProjectilePool::release(parent);
 
-    std::cout<< enemyManager->GetWithinRange(curPos, projectileRadius).size()<<"\n";
-    if (auto playerPtr = player.lock()) { // Figure out why we aren't properly getting player ptr ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        if ((playerPtr->getPosition() - curPos).lengthSquared() < range)
-            ProjectilePool::release(parent);
-
+    for (auto& enemy : enemyManager->GetWithinRange(curPos, projectileRadius)) {
+        enemyManager->remove(enemy, true);
     }
 
-
-
 }
+
 void Projectile::Destroy() {}
 void Projectile::ProcessEvent(const std::optional<sf::Event>& event) {}
 
 
-void ProjectilePool::init(size_t initial_size) {
+void ProjectilePool::init(size_t initial_size, std::weak_ptr<GameObject> player) {
     // Set static references once
-    Projectile::player = EnemyMovement::GetPlayer();
+    Projectile::player = player;
     Projectile::enemyManager = &EnemyManager::getInstance();
 
     // Initialize pool
@@ -50,6 +51,7 @@ void ProjectilePool::init(size_t initial_size) {
 
 void ProjectilePool::release(GameObject* obj) {
     obj->setActive(false);
+    obj->removeSprite();
     auto it = std::find_if(pool_.begin(), pool_.end(),
         [obj](const auto& ptr) { return ptr.get() == obj; });
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Utility.h"
 class EnemyManager;
 class GameObject;
 
@@ -23,7 +24,7 @@ public:
     /// <param name="speed"> speed the projectile moves</param>
     /// <param name="direction"> direction of the projectile</param>
     /// <param name="range"> maximum travel distance SQUARED of the projectile.</param>
-    Projectile(float speed, sf::Vector2f direction, float range);
+    Projectile(float speed, sf::Vector2f direction, float range, float radius);
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
@@ -66,7 +67,7 @@ public:
     }
 
     // Initialize pool (call once during game setup)
-    static void init(size_t initial_size);
+    static void init(size_t initial_size, std::weak_ptr<GameObject> player);
 
     // Get a projectile
     template <typename ProjectileType, typename... Args>

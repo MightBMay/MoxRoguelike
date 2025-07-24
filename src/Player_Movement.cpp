@@ -13,15 +13,19 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 	if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 		switch (keyPressed->scancode) {
 		case sf::Keyboard::Scancode::Up:
+		case sf::Keyboard::Scancode::W:
 			direction.y = -1;
 			break;
 		case sf::Keyboard::Scancode::Down:
+		case sf::Keyboard::Scancode::S:
 			direction.y = 1;
 			break;
 		case sf::Keyboard::Scancode::Left:
+		case sf::Keyboard::Scancode::A:
 			direction.x = -1;
 			break;
 		case sf::Keyboard::Scancode::Right:
+		case sf::Keyboard::Scancode::D:
 			direction.x = 1;
 			break;
 		default:
@@ -32,7 +36,8 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 	else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
 		switch (keyReleased->scancode) {
 		case sf::Keyboard::Scancode::Up:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down)) {
+		case sf::Keyboard::Scancode::W:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::S)) {
 				direction.y = 1; // Switch to opposite if still pressed. prevents weird issues when pressing opposing directions at the same time. done for all 4.
 			}
 			else {
@@ -40,7 +45,8 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 			}
 			break;
 		case sf::Keyboard::Scancode::Down:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Up)) {
+		case sf::Keyboard::Scancode::S:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::W)) {
 				direction.y = -1;
 			}
 			else {
@@ -48,7 +54,8 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 			}
 			break;
 		case sf::Keyboard::Scancode::Left:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right)) {
+		case sf::Keyboard::Scancode::A:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D)) {
 				direction.x = 1;
 			}
 			else {
@@ -56,7 +63,8 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 			}
 			break;
 		case sf::Keyboard::Scancode::Right:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left)) {
+		case sf::Keyboard::Scancode::D:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A)) {
 				direction.x = -1;
 			}
 			else {

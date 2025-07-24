@@ -65,7 +65,8 @@ void GameObject::setOrigin(const sf::Vector2f& origin) {
 
 
 void GameObject::removeSprite() {
-    //sprite.reset();  does nothing currently.
+    sprite->Destroy();
+    sprite.reset();
 }
 
 const sf::Transform& GameObject::getTransform() const {
@@ -137,10 +138,14 @@ void GameObjectManager::clearAll() {
 
 void GameObjectManager::updateAll(float deltaTime) {
     // Use a copy for thread safety
-    auto objects = gameObjects_;
-    for (auto* obj : objects) {
-        if (obj && obj->isActive()) {
-            obj->update(deltaTime);
+    //auto objects = gameObjects_;
+    for (auto* obj : gameObjects_) {
+        try {
+            if (obj && obj->isActive()) {
+                obj->update(deltaTime);
+            }
+        }catch(...) {
+            obj = nullptr;
         }
     }
 }
