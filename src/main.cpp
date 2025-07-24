@@ -16,7 +16,7 @@
 #include "Player_Movement.h"
 #include "EnemyMovement.h"
 
-sf::RenderWindow window;
+std::shared_ptr<sf::RenderWindow> window;
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, GameObjectManager& manager) {
 	player = std::make_shared<GameObject>(
@@ -31,7 +31,8 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 
 	
 	player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 250, 500, 32, 1)
+		std::make_shared<WeaponStats>(1, 250, 500, 32, 1), 
+		window
 	);
 
 
@@ -69,8 +70,9 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 
 int main() {
 #pragma region create window
-	window = sf::RenderWindow(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
-	window.setFramerateLimit(144); // cap fps
+	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
+	window = window;
+	window->setFramerateLimit(144); // cap fps
 #pragma endregion
 
 #pragma region create delta time dt_clock
@@ -120,15 +122,15 @@ int main() {
 		//CreateTestEnemy(manager, enemyManager);
 
 
-	while (window.isOpen()) {
+	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
 		float deltaTime = Delta_Timer.asSeconds();
 		// Event handling (unchanged)
-		while (const std::optional event = window.pollEvent()) {
+		while (const std::optional event = window->pollEvent()) {
 
 
 			if (event->is<sf::Event::Closed>()) {
-				window.close();
+				window->close();
 			}
 
 
@@ -156,8 +158,8 @@ int main() {
 		// Update and render
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
 
-		window.clear();
-		manager.renderAll(window); // draw all gameobjects with sprites to window.
+		window->clear();
+		manager.renderAll(*window); // draw all gameobjects with sprites to window.
 
 
 #pragma region FPS logging
@@ -174,7 +176,7 @@ int main() {
 
 #pragma endregion
 
-		window.display(); // display drawn image.
+		window->display(); // display drawn image.
 	}
 }
 
