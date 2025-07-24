@@ -2,16 +2,16 @@
 #include "GameObject.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "Weapon.h"
 
 
-Projectile::Projectile(float speed, sf::Vector2f direction, float range, float radius) :
-    speed(speed), direction(direction.normalized()), range(range), projectileRadius(radius) {}
+Projectile::Projectile(sf::Vector2f direction,std::weak_ptr<WeaponStats> stats) :
+    stats(stats), pierceCount(stats.lock()->pierce), direction(direction){}
 
 void Projectile::init() {
     parent->setSprite(getSpritePath()); // load the correct sprite for the projectile
     startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
     parent->setPosition(startPos); // actually move projectile to the player position as well.
-
     parent->setRotation( vectorToAngle(direction) );
 
 }
@@ -19,14 +19,20 @@ void Projectile::init() {
 
 
 void Projectile::update(float deltaTime) {
-    parent->move(direction * speed * deltaTime);
+    auto statsP = stats.lock();
+    parent->move(direction * statsP->speed * deltaTime);
     auto curPos = parent->getPosition();
    
-    if ((curPos - startPos).lengthSquared() >= range)
+    if ((curPos - startPos).lengthSquared() >= statsP->range)
         ProjectilePool::release(parent);
 
-    for (auto& enemy : enemyManager->GetWithinRange(curPos, projectileRadius)) {
-        enemyManager->remove(enemy, true);
+    for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
+        enemy->getDerivitivesOfComponent<Enemy>()->takeDamage(statsP->damage);
+        --pierceCount;
+        if (pierceCount <= 0) {
+            ProjectilePool::release(parent);
+            break;
+        }
     }
 
 }
@@ -45,8 +51,9 @@ void ProjectilePool::init(size_t initial_size, std::weak_ptr<GameObject> player)
     for (size_t i = 0; i < initial_size; ++i) {
         auto obj = std::make_unique<GameObject>();
         obj->setActive(false);
-        pool_.push_back(std::move(obj));
         GameObjectManager::getInstance().setRenderLayer(obj.get(), 4);
+        pool_.push_back(std::move(obj));
+     
     }
 }
 

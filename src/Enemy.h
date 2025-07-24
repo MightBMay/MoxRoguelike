@@ -7,6 +7,10 @@ class GameObject;
 
 class Enemy : public Component, public std::enable_shared_from_this<Enemy> {
 public:
+
+	int health = 3;
+
+
 	Enemy(float speed, float size): speed(speed),size(size*size){}
 
 	float speed = 80.0f;
@@ -16,6 +20,12 @@ public:
 
 	// 0 == right, 1 = left
 	bool facingDirection = false;
+
+	void takeDamage(int damage) {
+		health -= damage;
+		
+		if (health <= 0) Destroy();
+	}
 
 	static void SetPlayer(std::weak_ptr<GameObject> player);
 	static std::weak_ptr<GameObject> GetPlayer() { return _player; }

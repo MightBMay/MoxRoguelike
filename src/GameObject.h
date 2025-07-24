@@ -63,6 +63,16 @@ public:
     }
 
     template <typename T>
+    T* getDerivitivesOfComponent() {
+        for (auto& comp : components) {
+            if (auto ptr = dynamic_cast<T*>(comp.get())) {
+                return ptr;
+            }
+        }
+        return nullptr;
+    }
+
+    template <typename T>
     bool removeComponent() {
         auto it = componentTypeMap.find(typeid(T));
         if (it != componentTypeMap.end()) {

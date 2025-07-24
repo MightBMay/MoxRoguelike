@@ -31,7 +31,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 
 	
 	player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 250, 500, 32, 1), 
+		std::make_shared<WeaponStats>(1, 250, 500, 32, 1, 5), 
 		window
 	);
 
@@ -59,7 +59,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	sf::Vector2f playerPos = player.lock()->getPosition();
 	enemy->setPosition(
 		playerPos +
-		sf::Vector2f{ rng::getFloat(-2000, 2000), rng::getFloat(-800, 800) }
+		sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
 
 	);
 
@@ -118,8 +118,8 @@ int main() {
 	manager.setRenderLayer(Background.get(), -10); // move to layer -10 to stay behind things.
 #pragma endregion
 
-	for (int i = 0; i < 500; i++)
-		CreateTestEnemy(manager, enemyManager);
+	//for (int i = 0; i < 5; i++)
+		//CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
@@ -138,7 +138,7 @@ int main() {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
 
-
+						CreateTestEnemy(manager, enemyManager);
 
 				}/* unused atm, moved the input stuff to their own component.
 				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {

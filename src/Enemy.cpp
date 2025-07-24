@@ -13,7 +13,7 @@ void Enemy::init() {
 	// we need a seperate manager for enemies to store their shared_ptr's.
 }
 void Enemy::Destroy() {
-	EnemyManager::getInstance().remove(parent->shared_from_this(), false);
+	EnemyManager::getInstance().remove(parent->shared_from_this(), true);
 }
 
 void Enemy::SetPlayer(std::weak_ptr<GameObject> player) {

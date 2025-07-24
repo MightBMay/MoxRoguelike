@@ -11,22 +11,26 @@ struct WeaponStats
 
 public:
 	//s.e
-	const int damage;
+	const int damage=0;
 	//s.e
-	const float speed;
+	const float speed=0;
 	// distance the projectile travels
-	const int range;
+	const int range=0;
 	// width of the collision check with enemies
-	const float projRadius;
+	const float projRadius=0;
 	// how many projectiles can be fired in a second.
-	const float fireRate;
+	const float fireRate=0;
+	// how many enemies the projectile can hit before being destroyed.
+	const int pierce=0;
 
 
 	/// <summary>
 	/// remember, range and projRadius are SQUARED to avoid the root when calcualting.
 	/// </summary>
-	WeaponStats(int damage, float speed, int range, float projRadius, float fireRate) :
-		damage(damage), speed(speed), range(range* range), projRadius(projRadius* projRadius), fireRate(fireRate) {}
+	WeaponStats(int damage, float speed, int range, float projRadius, float fireRate, int pierce) :
+		damage(damage), speed(speed), range(range* range), 
+		projRadius(projRadius* projRadius), fireRate(fireRate),
+		pierce(pierce) {}
 
 private:
 
@@ -43,7 +47,7 @@ public:
 
 	virtual void Fire() {
 		sf::Vector2f direction = getMouseWorldPos(*window, window->getDefaultView()) -parent->getPosition();
-		projPool->make<Projectile>(stats->speed, direction.normalized(), stats->range, stats->projRadius);
+		projPool->make<Projectile>(direction.normalized(), stats);		
 		fireTimer = 1 / stats->fireRate;
 	}
 	virtual void init() override {
