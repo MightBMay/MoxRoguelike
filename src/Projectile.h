@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Utility.h"
+#include <unordered_set>
 class EnemyManager;
 class GameObject;
 struct WeaponStats;
@@ -33,6 +34,7 @@ private:
 
     static inline std::weak_ptr<GameObject> player;
     static inline EnemyManager* enemyManager;
+    std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
     std::weak_ptr<WeaponStats> stats;
     sf::Vector2f startPos = { 0,0 };
 

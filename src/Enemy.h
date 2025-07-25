@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <iostream>
 #include "Component.h"
 
 class GameObject;
@@ -9,21 +10,16 @@ class Enemy : public Component, public std::enable_shared_from_this<Enemy> {
 public:
 
 	int health = 3;
-
-
-	Enemy(float speed, float size): speed(speed),size(size*size){}
-
-	float speed = 80.0f;
-	sf::Vector2f direction{ 0,0 };
-	// size is SQUARED to avoid issues.
+	float speed = 0;
+	int damage = 0;
 	float size = 0;
-
-	// 0 == right, 1 = left
-	bool facingDirection = false;
+	sf::Vector2f direction{ 0,0 };
+	bool facingDirection; // 0== right, 1 == left;
+	Enemy(int health, int damage, float speed, float size):
+		health(health), damage(damage), speed(speed),size(size*size){}
 
 	void takeDamage(int damage) {
 		health -= damage;
-		
 		if (health <= 0) Destroy();
 	}
 

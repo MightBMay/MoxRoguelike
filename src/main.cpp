@@ -17,6 +17,7 @@
 #include "Enemy.h"
 
 std::shared_ptr<sf::RenderWindow> window;
+std::shared_ptr<sf::View> view;
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, GameObjectManager& manager) {
 	player = std::make_shared<GameObject>(
@@ -31,7 +32,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, G
 
 	
 	player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 250, 500, 32, 1, 5), 
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 5, 5), 
 		window
 	);
 
@@ -51,7 +52,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(80, 32);
+	auto enemyMove = enemy->addComponent<Enemy>(3, 0, 125, 32);
 	enemyMove->init();
 
 
