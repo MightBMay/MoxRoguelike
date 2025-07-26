@@ -3,6 +3,7 @@
 #include "EnemyManager.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "TimedDestroy.h"
 
 std::weak_ptr<GameObject> Enemy::_player;
 
@@ -27,9 +28,8 @@ void Enemy::update(float deltatime) {
 		if(newDirection.lengthSquared() > 0) // avoids normalizing zero vector, which crashes.
 			direction = newDirection.normalized();
 		parent->move(direction * speed * deltatime);
-
 		// checks attack timer and range check on player, and deals damage if it should.
-		DamagePlayer(deltatime, player);
+		Attack(deltatime, player);
 
 
 	}
@@ -41,9 +41,18 @@ void Enemy::update(float deltatime) {
 
 }
 
-void Enemy::DamagePlayer(float deltaTime, std::shared_ptr<GameObject>& player) {
+void Enemy::Attack(float deltaTime, std::shared_ptr<GameObject>& player) {
 	if (attackTimer <= 0) { // if attack off cd and in range, 
 		if ((player->getPosition() - parent->getPosition()).lengthSquared() <= size) {
+			auto hitbox = std::make_shared<GameObject>(
+				"../assets/sprites/shapes/circle32.png",
+				sf::IntRect{ {0,0},{32,32} }
+			);
+
+			hitbox->setPosition(parent->getPosition());
+			hitbox->getSprite()->setColor(sf::Color(255, 255, 255, 128));
+			hitbox->addComponent<TimedDestroy>(3);
+
 			player->getDerivativesOfComponent<Player>()->takeDamage(damage); // dmg player (or subclass of player)
 			attackTimer = attackSpeed; // reset attack timer.
 		}

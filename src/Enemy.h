@@ -28,7 +28,7 @@ public:
 		if (health <= 0) Destroy();
 	}
 
-	virtual void DamagePlayer(float deltaTime, std::shared_ptr<GameObject>& player);
+	virtual void Attack(float deltaTime, std::shared_ptr<GameObject>& player);
 
 	static void SetPlayer(std::weak_ptr<GameObject> player);
 	static std::weak_ptr<GameObject> GetPlayer() { return _player; }
