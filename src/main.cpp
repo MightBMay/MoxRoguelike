@@ -13,20 +13,20 @@
 #include "GameObject.h"
 
 
-#include "Player_Movement.h"
+#include "Player.h"
 #include "Enemy.h"
 
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
 
-void CreatePlayer(std::shared_ptr<GameObject>& player, PlayerMovement*& pmove, GameObjectManager& manager) {
+void CreatePlayer(std::shared_ptr<GameObject>& player, Player*& pmove, GameObjectManager& manager) {
 	player = std::make_shared<GameObject>(
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} }
 	);
 	player->setOrigin(64, 64);
 	player->setPosition(960, 540);
-	pmove = player->addComponent<PlayerMovement>();
+	pmove = player->addComponent<Player>(3);
 	manager.setRenderLayer(player.get(), 5);
 
 
@@ -52,7 +52,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(3, 0, 125, 32);
+	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 125, 32);
 	enemyMove->init();
 
 
@@ -97,10 +97,10 @@ int main() {
 	
 
 #pragma region make player
-	std::shared_ptr<GameObject> Player; // declare player
-	PlayerMovement* p_move; // get pointer to player's movement component.
-	CreatePlayer(Player, p_move, manager); // seperate method cuz it took a lot of space.
-	projectilePool.init(256, Player);
+	std::shared_ptr<GameObject> player; // declare player
+	Player* p_move; // get pointer to player's movement component.
+	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
+	projectilePool.init(256, player);
 
 
 
@@ -187,15 +187,15 @@ int main() {
 * destruction and re creation of player example.
 
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
-						if (Player) {
-							GameObject::Destroy(Player);
-							Player.reset(); // Clear the shared_ptr
+						if (player) {
+							GameObject::Destroy(player);
+							player.reset(); // Clear the shared_ptr
 							p_move = nullptr;
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
-						if (!Player) {
-							CreatePlayer(Player, p_move, manager);
+						if (!player) {
+							CreatePlayer(player, p_move, manager);
 
 							std::cout << "no";
 						}std::cout << "yes";

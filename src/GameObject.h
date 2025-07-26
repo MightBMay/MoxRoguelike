@@ -63,7 +63,7 @@ public:
     }
 
     template <typename T>
-    T* getDerivitivesOfComponent() {
+    T* getDerivativesOfComponent() {
         for (auto& comp : components) {
             if (auto ptr = dynamic_cast<T*>(comp.get())) {
                 return ptr;

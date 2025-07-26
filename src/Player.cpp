@@ -1,13 +1,13 @@
-#include "Player_Movement.h"
+#include "Player.h"
 #include "GameObject.h"
 #include <math.h>
 
-void PlayerMovement::update(float deltatime) {
+void Player::update(float deltatime) {
 	if (direction.lengthSquared() < 0.15f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
 }
 
-void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
+void Player::ProcessEvent(const std::optional<sf::Event>& event) {
 
 
 	if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
@@ -82,7 +82,7 @@ void PlayerMovement::ProcessEvent(const std::optional<sf::Event>& event) {
 	
 }
 
-void PlayerMovement::UpdateFacingDirection() {
+void Player::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
 	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
