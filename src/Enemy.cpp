@@ -5,8 +5,6 @@
 #include "Player.h"
 #include "TimedDestroy.h"
 
-std::weak_ptr<GameObject> Enemy::_player;
-
 
 void Enemy::init() {
 	EnemyManager::getInstance().add(parent->shared_from_this());
@@ -15,7 +13,9 @@ void Enemy::init() {
 	// we need a seperate manager for enemies to store their shared_ptr's.
 }
 void Enemy::Destroy() {
-	EnemyManager::getInstance().remove(parent->shared_from_this(), true);
+	auto& parentPTR = parent;
+	EnemyManager::getInstance().remove( parentPTR, true);
+	EnemyManager::removeHitboxVisual(parentPTR);
 }
 
 void Enemy::SetPlayer(std::weak_ptr<GameObject> player) {
@@ -25,9 +25,13 @@ void Enemy::update(float deltatime) {
 	if (auto player = _player.lock()) {
 		sf::Vector2f playerPos = player->getPosition();
 		sf::Vector2f newDirection = (playerPos - parent->getPosition());
-		if(newDirection.lengthSquared() > 0) // avoids normalizing zero vector, which crashes.
+		float newSqrMag = newDirection.lengthSquared();
+		if (newSqrMag <= halfSize) { direction = { 0,0 }; }
+		else if (newSqrMag > 0) {// avoids normalizing zero vector, which crashes.
 			direction = newDirection.normalized();
-		parent->move(direction * speed * deltatime);
+			parent->move(direction * speed * deltatime);
+		}
+		
 		// checks attack timer and range check on player, and deals damage if it should.
 		Attack(deltatime, player);
 
@@ -43,15 +47,21 @@ void Enemy::update(float deltatime) {
 
 void Enemy::Attack(float deltaTime, std::shared_ptr<GameObject>& player) {
 	if (attackTimer <= 0) { // if attack off cd and in range, 
-		if ((player->getPosition() - parent->getPosition()).lengthSquared() <= size) {
-			auto hitbox = std::make_shared<GameObject>(
-				"../assets/sprites/shapes/circle32.png",
-				sf::IntRect{ {0,0},{32,32} }
-			);
+		// 32 is the radius of the player hitbox. 
+		constexpr int playerSize = 32 * 32; // squared player size, because we use sqr magnitude.
+		if ((player->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= size) {
+			
+#pragma region make hitbox sprite
+			auto hitbox = 
+			GameObject::Create("../assets/sprites/shapes/circle_32.png", sf::IntRect{ {0,0},{32,32} });
 
 			hitbox->setPosition(parent->getPosition());
-			hitbox->getSprite()->setColor(sf::Color(255, 255, 255, 128));
-			hitbox->addComponent<TimedDestroy>(3);
+			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
+			hitbox->setOrigin(16, 16);
+			hitbox->scaleObject(attackSize);
+			hitbox->addComponent<TimedDestroy>(10);// (0.125f);
+			EnemyManager::addHitboxVisual(hitbox);
+#pragma endregion
 
 			player->getDerivativesOfComponent<Player>()->takeDamage(damage); // dmg player (or subclass of player)
 			attackTimer = attackSpeed; // reset attack timer.

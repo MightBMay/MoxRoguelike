@@ -20,14 +20,14 @@ std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, Player*& pmove, GameObjectManager& manager) {
-	player = std::make_shared<GameObject>(
+	player = GameObject::Create(
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} }
 	);
 	player->setOrigin(64, 64);
 	player->setPosition(960, 540);
 	pmove = player->addComponent<Player>(3);
-	manager.setRenderLayer(player.get(), 5);
+	manager.setRenderLayer(player, 5);
 
 
 	
@@ -46,13 +46,13 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, Player*& pmove, GameObjec
 
 void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	static std::weak_ptr<GameObject> player = Enemy::GetPlayer();
-	std::shared_ptr<GameObject> enemy = std::make_shared<GameObject>(
+	std::shared_ptr<GameObject> enemy = GameObject::Create(
 		"../assets/sprites/twig.png",
 		sf::IntRect{ {0,0},{128,150} }
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 125, 32);
+	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 0, 86);
 	enemyMove->init();
 
 
@@ -60,11 +60,11 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	sf::Vector2f playerPos = player.lock()->getPosition();
 	enemy->setPosition(
 		playerPos +
-		sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
+		sf::Vector2f{ rng::getFloat(-100, 100), rng::getFloat(-200, 200) }
 
 	);
 
-	manager.setRenderLayer(enemy.get(), 1);
+	manager.setRenderLayer(enemy, 1);
 
 }
 
@@ -111,15 +111,15 @@ int main() {
 
 
 
-	std::shared_ptr<GameObject> Background = std::make_shared<GameObject>( // create gameobject for background.
+	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} }
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
-	manager.setRenderLayer(Background.get(), -10); // move to layer -10 to stay behind things.
+	manager.setRenderLayer(Background, -10); // move to layer -10 to stay behind things.
 #pragma endregion
 
-	//for (int i = 0; i < 5; i++)
+	//for (int i = 0; i < 500; i++)
 		//CreateTestEnemy(manager, enemyManager);
 
 

@@ -65,7 +65,29 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 
 
     if(DestroyObject)
-        GameObjectManager::getInstance().remove(obj.get());
+        GameObjectManager::getInstance().remove(obj);
+}
+
+
+
+void EnemyManager::removeHitboxVisual(std::shared_ptr<GameObject>& hitbox){
+    if (!hitbox) return;
+    auto it = std::find_if(
+        hitboxVisuals.begin(), 
+        hitboxVisuals.end(), 
+        [&hitbox](const auto& obj) {
+            return hitbox == obj;
+        }
+    );
+    if (it != hitboxVisuals.end()) 
+        hitboxVisuals.erase(it);
+
+}
+
+
+void EnemyManager::addHitboxVisual(std::shared_ptr<GameObject>& hitbox){
+    if (!hitbox) return;
+    hitboxVisuals.push_back(hitbox);
 }
 
 /// <summary>

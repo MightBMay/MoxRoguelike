@@ -9,6 +9,7 @@ public:
 		timeRemaining -= deltaTime;
 		if (timeRemaining <= 0)
 			GameObjectManager::getInstance().remove(parent);
+			//EnemyManager::removeHitboxVisual(parent->shared_from_this());
 	}
 	void Destroy() override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event) override {};

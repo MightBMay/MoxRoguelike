@@ -7,7 +7,7 @@ class GameObject;
 
 class Component {
 public:
-    GameObject* parent = nullptr; // Set by GameObject when added
+    std::shared_ptr<GameObject> parent; // Set by GameObject when added
     //if initialization is needed
     virtual void init() {} 
     virtual void update(float deltaTime) = 0;

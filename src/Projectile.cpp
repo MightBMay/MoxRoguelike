@@ -52,19 +52,19 @@ void ProjectilePool::init(size_t initial_size, std::weak_ptr<GameObject> player)
 	// Initialize pool
 	pool_.reserve(initial_size);
 	for (size_t i = 0; i < initial_size; ++i) {
-		auto obj = std::make_unique<GameObject>();
+		auto obj = GameObject::Create();
 		obj->setActive(false);
-		GameObjectManager::getInstance().setRenderLayer(obj.get(), 4);
+		GameObjectManager::getInstance().setRenderLayer(obj, 4);
 		pool_.push_back(std::move(obj));
 
 	}
 }
 
-void ProjectilePool::release(GameObject* obj) {
+void ProjectilePool::release(std::shared_ptr<GameObject> obj) {
 	obj->setActive(false);
 	obj->removeSprite();
 	auto it = std::find_if(pool_.begin(), pool_.end(),
-		[obj](const auto& ptr) { return ptr.get() == obj; });
+		[obj](const auto& ptr) { return ptr == obj; });
 
 	if (it != pool_.end() && it >= pool_.begin() + next_available_) {
 		std::swap(*it, pool_[next_available_ - 1]);

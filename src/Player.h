@@ -6,6 +6,7 @@ public:
 
 	int health = 0;
 	float speed = 300.0f;
+	float size = 32;
 	sf::Vector2f direction{ 0,0 };
 	// 0 == right, 1 = left
 	bool facingDirection = false;

@@ -20,8 +20,10 @@ class GameObjectManager;
 class GameObject : public std::enable_shared_from_this<GameObject>{
 public:
     // Constructors
-    GameObject();
-    GameObject(const std::string& path, const sf::IntRect& rect = sf::IntRect());
+    static std::shared_ptr<GameObject> Create();
+    static std::shared_ptr<GameObject> Create(const std::string& path, const sf::IntRect& rect = sf::IntRect());
+
+
     ~GameObject();
 
 
@@ -35,7 +37,7 @@ public:
         removeComponent<T>();
 
         auto component = std::make_unique<T>(std::forward<Args>(args)...);
-        component->parent = this;
+        component->parent = shared_from_this();
         T* ptr = component.get();
 
         components.push_back(std::move(component));
@@ -110,7 +112,9 @@ public:
     void rotate(float angle);
     void setScale(float factorX, float factorY);
     void setScale(const sf::Vector2f& factors) { setScale(factors.x, factors.y); }
+
     void scaleObject(float factorX, float factorY);
+    void scaleObject(float factor) { scaleObject(factor, factor); }
     void scaleObject(const sf::Vector2f& factor) { scaleObject(factor.x, factor.y); }
 
     void setOrigin(float x, float y) { setOrigin( { x, y } ); }
@@ -157,6 +161,8 @@ private:
     std::shared_ptr<MSprite> sprite;
 
     void updateTransform() const;
+    GameObject();
+    GameObject(const std::string& path, const sf::IntRect& rect);
 };
 
 
@@ -169,8 +175,8 @@ public:
     GameObjectManager& operator=(const GameObjectManager&) = delete;
 
     // Object management
-    void add(GameObject* obj, int renderLayer = 0);
-    void remove(GameObject* obj);
+    void add(std::weak_ptr<GameObject> obj, int renderLayer = 0);
+    void remove(std::weak_ptr<GameObject> obj);
     void clearAll();
 
     // Update and render
@@ -181,8 +187,8 @@ public:
 
 
     // Layer management
-    void setRenderLayer(GameObject* obj, int newLayer);
-    int getRenderLayer(GameObject* obj) const;
+    void setRenderLayer(std::weak_ptr<GameObject> obj, int newLayer);
+    int getRenderLayer(std::weak_ptr<GameObject> obj) const;
 
 private:
     GameObjectManager() = default;
@@ -190,6 +196,6 @@ private:
 
 
 
-    std::vector<GameObject*> gameObjects_;
-    std::map<int, std::vector<GameObject*>> renderLayers_;
+    std::vector<std::weak_ptr<GameObject>> gameObjects_;
+    std::map<int, std::vector<std::weak_ptr<GameObject>>> renderLayers_;
 };

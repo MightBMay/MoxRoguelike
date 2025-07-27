@@ -45,7 +45,7 @@ private:
 
 class ProjectilePool {
 private:
-    static inline std::vector<std::unique_ptr<GameObject>> pool_;
+    static inline std::vector<std::shared_ptr<GameObject>> pool_;
     static inline size_t next_available_ = 0;
 
     ProjectilePool() = default;
@@ -72,7 +72,7 @@ public:
     static GameObject* make(Args&&... args) {
         // Expand pool if exhausted
         if (next_available_ >= pool_.size()) {
-            pool_.push_back(std::make_unique<GameObject>());
+            pool_.push_back(GameObject::Create());
         }
 
         auto& obj = pool_[next_available_++];
@@ -83,7 +83,7 @@ public:
     }
 
     // Return projectile to pool
-    static void release(GameObject* obj);
+    static void release(std::shared_ptr<GameObject> obj);
 
     // Cleanup all projectiles
     static void clear() {

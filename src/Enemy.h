@@ -5,7 +5,6 @@
 class GameObject;
 
 
-
 class Enemy : public Component, public std::enable_shared_from_this<Enemy> {
 public:
 
@@ -19,9 +18,20 @@ public:
 	bool facingDirection =0; // 0== right, 1 == left;
 	float attackTimer = 0;
 
+	// used to scale the attack hitbox visual. 
+	// can be influenced depending on texture size for the hitbox.
+	const float attackSize = 6; 
 
+	/// <summary>
+	/// base enemy constructor
+	/// </summary>
+	/// <param name="health"></param>
+	/// <param name="damage"></param>
+	/// <param name="attackSpeed"> how many attacks/second the enemy can perform.</param>
+	/// <param name="speed"> pixels/second movement speed</param>
+	/// <param name="size"> radius of the enemies "collision"</param>
 	Enemy(int health, int damage, float attackSpeed, float speed, float size ):
-		health(health), damage(damage), speed(speed),size(size*size), attackSpeed(1/attackSpeed){}
+		health(health), damage(damage), speed(speed),size(size*size), attackSpeed(1/attackSpeed), halfSize(size/2){}
 
 	void takeDamage(int damage) {
 		health -= damage;
@@ -40,7 +50,8 @@ public:
 	virtual void ProcessEvent(const std::optional<sf::Event>& event) {};
 
 private:
-	static std::weak_ptr<GameObject> _player;
+	static inline std::weak_ptr<GameObject> _player;
+	float halfSize=0;// used for some checks, but is a waste to calculate per frame per enemy.
 	void UpdateFacingDirection();
 
 

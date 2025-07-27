@@ -9,6 +9,7 @@ class GameObject;
 class EnemyManager {
 public:
 	static EnemyManager& getInstance();
+	
 	EnemyManager(const EnemyManager&) = delete;
 	EnemyManager& operator=(const EnemyManager&) = delete;
 	
@@ -16,6 +17,9 @@ public:
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::shared_ptr<GameObject>&);
 	void remove(std::shared_ptr<GameObject>&, bool DestroyObject);
+
+	static void removeHitboxVisual(std::shared_ptr<GameObject>& hitbox);
+	static void addHitboxVisual(std::shared_ptr<GameObject>& hitbox);
 	int count() {
 		return enemyObjects_.size();
 	}
@@ -29,6 +33,6 @@ private:
 	~EnemyManager() = default;
 
 
-
+	static inline std::vector<std::shared_ptr<GameObject>> hitboxVisuals;
 	std::vector<std::shared_ptr<GameObject>> enemyObjects_;
 };
