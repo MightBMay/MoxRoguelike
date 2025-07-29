@@ -21,7 +21,7 @@
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
 std::shared_ptr<GameObject> player;
-std::weak_ptr<Weapon<Projectile>> weapon;
+std::weak_ptr<WeaponBase> weapon;
 
 void CreatePlayer(std::shared_ptr<GameObject>& player, std::weak_ptr<Player>& pmove, GameObjectManager& manager) {
 	player = GameObject::Create(
@@ -36,9 +36,10 @@ void CreatePlayer(std::shared_ptr<GameObject>& player, std::weak_ptr<Player>& pm
 
 	
 	weapon = player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 5), 
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 0.1), 
 		window
 	);
+	
 
 
 
@@ -74,18 +75,24 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 
 
 void CreateTestButton(GameObjectManager& manager, std::shared_ptr<GameObject> obj) {
+	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };
 	obj = GameObject::Create(
-		"../assets/sprites/shapes/square_32.png",
-		sf::IntRect{ {0,0},{32,32} }
+		"../assets/sprites/cardboard.png",
+		rect
 	);
+	obj->setPosition(512, 512);
+	obj->setOrigin(rect.size.x/2.0, rect.size.y/2.0);
+	 
+	manager.setRenderLayer(obj, 100);
 
-	std::shared_ptr<UI_CooldownSprite> sprite = obj->addComponent<UI_CooldownSprite>(window, weapon.lock()).lock();
+	std::shared_ptr<UI_CooldownSprite> sprite = 
+		obj->addComponent<UI_CooldownSprite>(
+			window, 
+			weapon, 
+			rect, 
+			"../assets/sprites/shapes/bl_square_128.png").lock();
 	
-	obj->setOrigin(16, 16);
-	//obj->scaleObject(3, 5);
-	obj->setPosition(32, 32);
 
-	manager.setRenderLayer(obj, 0);
 }
 
 int main() {

@@ -37,18 +37,46 @@ private:
 
 };
 
+
+class WeaponBase : public Component {
+
+public:
+	WeaponBase(std::shared_ptr<WeaponStats>& stats):stats(stats){}
+
+	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
+
+	virtual void Fire() = 0;
+	virtual void init() = 0;
+	virtual void Destroy() = 0;
+	virtual void ProcessEvent(const std::optional<sf::Event>& event) = 0;
+
+	std::shared_ptr<WeaponStats> getStats() const { return stats; }
+	float getAttackSpeed() const { return stats->attackSpeed; }
+	float getAttackTimer() const { return attackTimer; }
+
+protected:
+	std::shared_ptr<WeaponStats> stats;
+
+	MEvent<float> cooldownTickEvent{};
+	ProjectilePool* projPool = nullptr;
+	float attackTimer = 0;
+
+
+};
+
+
 // need to store projectiletype somehow.
 template<typename ProjectileType>
-class  Weapon :public Component
+class  Weapon :public WeaponBase
 {
 public:
-
+	using projectileType = ProjectileType;
 	Weapon(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		stats(stats), window(window) {}
+		WeaponBase(stats), window(window) {}
 
 
 
-	virtual void Fire() {
+	virtual void Fire() override{
 		sf::Vector2f direction = getMouseWorldPos(*window, window->getDefaultView()) -parent->getPosition();
 		projPool->make<Projectile>(direction.normalized(), stats);		
 		attackTimer = stats->attackSpeed;
@@ -60,7 +88,8 @@ public:
 
 	virtual void update(float deltaTime)override {
 		attackTimer -= deltaTime;
-		cooldownTickEvent.invoke(attackTimer, stats->attackSpeed);
+		if (attackTimer < -0.1) return;
+		cooldownTickEvent.invoke(attackTimer);
 	}
 	virtual void Destroy()override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
@@ -79,19 +108,14 @@ public:
 	}
 
 
-	std::shared_ptr<WeaponStats> getStats() const { return stats; }
-	float getAttackSpeed() const { return stats->attackSpeed; }
-	float getAttackTimer() const { return attackTimer; }
-	MEvent<float, float>& getCooldownEvent() { return cooldownTickEvent; }
+
+
+
+
 
 
 private:
-	MEvent<float, float> cooldownTickEvent;
-
-	std::shared_ptr<WeaponStats> stats;
-	ProjectilePool* projPool = nullptr;
 	std::shared_ptr<sf::RenderWindow> window;
-	float attackTimer = 0;
 
 };
 
