@@ -133,7 +133,7 @@ public:
     const sf::Transform& getTransform() const;
     const bool isActive()const { return _isActive; }
     bool hasComponents() const { return !components.empty(); }
-
+    void Log() const;
 
     void handleEvent(const std::optional<sf::Event>& event) {
         for (auto& component : components) {
@@ -187,8 +187,8 @@ public:
 
 
     // Layer management
-    void setRenderLayer(std::weak_ptr<GameObject> obj, int newLayer);
-    int getRenderLayer(std::weak_ptr<GameObject> obj) const;
+    void setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer);
+    int getRenderLayer(const std::shared_ptr<GameObject>& obj) const;
 
 private:
     GameObjectManager() = default;

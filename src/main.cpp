@@ -8,6 +8,7 @@
 #include "EnemyManager.h"
 #include "Projectile.h"
 #include "Weapon.h"
+#include "UI_Button.h"
 
 #include "MSprite.h"
 #include "GameObject.h"
@@ -69,6 +70,21 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 }
 
 
+void CreateTestButton(GameObjectManager& manager, std::shared_ptr<GameObject> obj) {
+	obj = GameObject::Create(
+		"../assets/sprites/shapes/square_32.png",
+		sf::IntRect{ {0,0},{32,32} }
+	);
+
+	UI_Button* button = obj->addComponent<UI_Button>(window);
+	button->temp.invoke(1, 1);
+	obj->setOrigin(16, 16);
+	obj->scaleObject(3, 5);
+	obj->setPosition(32*3, 32*5);
+	std::cout << "id: " << button->getOnClick().subscribe(obj, &GameObject::Log) << std::endl;
+	manager.setRenderLayer(obj, 0);
+}
+
 int main() {
 #pragma region create window
 	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
@@ -102,7 +118,8 @@ int main() {
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
 	projectilePool.init(256, player);
 
-
+	std::shared_ptr<GameObject> button;
+	CreateTestButton(manager, button);
 
 #pragma endregion
 

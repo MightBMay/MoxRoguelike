@@ -112,6 +112,20 @@ void GameObject::Destroy(std::shared_ptr<GameObject>& gameObject) {
     gameObject.reset();
 }
 
+void GameObject::Log() const {
+    std::cout <<
+        "\nisActive: "<< _isActive<<"\n"<<
+        "Position: (" << position.x << ", " << position.y << ")\n" <<
+        "Scale: (" << scale.x << ", " << scale.y << ")\n" <<
+        "Rotation: " << rotation << "\n";
+
+    if (hasSprite()) {
+        std::cout <<
+            "Sprite Path: " << sprite->getPath()<<"\n";
+    }
+        
+
+}
 
 
 // manager
@@ -209,8 +223,8 @@ void GameObjectManager::processEvent(const std::optional<sf::Event>& event) {
     }
 }
 
-void GameObjectManager::setRenderLayer(std::weak_ptr<GameObject> obj, int newLayer) {
-    if (!obj.lock()) return;
+void GameObjectManager::setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer) {
+    if (!obj) return;
 
     // Remove from all current layers
     for (auto& [layer, objects] : renderLayers_) {
@@ -218,8 +232,9 @@ void GameObjectManager::setRenderLayer(std::weak_ptr<GameObject> obj, int newLay
             std::remove_if(
                 objects.begin(), 
                 objects.end(), 
-                [&obj](const auto weak) {
-                    return obj.lock() == weak.lock();
+                [&obj](const std::weak_ptr<GameObject>& weakOther) {
+                    auto other = weakOther.lock();
+                    return obj == other && other;
                 }
             ),
             objects.end()
@@ -230,16 +245,16 @@ void GameObjectManager::setRenderLayer(std::weak_ptr<GameObject> obj, int newLay
     renderLayers_[newLayer].push_back(obj);
 }
 
-int GameObjectManager::getRenderLayer(std::weak_ptr<GameObject> obj) const {
-    auto sharedObj = obj.lock();
-    if (!sharedObj) return 0;
+int GameObjectManager::getRenderLayer(const std::shared_ptr<GameObject>& obj) const {
+    if (!obj) return 0;
 
-    for (const auto& [layer, objects] : renderLayers_) {
-        auto it = std::find_if(objects.begin(), objects.end(),
-            [&sharedObj](const std::weak_ptr<GameObject>& weak) {
-                return weak.lock() == sharedObj;
+    for (const auto& [layer, weakObjects] : renderLayers_) {
+        auto it = std::find_if(weakObjects.begin(), weakObjects.end(),
+            [&obj](const std::weak_ptr<GameObject>& weakOther) {
+                auto other = weakOther.lock();
+                return other && other == obj;
             });
-        if (it != objects.end()) {
+        if (it != weakObjects.end()) {
             return layer;
         }
     }

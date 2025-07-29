@@ -23,6 +23,8 @@ public:
         }
     }
 
+
+    MSprite(std::shared_ptr<sf::Texture> texture) : sf::Sprite(*texture), textureRef(texture) {}
     ~MSprite() {
     }
 
@@ -35,7 +37,7 @@ public:
     static std::shared_ptr<sf::Texture> LoadTexture(const std::string& path) {
         return TextureManager::getTexture(path);
     }
-
+    std::string getPath() const { return texturePath; }
     const void Destroy() {
         TextureManager::releaseTexture(texturePath);
     
