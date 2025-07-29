@@ -9,6 +9,7 @@
 #include "Projectile.h"
 #include "Weapon.h"
 #include "UI_Button.h"
+#include "UI_CooldownSprite.h"
 
 #include "MSprite.h"
 #include "GameObject.h"
@@ -19,21 +20,23 @@
 
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
+std::shared_ptr<GameObject> player;
+std::weak_ptr<Weapon<Projectile>> weapon;
 
-void CreatePlayer(std::shared_ptr<GameObject>& player, Player*& pmove, GameObjectManager& manager) {
+void CreatePlayer(std::shared_ptr<GameObject>& player, std::weak_ptr<Player>& pmove, GameObjectManager& manager) {
 	player = GameObject::Create(
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} }
 	);
 	player->setOrigin(64, 64);
 	player->setPosition(960, 540);
-	pmove = player->addComponent<Player>(3);
+	pmove = player->addComponent<Player>(3).lock();
 	manager.setRenderLayer(player, 5);
 
 
 	
-	player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 5, 5), 
+	weapon = player->addComponent<Weapon<Projectile>>(
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 5), 
 		window
 	);
 
@@ -53,7 +56,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 0, 86);
+	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 0, 86).lock();
 	enemyMove->init();
 
 
@@ -76,12 +79,12 @@ void CreateTestButton(GameObjectManager& manager, std::shared_ptr<GameObject> ob
 		sf::IntRect{ {0,0},{32,32} }
 	);
 
-	UI_Button* button = obj->addComponent<UI_Button>(window);
-	button->temp.invoke(1, 1);
+	std::shared_ptr<UI_CooldownSprite> sprite = obj->addComponent<UI_CooldownSprite>(window, weapon.lock()).lock();
+	
 	obj->setOrigin(16, 16);
-	obj->scaleObject(3, 5);
-	obj->setPosition(32*3, 32*5);
-	std::cout << "id: " << button->getOnClick().subscribe(obj, &GameObject::Log) << std::endl;
+	//obj->scaleObject(3, 5);
+	obj->setPosition(32, 32);
+
 	manager.setRenderLayer(obj, 0);
 }
 
@@ -113,8 +116,8 @@ int main() {
 	
 
 #pragma region make player
-	std::shared_ptr<GameObject> player; // declare player
-	Player* p_move; // get pointer to player's movement component.
+	//std::shared_ptr<GameObject> player; // declare player
+	std::weak_ptr<Player> p_move; // get pointer to player's movement component.
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
 	projectilePool.init(256, player);
 

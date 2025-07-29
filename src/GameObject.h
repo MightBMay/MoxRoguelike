@@ -28,60 +28,77 @@ public:
 
 
 
-    //  component system 
+    // Add a component, store as shared_ptr, return weak_ptr to the caller
     template <typename T, typename... Args>
-    T* addComponent(Args&&... args) {
+    std::weak_ptr<T> addComponent(Args&&... args) {
         static_assert(std::is_base_of_v<Component, T>, "T must inherit from Component");
 
-        // First remove existing component if it exists
+        // Remove existing of this type
         removeComponent<T>();
 
-        auto component = std::make_unique<T>(std::forward<Args>(args)...);
+        // Create shared_ptr
+        auto component = std::make_shared<T>(std::forward<Args>(args)...);
+
+        // Set parent
         component->parent = shared_from_this();
-        T* ptr = component.get();
 
-        components.push_back(std::move(component));
-        componentTypeMap[typeid(T)] = ptr;
+        // Store in container and type map
+        components.push_back(component);
+        componentTypeMap[typeid(T)] = component;
 
-        ptr->init();
-        return ptr;
+        component->init();
+
+        return component; // Return weak_ptr implicitly convertible from shared_ptr
     }
 
+    // Get a component by exact type. Return shared_ptr for safe lifetime mgmt.
     template <typename T>
-    T* getComponent() {
+    std::shared_ptr<T> getComponent() {
         auto it = componentTypeMap.find(typeid(T));
         if (it != componentTypeMap.end()) {
-            // Verify the component still exists in the vector
-            for (auto& comp : components) {
-                if (comp.get() == it->second) {
-                    return static_cast<T*>(it->second);
-                }
+            // Lock the weak_ptr
+            auto sptr = it->second.lock();
+            if (sptr) {
+                return std::static_pointer_cast<T>(sptr);
             }
-            // If we get here, the pointer was stale - clean it up
-            componentTypeMap.erase(it);
+            else {
+                // Expired, clean up stale entry
+                componentTypeMap.erase(it);
+            }
         }
-        std::cout << " Component not found"<<std::endl;
+        std::cout << "Component not found" << std::endl;
         return nullptr;
     }
 
+    // Get a component by base type or derived type (dynamic_cast)
     template <typename T>
-    T* getDerivativesOfComponent() {
+    std::shared_ptr<T> getDerivativesOfComponent() {
         for (auto& comp : components) {
-            if (auto ptr = dynamic_cast<T*>(comp.get())) {
-                return ptr;
+            auto casted = std::dynamic_pointer_cast<T>(comp);
+            if (casted) {
+                return casted;
             }
         }
         return nullptr;
     }
 
+    // Remove a component by type
     template <typename T>
     bool removeComponent() {
         auto it = componentTypeMap.find(typeid(T));
         if (it != componentTypeMap.end()) {
-            components.erase(
-                std::remove_if(components.begin(), components.end(),
-                    [&](auto& c) { return c.get() == it->second; }),
-                components.end());
+            // Lock to find the actual shared_ptr
+            auto sptr = it->second.lock();
+            if (sptr) {
+                // Remove from vector
+                components.erase(
+                    std::remove_if(components.begin(), components.end(),
+                        [&](const std::shared_ptr<Component>& c) {
+                            return c == sptr;
+                        }),
+                    components.end());
+            }
+            // Always erase the map entry
             componentTypeMap.erase(it);
             return true;
         }
@@ -145,8 +162,8 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
-    std::vector<std::unique_ptr<Component>> components;
-    std::unordered_map<std::type_index, Component*> componentTypeMap;
+    std::vector<std::shared_ptr<Component>> components;
+    std::unordered_map<std::type_index, std::weak_ptr<Component>> componentTypeMap;
 
     // Transform properties
     sf::Vector2f position{ 0.f, 0.f };

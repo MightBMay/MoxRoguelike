@@ -2,6 +2,7 @@
 #include "Component.h"
 #include "Utility.h"
 #include "Projectile.h"
+#include "MEvent.h"
 
 
 
@@ -29,14 +30,14 @@ public:
 	/// </summary>
 	WeaponStats(int damage, float speed, int range, float projRadius, float attackSpeed, int pierce) :
 		damage(damage), speed(speed), range(range* range), 
-		projRadius(projRadius* projRadius), attackSpeed(attackSpeed),
+		projRadius(projRadius* projRadius), attackSpeed(1/attackSpeed),
 		pierce(pierce) {}
 
 private:
 
 };
 
-
+// need to store projectiletype somehow.
 template<typename ProjectileType>
 class  Weapon :public Component
 {
@@ -45,17 +46,22 @@ public:
 	Weapon(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
 		stats(stats), window(window) {}
 
+
+
 	virtual void Fire() {
 		sf::Vector2f direction = getMouseWorldPos(*window, window->getDefaultView()) -parent->getPosition();
 		projPool->make<Projectile>(direction.normalized(), stats);		
-		attackTimer = 1 / stats->attackSpeed;
+		attackTimer = stats->attackSpeed;
 	}
 	virtual void init() override {
 
 		projPool = &ProjectilePool::getInstance();
 	}
 
-	virtual void update(float deltaTime)override { attackTimer -= deltaTime; }
+	virtual void update(float deltaTime)override {
+		attackTimer -= deltaTime;
+		cooldownTickEvent.invoke(attackTimer, stats->attackSpeed);
+	}
 	virtual void Destroy()override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
 		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -72,8 +78,16 @@ public:
 		}
 	}
 
+
+	std::shared_ptr<WeaponStats> getStats() const { return stats; }
+	float getAttackSpeed() const { return stats->attackSpeed; }
+	float getAttackTimer() const { return attackTimer; }
+	MEvent<float, float>& getCooldownEvent() { return cooldownTickEvent; }
+
+
 private:
-	using projectileT = ProjectileType;
+	MEvent<float, float> cooldownTickEvent;
+
 	std::shared_ptr<WeaponStats> stats;
 	ProjectilePool* projPool = nullptr;
 	std::shared_ptr<sf::RenderWindow> window;

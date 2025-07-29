@@ -17,6 +17,9 @@ public:
         return id;
     }
 
+
+
+
     // Subscribe a member function with shared_ptr instance
     template <typename T>
     size_t subscribe(std::shared_ptr<T> instance, void (T::* method)(Args...)) {
