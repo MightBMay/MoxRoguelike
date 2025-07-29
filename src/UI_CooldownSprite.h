@@ -56,7 +56,7 @@ public:
 	/// <param name="rect"> rect of the white sprite used to create a sprite.</param>
 	/// <param name="path"> path of the sprite used to cover the parent gameobjects sprite. defaults to a white square.</param>
 	UI_CooldownSprite(std::shared_ptr<sf::RenderWindow> window, std::weak_ptr<WeaponBase> weapon, sf::IntRect rect,
-		std::string path = "../assets/sprites/shapes/square_32.png");
+		std::string path = "../assets/sprites/shapes/bl_square_128.png");
 	virtual void init() override;
 	virtual void OnHover() {}
 	virtual void OnHoverExit() {}

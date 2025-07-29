@@ -21,30 +21,33 @@
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
 std::shared_ptr<GameObject> player;
-std::weak_ptr<WeaponBase> weapon;
+std::array<std::weak_ptr<WeaponBase>,4> weaponHolder;
+std::array<std::shared_ptr<GameObject>, 4> weaponCDSprites;
 
-void CreatePlayer(std::shared_ptr<GameObject>& player, std::weak_ptr<Player>& pmove, GameObjectManager& manager) {
-	player = GameObject::Create(
+void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
+	playerObj = GameObject::Create(
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} }
 	);
-	player->setOrigin(64, 64);
-	player->setPosition(960, 540);
-	pmove = player->addComponent<Player>(3).lock();
-	manager.setRenderLayer(player, 5);
+	playerObj->setOrigin(64, 64);
+	playerObj->setPosition(960, 540);
+	player = playerObj->addComponent<Player>(3);
+	manager.setRenderLayer(playerObj, 5);
 
-
-	
-	weapon = player->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 0.1), 
-		window
-	);
+	player.lock()->CreateWeapons(window, weaponHolder, weaponCDSprites);
 	
 
 
 
 
-	Enemy::SetPlayer(player);
+		
+
+	
+
+
+
+
+	Enemy::SetPlayer(playerObj);
 
 
 }
@@ -74,26 +77,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 }
 
 
-void CreateTestButton(GameObjectManager& manager, std::shared_ptr<GameObject> obj) {
-	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };
-	obj = GameObject::Create(
-		"../assets/sprites/cardboard.png",
-		rect
-	);
-	obj->setPosition(512, 512);
-	obj->setOrigin(rect.size.x/2.0, rect.size.y/2.0);
-	 
-	manager.setRenderLayer(obj, 100);
 
-	std::shared_ptr<UI_CooldownSprite> sprite = 
-		obj->addComponent<UI_CooldownSprite>(
-			window, 
-			weapon, 
-			rect, 
-			"../assets/sprites/shapes/bl_square_128.png").lock();
-	
-
-}
 
 int main() {
 #pragma region create window
@@ -122,14 +106,12 @@ int main() {
 	auto& projectilePool = ProjectilePool::getInstance();
 	
 
-#pragma region make player
-	//std::shared_ptr<GameObject> player; // declare player
-	std::weak_ptr<Player> p_move; // get pointer to player's movement component.
+#pragma region make playerObj
+	//std::shared_ptr<GameObject> playerObj; // declare playerObj
+	std::weak_ptr<Player> p_move; // get pointer to playerObj's movement component.
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
 	projectilePool.init(256, player);
 
-	std::shared_ptr<GameObject> button;
-	CreateTestButton(manager, button);
 
 #pragma endregion
 
@@ -211,18 +193,18 @@ int main() {
 
 /*
 *
-* destruction and re creation of player example.
+* destruction and re creation of playerObj example.
 
 					if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
-						if (player) {
-							GameObject::Destroy(player);
-							player.reset(); // Clear the shared_ptr
+						if (playerObj) {
+							GameObject::Destroy(playerObj);
+							playerObj.reset(); // Clear the shared_ptr
 							p_move = nullptr;
 						}
 					}
 					else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
-						if (!player) {
-							CreatePlayer(player, p_move, manager);
+						if (!playerObj) {
+							CreatePlayer(playerObj, p_move, manager);
 
 							std::cout << "no";
 						}std::cout << "yes";

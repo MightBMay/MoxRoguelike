@@ -31,8 +31,10 @@ void UI_CooldownSprite::init(){
 
 	weaponMaxCooldown = shared->getAttackSpeed(); // get attack speed
 	originalScale = parent->getScale(); // get original scale
+	parent->getSprite()->setColor(sf::Color::Red);
+
 	auto cdSprite = cooldownObject->getSprite(); // get actual MSprite
-	cdSprite->setColor(sf::Color(255, 255, 255, 128)); // set translucent white, and repeating (in case base texture not big enough)
+	cdSprite->setColor(sf::Color(192, 192, 192, 96)); // set translucent white, and repeating (in case base texture not big enough)
 	cdSprite->SetRepeated(true);
 	auto textureRect = cdSprite->getTextureRect().size; // get size
 	

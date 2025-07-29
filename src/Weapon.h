@@ -30,7 +30,7 @@ public:
 	/// </summary>
 	WeaponStats(int damage, float speed, int range, float projRadius, float attackSpeed, int pierce) :
 		damage(damage), speed(speed), range(range* range), 
-		projRadius(projRadius* projRadius), attackSpeed(1/attackSpeed),
+		projRadius(projRadius* projRadius), attackSpeed(1.0f/attackSpeed),
 		pierce(pierce) {}
 
 private:
@@ -80,6 +80,7 @@ public:
 		sf::Vector2f direction = getMouseWorldPos(*window, window->getDefaultView()) -parent->getPosition();
 		projPool->make<Projectile>(direction.normalized(), stats);		
 		attackTimer = stats->attackSpeed;
+
 	}
 	virtual void init() override {
 
@@ -107,16 +108,61 @@ public:
 		}
 	}
 
-
-
-
-
-
-
-
-private:
+protected:
 	std::shared_ptr<sf::RenderWindow> window;
 
 };
+
+
+
+template<typename ProjectileType>
+class Weapon1 : public Weapon<ProjectileType>{
+public:
+	static inline int count = 0;
+	Weapon1(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
+		Weapon(stats, window) {}
+
+	void Fire()override {
+		Weapon::Fire();
+		count++;
+		std::cout << "fired wep1: "<< count;
+	}
+
+};
+
+template<typename ProjectileType>
+class Weapon2 : public Weapon<ProjectileType> {
+public:
+	static inline int count = 0;
+	Weapon2(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
+		Weapon(stats, window) {}
+
+	void Fire()override {
+		Weapon::Fire();
+		count++;
+		std::cout << "fired wep2: " << count;
+	}
+
+	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
+		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
+			switch (mousePressed->button)
+			{
+			case sf::Mouse::Button::Left:
+				break;
+			case sf::Mouse::Button::Right:
+				if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
+				break;
+			case sf::Mouse::Button::Middle:
+			default:
+				break;
+			}
+		}
+	}
+};
+
+
+
+
+
 
 

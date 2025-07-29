@@ -33,8 +33,13 @@ public:
     std::weak_ptr<T> addComponent(Args&&... args) {
         static_assert(std::is_base_of_v<Component, T>, "T must inherit from Component");
 
-        // Remove existing of this type
-        removeComponent<T>();
+        // check to see if component already exists. alerts you if you have multiple of the same type.
+        
+        //auto tryFind = getComponent<T>();
+        //if (tryFind) std::cout << " Tried to add component type that already exists in component list\n";
+        
+         //or remove pre existing duplicate.
+        //removeComponent<T>();
 
         // Create shared_ptr
         auto component = std::make_shared<T>(std::forward<Args>(args)...);

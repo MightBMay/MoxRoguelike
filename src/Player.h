@@ -1,5 +1,11 @@
 #pragma once
 #include "Component.h"
+#include "Weapon.h"
+
+class WeaponBase;
+class WeaponStats;
+class GameObject;
+
 
 class Player : public Component {
 public:
@@ -12,6 +18,8 @@ public:
 	bool facingDirection = false;
 
 	Player(int health) : health(health) {}
+
+	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window, std::array<std::weak_ptr<WeaponBase>, 4>& weaponArray, std::array<std::shared_ptr<GameObject>, 4>& cdSprites);
 
 	virtual void takeDamage(int damage) {
 		health -= damage;
