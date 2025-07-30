@@ -10,7 +10,7 @@
 #include "Weapon.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
-
+#include "Global.h"
 #include "MSprite.h"
 #include "GameObject.h"
 
@@ -20,9 +20,10 @@
 
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> view;
+
 std::shared_ptr<GameObject> player;
-std::array<std::weak_ptr<WeaponBase>,4> weaponHolder;
-std::array<std::shared_ptr<GameObject>, 4> weaponCDSprites;
+std::array<std::weak_ptr<WeaponBase>, 3> weaponHolder;
+std::array<std::shared_ptr<GameObject>, 3> weaponCDSprites;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
@@ -82,7 +83,9 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 int main() {
 #pragma region create window
 	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
-	window = window;
+	view = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
+	std::cout << view->getCenter().x;
+	window->setView(*view);
 	window->setFramerateLimit(144); // cap fps
 #pragma endregion
 

@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <math.h>
 #include "Projectile.h"
+#include "Sow_Projectile.h"
 #include "UI_CooldownSprite.h"
 
 void Player::update(float deltatime) {
@@ -95,44 +96,35 @@ void Player::UpdateFacingDirection() {
 
 void Player::CreateWeapons(
 	std::shared_ptr<sf::RenderWindow> window,
-	std::array<std::weak_ptr<WeaponBase>, 4>& weaponArray,
-	std::array<std::shared_ptr<GameObject>, 4>& cdSprites) {
+	std::array<std::weak_ptr<WeaponBase>, 3>& weaponArray,
+	std::array<std::shared_ptr<GameObject>, 3>& cdSprites) {
 
-	 auto weapon2 = parent->addComponent<Weapon2<Projectile>>(
+	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };		
+
+	 auto weaponQ = parent->addComponent<Weapon1<Sow_Projectile>>(
 		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
-	weaponArray[0] =
-		std::static_pointer_cast<WeaponBase>(weapon2.lock());
+	weaponArray[0] = std::static_pointer_cast<WeaponBase>(weaponQ.lock());
+	cdSprites[0] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
-
-	auto weapon = parent->addComponent<Weapon1<Projectile>>(         // I am reassigning the same weapon type here for testing, 
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1), // but in the future when i have actual player classes,
-		window);												//you would assign these as abilities.
-	weaponArray[1] =
-		std::static_pointer_cast<WeaponBase>(weapon.lock());
-
-
-	weapon = parent->addComponent<Weapon1<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.3f, 1),
+	auto weaponE = parent->addComponent<Weapon1<Projectile>>(
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
-	weaponArray[2] =
-		std::static_pointer_cast<WeaponBase>(weapon.lock());
+	weaponArray[1] = std::static_pointer_cast<WeaponBase>(weaponE.lock());
+	cdSprites[1] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
 
-	weapon = parent->addComponent<Weapon1<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.4f, 1),
+	auto weaponR = parent->addComponent<Weapon1<Projectile>>(
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
-	weaponArray[3] =
-		std::static_pointer_cast<WeaponBase>(weapon.lock());
-
-	for (int i = 0; i < 4; i++) {
+	weaponArray[2] = std::static_pointer_cast<WeaponBase>(weaponR.lock());
+	cdSprites[2] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
 
 
-		sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };
-		auto cdSprite =
-			GameObject::Create("../assets/sprites/cardboard.png", rect);
-		// move half width of rect, and then 136 per cdSprite.
+
+	for (int i = 0; i < 3; i++) {
+		auto& cdSprite = cdSprites[i];
 		cdSprite->setPosition(64 + (136 * i), 64);
 		cdSprite->setOrigin(64, 64);
 		cdSprite->addComponent<UI_CooldownSprite>(window, weaponArray[i], rect);

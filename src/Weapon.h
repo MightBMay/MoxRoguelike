@@ -3,6 +3,7 @@
 #include "Utility.h"
 #include "Projectile.h"
 #include "MEvent.h"
+#include "Global.h"
 
 
 
@@ -77,8 +78,8 @@ public:
 
 
 	virtual void Fire() override{
-		sf::Vector2f direction = getMouseWorldPos(*window, window->getDefaultView()) -parent->getPosition();
-		projPool->make<Projectile>(direction.normalized(), stats);		
+		sf::Vector2f direction = getMouseWorldPos(window, view) -parent->getPosition();
+		projPool->make<projectileType>(direction.normalized(), stats);		
 		attackTimer = stats->attackSpeed;
 
 	}

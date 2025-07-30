@@ -27,6 +27,14 @@ sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& vi
     return window.mapPixelToCoords(mousePixelPos, view);
 }
 
+sf::Vector2f getMouseWorldPos(
+    const std::shared_ptr<sf::RenderWindow>& window, 
+    const std::shared_ptr < sf::View>& view) {
+    assert(window && "window is null in getMouseWorldPos!");
+    assert(view && "view is null in getMouseWorldPos!");
+    return getMouseWorldPos(*window, *view);
+}
+
 
 
 

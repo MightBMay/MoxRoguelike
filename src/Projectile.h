@@ -12,7 +12,6 @@ class Projectile : public Component {
 public:
     int pierceCount = 0;
     sf::Vector2f direction = { 0,0 };
-    static inline const std::string spritePath = "../assets/sprites/projectiles/default.png";
     // projectile stats would also go here.
 
     /// <summary>
@@ -30,7 +29,7 @@ public:
         return spritePath;
     }
 
-private:
+protected:
 
     static inline std::weak_ptr<GameObject> player;
     static inline EnemyManager* enemyManager;
@@ -38,7 +37,8 @@ private:
     std::weak_ptr<WeaponStats> stats;
     sf::Vector2f startPos = { 0,0 };
 
-
+private:
+    static inline const std::string spritePath = "../assets/sprites/projectiles/default.png";
 
 };
 

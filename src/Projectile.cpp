@@ -25,6 +25,8 @@ void Projectile::update(float deltaTime) {
 
 	if ((curPos - startPos).lengthSquared() >= statsP->range)
 		ProjectilePool::release(parent);
+
+
 	// iterate over all enemies within range of projectile.
 	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
