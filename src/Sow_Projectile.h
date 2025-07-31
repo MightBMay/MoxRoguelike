@@ -8,7 +8,10 @@ class Sow_Projectile : public Projectile {
 	
 public:
 	Sow_Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats);
-
+	static std::unordered_set<std::shared_ptr<GameObject>>& GetSowedEnemies() {
+		return sowedEnemies;
+	}
+	static void ClearSowedEnemies() { sowedEnemies.clear(); }
 	void update(float deltaTime) override final;
 	const std::string& getSpritePath() const final{
 		return spritePath;
@@ -21,6 +24,8 @@ public:
 protected:
 
 private:
-	static inline std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
+	static inline const float duration = 7.5f;
+	float remainingDuration = duration;
+	static inline std::unordered_set<std::shared_ptr<GameObject>> sowedEnemies;
 	static inline std::string spritePath = "../assets/sprites/cardboard.png";
 };

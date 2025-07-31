@@ -59,7 +59,7 @@ void Enemy::Attack(float deltaTime, std::shared_ptr<GameObject>& player) {
 			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
 			hitbox->setOrigin(16, 16);
 			hitbox->scaleObject(attackSize);
-			hitbox->addComponent<TimedDestroy>(10);// (0.125f);
+			hitbox->addComponent<TimedDestroy>(0.125f);
 			EnemyManager::addHitboxVisual(hitbox);
 #pragma endregion
 

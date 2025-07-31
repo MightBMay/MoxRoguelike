@@ -11,19 +11,19 @@
 Sow_Projectile::Sow_Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats):
 Projectile(direction, stats){
 
-
 }
 
 void Sow_Projectile::update(float deltaTime) {
 	auto statsP = stats.lock();
-	static const float influenceRadiusSqr = 10000.0f; // 200px * 200px (adjust as needed)
+	static const float influenceRadiusSqr = 2500.0f; // 50px * 50px (adjust as needed)
 	static const float minSpeed = statsP->speed;
-	static const float maxSpeed = statsP->speed * 3.0f;
+	static const float maxSpeed = statsP->speed * 8.0f;
 	
 	sf::Vector2f mousePos = getMouseWorldPos(window, view);
-	sf::Vector2f newDirection = mousePos - parent->getPosition();
+	sf::Vector2f curPos = parent->getPosition();
+	sf::Vector2f newDirection = mousePos - curPos ;
 	float distanceSqr = newDirection.lengthSquared();
-	if (distanceSqr >= 25) {// cancel movement if closer than 10 pixels.
+	if (distanceSqr >= 25) {// cancel movement if closer than 5 pixels.
 		direction = newDirection.normalized();
 		
 		float speedFactor = std::min(distanceSqr / influenceRadiusSqr, 1.0f); // Clamped [0,1]
@@ -31,6 +31,22 @@ void Sow_Projectile::update(float deltaTime) {
 		parent->move(direction * adjustedSpeed * deltaTime);
 	}
 	parent->setRotation(vectorToAngle(direction));
+
+	remainingDuration -= deltaTime;
+	if (remainingDuration <= 0)
+		ProjectilePool::release(parent);
+	
+	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
+		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
+			sowedEnemies.insert(enemy);
+		}
+
+		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re damage already damaged enemies.
+		// add to sow list wherever that is.
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->damage); // get the base Enemy component and take damage.
+		hitEnemies.insert(enemy); // add to hit enemies list
+	}
+
 }
 
 void Sow_Projectile::init() {

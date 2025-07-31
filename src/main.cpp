@@ -61,7 +61,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(3, 1, 1, 0, 86).lock();
+	auto enemyMove = enemy->addComponent<Enemy>(2, 1, 1, 0, 86).lock();
 	enemyMove->init();
 
 
@@ -113,7 +113,7 @@ int main() {
 	//std::shared_ptr<GameObject> playerObj; // declare playerObj
 	std::weak_ptr<Player> p_move; // get pointer to playerObj's movement component.
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
-	projectilePool.init(256, player);
+	projectilePool.init(512, player);
 
 
 #pragma endregion
@@ -129,10 +129,11 @@ int main() {
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	manager.setRenderLayer(Background, -10); // move to layer -10 to stay behind things.
+
 #pragma endregion
 
-	//for (int i = 0; i < 500; i++)
-		//CreateTestEnemy(manager, enemyManager);
+	for (int i = 0; i < 512; i++)
+		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {

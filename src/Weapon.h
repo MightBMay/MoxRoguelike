@@ -46,6 +46,11 @@ public:
 
 	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
 
+	virtual void update(float deltaTime)override {
+		attackTimer -= deltaTime;
+		if (attackTimer < -0.1) return;
+		cooldownTickEvent.invoke(attackTimer);
+	}
 	virtual void Fire() = 0;
 	virtual void init() = 0;
 	virtual void Destroy() = 0;
@@ -87,12 +92,6 @@ public:
 
 		projPool = &ProjectilePool::getInstance();
 	}
-
-	virtual void update(float deltaTime)override {
-		attackTimer -= deltaTime;
-		if (attackTimer < -0.1) return;
-		cooldownTickEvent.invoke(attackTimer);
-	}
 	virtual void Destroy()override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
 		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -129,36 +128,6 @@ public:
 		std::cout << "fired wep1: "<< count;
 	}
 
-};
-
-template<typename ProjectileType>
-class Weapon2 : public Weapon<ProjectileType> {
-public:
-	static inline int count = 0;
-	Weapon2(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		Weapon(stats, window) {}
-
-	void Fire()override {
-		Weapon::Fire();
-		count++;
-		std::cout << "fired wep2: " << count;
-	}
-
-	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
-		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
-			switch (mousePressed->button)
-			{
-			case sf::Mouse::Button::Left:
-				break;
-			case sf::Mouse::Button::Right:
-				if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
-				break;
-			case sf::Mouse::Button::Middle:
-			default:
-				break;
-			}
-		}
-	}
 };
 
 

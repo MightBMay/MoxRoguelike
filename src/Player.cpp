@@ -3,6 +3,8 @@
 #include <math.h>
 #include "Projectile.h"
 #include "Sow_Projectile.h"
+#include "Reap_Projectile.h"
+#include "Papyrmancer_Reap.h"
 #include "UI_CooldownSprite.h"
 
 void Player::update(float deltatime) {
@@ -101,20 +103,20 @@ void Player::CreateWeapons(
 
 	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };		
 
-	 auto weaponQ = parent->addComponent<Weapon1<Sow_Projectile>>(
+	 auto weaponQ = parent->addComponent<Weapon<Sow_Projectile>>(
 		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
 	weaponArray[0] = std::static_pointer_cast<WeaponBase>(weaponQ.lock());
 	cdSprites[0] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
-	auto weaponE = parent->addComponent<Weapon1<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
+	auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 1),
 		window);
 	weaponArray[1] = std::static_pointer_cast<WeaponBase>(weaponE.lock());
 	cdSprites[1] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
 
-	auto weaponR = parent->addComponent<Weapon1<Projectile>>(
+	auto weaponR = parent->addComponent<Weapon<Projectile>>(
 		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
 	weaponArray[2] = std::static_pointer_cast<WeaponBase>(weaponR.lock());
