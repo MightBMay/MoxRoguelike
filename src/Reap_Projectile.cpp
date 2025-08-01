@@ -32,8 +32,8 @@ void Reap_Projectile::update(float deltaTime) {
 	parent->move(direction * statsP->speed * deltaTime);
 
 
-
-	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
+	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
+	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end()) return;
 		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->damage); // get the base Enemy component and take damage.
 		hitEnemies.insert(enemy); // add to hit enemies list

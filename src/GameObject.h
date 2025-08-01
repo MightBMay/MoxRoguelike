@@ -168,6 +168,8 @@ public:
     // Drawing
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+    size_t getPoolIndex() { return poolIndex; }
+    void setPoolIndex(size_t value) { poolIndex = value; }
 private:
     std::vector<std::shared_ptr<Component>> components;
     std::unordered_map<std::type_index, std::weak_ptr<Component>> componentTypeMap;
@@ -182,6 +184,8 @@ private:
     mutable sf::Transform transform;
     mutable bool transformNeedsUpdate = true;
 
+    // used to significantly improve GameObjectPool finding of the object.
+    size_t poolIndex = -1;
     // Rendering
     std::shared_ptr<MSprite> sprite;
 

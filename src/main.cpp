@@ -38,13 +38,13 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 
 	player.lock()->CreateWeapons(window);
 	Projectile::player = playerObj;
-	Enemy::SetPlayer(playerObj);
+	Enemy::SetPlayer(playerObj.get());
 
 
 }
 
 void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
-	static std::weak_ptr<GameObject> player = Enemy::GetPlayer();
+	static GameObject* player = Enemy::GetPlayer();
 	std::shared_ptr<GameObject> enemy = GameObject::Create(
 		"../assets/sprites/twig.png",
 		sf::IntRect{ {0,0},{128,150} }
@@ -56,7 +56,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 
 
 
-	sf::Vector2f playerPos = player.lock()->getPosition();
+	sf::Vector2f playerPos = player->getPosition();
 	enemy->setPosition(
 		playerPos +
 		sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
@@ -74,7 +74,7 @@ int main() {
 #pragma region create window
 	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	window->setFramerateLimit(144); // cap fps
+	//window->setFramerateLimit(144); // cap fps
 
 	
 
@@ -97,7 +97,7 @@ int main() {
 
 	auto& enemyManager = EnemyManager::getInstance();
 	
-	Projectile::projPool.init(512);
+	Projectile::projPool.init(512, 10);
 
 #pragma region make playerObj
 	//std::shared_ptr<GameObject> playerObj; // declare playerObj
@@ -122,8 +122,8 @@ int main() {
 
 #pragma endregion
 
-	//for (int i = 0; i < 512; i++)
-		//CreateTestEnemy(manager, enemyManager);
+	for (int i = 0; i < 1028; i++)
+		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
@@ -142,8 +142,9 @@ int main() {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
 
-					//CreateTestEnemy(manager, enemyManager);
-					std::cout << Projectile::projPool.size();
+					CreateTestEnemy(manager, enemyManager);
+					std::cout << enemyManager.count();
+					
 	
 
 				}

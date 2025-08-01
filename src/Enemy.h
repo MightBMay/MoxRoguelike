@@ -21,7 +21,7 @@ public:
 	float attackTimer = 0;
 
 	// used to scale the attack hitbox visual. 
-	// can be influenced depending on texture size for the hitbox.
+	// KEEP IN MIND this can be influenced depending on texture size for the hitbox.
 	const float attackSize = 6;
 
 	/// <summary>
@@ -37,10 +37,10 @@ public:
 
 	virtual void takeDamage(int damage);
 
-	virtual void Attack(float deltaTime, std::shared_ptr<GameObject>& player);
+	virtual void Attack(float deltaTime, GameObject* player);
 
-	static void SetPlayer(std::weak_ptr<GameObject> player);
-	static std::weak_ptr<GameObject> GetPlayer() { return _player; }
+	static void SetPlayer(GameObject* player);
+	static GameObject* GetPlayer() { return _player; }
 
 	virtual void Destroy() override;
 
@@ -56,7 +56,7 @@ protected:
 
 
 private:
-	static inline std::weak_ptr<GameObject> _player;
+	static inline GameObject* _player = nullptr;
 	float halfSize = 0;// used for some checks, but is a waste to calculate per frame per enemy.
 	void UpdateFacingDirection();
 

@@ -35,8 +35,8 @@ void Sow_Projectile::update(float deltaTime) {
 	remainingDuration -= deltaTime;
 	if (remainingDuration <= 0)
 		Projectile::projPool.release(parent);
-	
-	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
+	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
+	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
 			sowedEnemies.insert(enemy);
 		}

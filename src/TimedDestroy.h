@@ -5,12 +5,7 @@
 class TimedDestroy : public Component {
 public:
 	TimedDestroy(float duration) : timeRemaining(duration) {}
-	void update(float deltaTime) override {
-		timeRemaining -= deltaTime;
-		if (timeRemaining <= 0)
-			GameObjectManager::getInstance().remove(parent);
-			//EnemyManager::removeHitboxVisual(parent->shared_from_this());
-	}
+	void update(float deltaTime) override;
 	void Destroy() override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event) override {};
 

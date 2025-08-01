@@ -21,13 +21,6 @@ public:
 
 	virtual void takeDamage(int damage) {
 		health -= damage;
-		std::cout << "Hit. hp: " << health << '\n';
-		if (health <= 0) {
-			std::cout << " Player has died" << std::endl;
-		}
-
-
-	
 	}
 	void update(float deltatime) override;
 	void ProcessEvent(const std::optional<sf::Event>& event)override;

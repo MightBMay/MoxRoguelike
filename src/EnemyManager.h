@@ -1,5 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include "GameObjectPool.h"
+#include "TimedDestroy.h"
 #include <memory>
 #include <vector>
 
@@ -17,9 +19,11 @@ public:
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::shared_ptr<GameObject>&);
 	void remove(std::shared_ptr<GameObject>&, bool DestroyObject);
+	static GameObjectPool<TimedDestroy>& getHitboxPool() { return hitboxVisuals; }
+	static void removeHitboxVisual(std::shared_ptr<GameObject> obj) {
+		hitboxVisuals.release(obj);
+	}
 
-	static void removeHitboxVisual(std::shared_ptr<GameObject>& hitbox);
-	static void addHitboxVisual(std::shared_ptr<GameObject>& hitbox);
 	int count() {
 		return enemyObjects_.size();
 	}
@@ -29,10 +33,9 @@ public:
 
 
 private:
-	EnemyManager() = default;
+	EnemyManager() { hitboxVisuals.init(512, 0); };
 	~EnemyManager() = default;
 
-
-	static inline std::vector<std::shared_ptr<GameObject>> hitboxVisuals;
-	std::vector<std::shared_ptr<GameObject>> enemyObjects_;
+	static inline GameObjectPool<TimedDestroy> hitboxVisuals;
+	std::vector<std::shared_ptr<GameObject>> enemyObjects_{};
 };

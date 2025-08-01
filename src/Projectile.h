@@ -34,9 +34,6 @@ public:
     }
 
 protected:
-   
-   
-    static inline EnemyManager* enemyManager;
     
     std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
     std::weak_ptr<WeaponStats> stats;

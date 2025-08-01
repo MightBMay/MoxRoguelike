@@ -26,9 +26,9 @@ void Projectile::update(float deltaTime) {
 	if ((curPos - startPos).lengthSquared() >= statsP->range)
 		projPool.release(parent);
 
-
+	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
 	// iterate over all enemies within range of projectile.
-	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
+	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
 		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->damage); // get the base Enemy component and take damage.
 		hitEnemies.insert(enemy); // add to hit enemies list

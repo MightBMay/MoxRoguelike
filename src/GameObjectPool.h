@@ -14,9 +14,12 @@ public:
 
 	}
 
-	void init(size_t quantity) {
+	void init(size_t quantity, int layer) {
+		auto& manager = GameObjectManager::getInstance();
 		for (int i = 0; i < quantity; ++i) {
 			auto obj = GameObject::Create();
+			obj->setPoolIndex(i);
+			manager.setRenderLayer(obj, layer);
 			obj->setActive(false);
 			_pool.push_back(obj);
 		}
@@ -32,7 +35,10 @@ public:
 			);
 
 		if (next_available >= _pool.size()) {
-			_pool.push_back(GameObject::Create());
+			// can be re-enabled to allow expansion.
+			//_pool.push_back(GameObject::Create());
+			//_pool.back()->setPoolIndex(_pool.size() - 1);
+			return nullptr;
 		}
 		auto obj = _pool[next_available++];
 		if (!obj) std::cout << "NULL: "<<next_available;
@@ -46,13 +52,20 @@ public:
 	void release(std::shared_ptr<GameObject> obj) {
 		obj->setActive(false);
 		obj->removeSprite();
-		auto it = std::find_if(_pool.begin(), _pool.end(),
-			[obj](const auto& ptr) { return ptr == obj; });
 
-		if (it != _pool.end() && it >= _pool.begin() + next_available) {
-			std::swap(*it, _pool[next_available - 1]);
-			next_available--;
-		}
+
+		int index = obj->getPoolIndex();
+		if (index >= next_available) return; // already inactive
+		// Swap it with the last active object
+		auto lastActive = _pool[next_available - 1];
+
+		std::swap(_pool[index], _pool[next_available - 1]);
+
+		// Update their indices
+		_pool[index]->setPoolIndex(index);
+		lastActive->setPoolIndex(next_available - 1);
+
+		next_available--;
 	}
 	
 
