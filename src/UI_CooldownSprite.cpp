@@ -18,6 +18,7 @@ UI_CooldownSprite::UI_CooldownSprite(
 	cooldownObject= GameObject::Create(
 		path,
 		rect);
+	cooldownObject->setAsUI(true);
 
 
 	//GameObjectManager::getInstance().setRenderLayer()
@@ -51,6 +52,7 @@ void UI_CooldownSprite::init(){
 	//subscribe checkCooldown method to the weapon's event.
 	shared->getCooldownEvent().subscribe(shared_from_this(), &UI_CooldownSprite::CalculateScaleFromCooldown);
 
+	UI_Element::init();
 
 }
 

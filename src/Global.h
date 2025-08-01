@@ -3,4 +3,4 @@
 #include <SFML/Graphics.hpp>
 
 extern std::shared_ptr<sf::RenderWindow> window;
-extern std::shared_ptr<sf::View> view;
+extern std::shared_ptr<sf::View> playerView;

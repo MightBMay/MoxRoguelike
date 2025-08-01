@@ -2,6 +2,8 @@
 #include "GameObject.h"
 
 
+ void UI_Element::init() { parent->setAsUI(true); }
+
 void UI_Element::update(float deltaTime) {
 	if (!parent->hasSprite()) return;
 	bool currentlyHovering = isHovering();

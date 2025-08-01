@@ -10,20 +10,21 @@
 #include "Weapon.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
+#include "Background.h"
 #include "Global.h"
 #include "MSprite.h"
 #include "GameObject.h"
-
+#include "CameraController.h" // can be used as an alternative camera controller. 
+							  // currently just manually tracking in player.cpp/h;
 
 #include "Player.h"
 #include "Enemy.h"
 
 std::shared_ptr<sf::RenderWindow> window;
-std::shared_ptr<sf::View> view;
+std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
-std::array<std::weak_ptr<WeaponBase>, 3> weaponHolder;
-std::array<std::shared_ptr<GameObject>, 3> weaponCDSprites;
+std::shared_ptr<CameraController> camController;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
@@ -35,19 +36,8 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	player = playerObj->addComponent<Player>(3);
 	manager.setRenderLayer(playerObj, 5);
 
-	player.lock()->CreateWeapons(window, weaponHolder, weaponCDSprites);
-	
-
-
-
-
-		
-
-	
-
-
-
-
+	player.lock()->CreateWeapons(window);
+	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj);
 
 
@@ -61,7 +51,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(2, 1, 1, 0, 86).lock();
+	auto enemyMove = enemy->addComponent<Enemy>(10, 1, 1, 125, 86).lock();
 	enemyMove->init();
 
 
@@ -69,7 +59,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	sf::Vector2f playerPos = player.lock()->getPosition();
 	enemy->setPosition(
 		playerPos +
-		sf::Vector2f{ rng::getFloat(-100, 100), rng::getFloat(-200, 200) }
+		sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
 
 	);
 
@@ -83,10 +73,11 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 int main() {
 #pragma region create window
 	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
-	view = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	std::cout << view->getCenter().x;
-	window->setView(*view);
+	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
 	window->setFramerateLimit(144); // cap fps
+
+	
+
 #pragma endregion
 
 #pragma region create delta time dt_clock
@@ -105,15 +96,13 @@ int main() {
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 
 	auto& enemyManager = EnemyManager::getInstance();
-
-	auto& projectilePool = ProjectilePool::getInstance();
 	
+	Projectile::projPool.init(512);
 
 #pragma region make playerObj
 	//std::shared_ptr<GameObject> playerObj; // declare playerObj
 	std::weak_ptr<Player> p_move; // get pointer to playerObj's movement component.
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
-	projectilePool.init(512, player);
 
 
 #pragma endregion
@@ -128,12 +117,13 @@ int main() {
 		sf::IntRect{ {0,0},{1920,1080} }
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
-	manager.setRenderLayer(Background, -10); // move to layer -10 to stay behind things.
+	Background->addComponent<BackgroundImage>();
+	manager.setRenderLayer(Background, -100); // move to layer -10 to stay behind things.
 
 #pragma endregion
 
-	for (int i = 0; i < 512; i++)
-		CreateTestEnemy(manager, enemyManager);
+	//for (int i = 0; i < 512; i++)
+		//CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
@@ -152,9 +142,16 @@ int main() {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
 
-						CreateTestEnemy(manager, enemyManager);
+					//CreateTestEnemy(manager, enemyManager);
+					std::cout << Projectile::projPool.size();
+	
 
-				}/* unused atm, moved the input stuff to their own component.
+				}
+				
+				/* unused atm, moved the input stuff to their own component.
+
+
+				}
 				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
 
 				}
@@ -173,6 +170,7 @@ int main() {
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
 
 		window->clear();
+		
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.
 
 

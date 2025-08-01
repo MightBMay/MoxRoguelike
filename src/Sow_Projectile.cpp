@@ -19,7 +19,7 @@ void Sow_Projectile::update(float deltaTime) {
 	static const float minSpeed = statsP->speed;
 	static const float maxSpeed = statsP->speed * 8.0f;
 	
-	sf::Vector2f mousePos = getMouseWorldPos(window, view);
+	sf::Vector2f mousePos = getMouseWorldPos(window, playerView);
 	sf::Vector2f curPos = parent->getPosition();
 	sf::Vector2f newDirection = mousePos - curPos ;
 	float distanceSqr = newDirection.lengthSquared();
@@ -30,11 +30,11 @@ void Sow_Projectile::update(float deltaTime) {
 		float adjustedSpeed = minSpeed + (maxSpeed - minSpeed) * speedFactor;
 		parent->move(direction * adjustedSpeed * deltaTime);
 	}
-	parent->setRotation(vectorToAngle(direction));
+	parent->rotate(360 * deltaTime); // spin projectile as some kind of animation.
 
 	remainingDuration -= deltaTime;
 	if (remainingDuration <= 0)
-		ProjectilePool::release(parent);
+		Projectile::projPool.release(parent);
 	
 	for (auto& enemy : enemyManager->GetWithinRange(curPos, statsP->projRadius)) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.

@@ -24,7 +24,7 @@ void Projectile::update(float deltaTime) {
 	auto curPos = parent->getPosition();
 
 	if ((curPos - startPos).lengthSquared() >= statsP->range)
-		ProjectilePool::release(parent);
+		projPool.release(parent);
 
 
 	// iterate over all enemies within range of projectile.
@@ -34,7 +34,7 @@ void Projectile::update(float deltaTime) {
 		hitEnemies.insert(enemy); // add to hit enemies list
 		--pierceCount; // decrement and check pierce.
 		if (pierceCount <= 0) {
-			ProjectilePool::release(parent); // if no more pierce, remove.
+			projPool.release(parent); // if no more pierce, remove.
 			break;
 		}
 
@@ -46,30 +46,3 @@ void Projectile::Destroy() {}
 void Projectile::ProcessEvent(const std::optional<sf::Event>& event) {}
 
 
-void ProjectilePool::init(size_t initial_size, std::weak_ptr<GameObject> player) {
-	// Set static references once
-	Projectile::player = player;
-	Projectile::enemyManager = &EnemyManager::getInstance();
-
-	// Initialize pool
-	pool_.reserve(initial_size);
-	for (size_t i = 0; i < initial_size; ++i) {
-		auto obj = GameObject::Create();
-		obj->setActive(false);
-		GameObjectManager::getInstance().setRenderLayer(obj, 4);
-		pool_.push_back(std::move(obj));
-
-	}
-}
-
-void ProjectilePool::release(std::shared_ptr<GameObject> obj) {
-	obj->setActive(false);
-	obj->removeSprite();
-	auto it = std::find_if(pool_.begin(), pool_.end(),
-		[obj](const auto& ptr) { return ptr == obj; });
-
-	if (it != pool_.end() && it >= pool_.begin() + next_available_) {
-		std::swap(*it, pool_[next_available_ - 1]);
-		next_available_--;
-	}
-}

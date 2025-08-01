@@ -11,8 +11,7 @@ class UI_Element : public Component {
 public:
 
 	UI_Element(const std::shared_ptr<sf::RenderWindow>& window) : window(window) {}
-
-	virtual void init() {}
+	virtual void init() override;
 	virtual void update(float deltaTime);
 	virtual void Destroy() {}
 	void ProcessEvent(const std::optional<sf::Event>& event) final;

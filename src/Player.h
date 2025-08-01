@@ -2,10 +2,8 @@
 #include "Component.h"
 #include "Weapon.h"
 
-class WeaponBase;
-class WeaponStats;
 class GameObject;
-
+class AbilityBar;
 
 class Player : public Component {
 public:
@@ -17,11 +15,9 @@ public:
 	// 0 == right, 1 = left
 	bool facingDirection = false;
 
-	Player(int health) : health(health) {}
+	Player(int health);
 
-	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window,
-		std::array<std::weak_ptr<WeaponBase>, 3>& weaponArray,
-		std::array<std::shared_ptr<GameObject>, 3>& cdSprites);
+	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window);
 
 	virtual void takeDamage(int damage) {
 		health -= damage;
@@ -36,6 +32,9 @@ public:
 	void update(float deltatime) override;
 	void ProcessEvent(const std::optional<sf::Event>& event)override;
 	virtual void Destroy() override {}
+
+protected:
+	std::shared_ptr<AbilityBar> abilityBarUI;
 
 private:
 

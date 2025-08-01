@@ -10,19 +10,13 @@ public:
 	// done this way to allow access to Mevent with no reassignment.
 	MEvent<>& getOnClick() { return onClickEvent; }
 
-	virtual void OnHover() {
-		std::cout << " hovering\n";
-
-	}
-	virtual void OnHoverExit() {
-		std::cout << "stopped hovering\n";
-	}
+	virtual void OnHover() {}
+	virtual void OnHoverExit() {}
 
 
 
 	virtual void OnClick(const Button& mouseButton) override{
 		onClickEvent.invoke();
-		std::cout << "invoked\n";
 	}
 
 private:

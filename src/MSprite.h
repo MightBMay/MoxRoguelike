@@ -5,6 +5,9 @@
 #include <string>
 #include "TextureManager.h"
 
+/// <summary>
+/// Custom sprite class to cache loaded textures, avoiding duplicates in memory.
+/// </summary>
 class MSprite : public sf::Sprite, public std::enable_shared_from_this<MSprite> {
 private:
     std::string texturePath;

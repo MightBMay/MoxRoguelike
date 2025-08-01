@@ -64,7 +64,7 @@ protected:
 	std::shared_ptr<WeaponStats> stats;
 
 	MEvent<float> cooldownTickEvent{};
-	ProjectilePool* projPool = nullptr;
+	GameObjectPool<Projectile>& projPool = Projectile::projPool;
 	float attackTimer = 0;
 
 
@@ -83,15 +83,12 @@ public:
 
 
 	virtual void Fire() override{
-		sf::Vector2f direction = getMouseWorldPos(window, view) -parent->getPosition();
-		projPool->make<projectileType>(direction.normalized(), stats);		
+		sf::Vector2f direction = getMouseWorldPos(window, playerView) -parent->getPosition();
+		projPool.make<projectileType>(direction.normalized(), stats);		
 		attackTimer = stats->attackSpeed;
 
 	}
-	virtual void init() override {
-
-		projPool = &ProjectilePool::getInstance();
-	}
+	virtual void init() override {}
 	virtual void Destroy()override {}
 	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
 		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
@@ -114,21 +111,6 @@ protected:
 };
 
 
-
-template<typename ProjectileType>
-class Weapon1 : public Weapon<ProjectileType>{
-public:
-	static inline int count = 0;
-	Weapon1(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		Weapon(stats, window) {}
-
-	void Fire()override {
-		Weapon::Fire();
-		count++;
-		std::cout << "fired wep1: "<< count;
-	}
-
-};
 
 
 

@@ -8,6 +8,7 @@
 
 void Enemy::init() {
 	EnemyManager::getInstance().add(parent->shared_from_this());
+	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
 	// upon adding enemymovement, this gameobject becomes an enemy.
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
 	// we need a seperate manager for enemies to store their shared_ptr's.
@@ -40,6 +41,7 @@ void Enemy::update(float deltatime) {
 	else {
 		// player not found.
 	}
+	hitFlickerTimer.update(deltatime);
 
 
 
@@ -72,6 +74,24 @@ void Enemy::Attack(float deltaTime, std::shared_ptr<GameObject>& player) {
 		attackTimer -= deltaTime; // reduce attack timer.
 	}
 }
+
+void Enemy::takeDamage(int damage) {
+	health -= damage;
+	if (health <= 0) {
+		Destroy();
+		return;
+	}
+
+	hitFlickerTimer.start(true);
+	parent->getSprite()->setColor(hitColour);
+
+}
+
+
+void Enemy::ResetHitFlicker() {
+	parent->getSprite()->setColor(sf::Color::White);
+}
+
 void Enemy::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.

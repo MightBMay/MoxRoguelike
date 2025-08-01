@@ -71,7 +71,6 @@ public:
                 componentTypeMap.erase(it);
             }
         }
-        std::cout << "Component not found" << std::endl;
         return nullptr;
     }
 
@@ -148,6 +147,9 @@ public:
     void removeSprite();
     bool hasSprite() const { return sprite != nullptr; }
 
+    void setAsUI(bool value) { _isUI = value; }
+    bool IsUI() { return _isUI; }
+
     // Accessors
     const sf::Vector2f& getPosition() const { return position; }
     float getRotation() const { return rotation; }
@@ -175,6 +177,7 @@ private:
     float rotation = 0.f;
     sf::Vector2f scale{ 1.f, 1.f };
     
+    bool _isUI = false;
     bool _isActive = true;
     mutable sf::Transform transform;
     mutable bool transformNeedsUpdate = true;

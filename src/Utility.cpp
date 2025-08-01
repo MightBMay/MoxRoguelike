@@ -3,6 +3,9 @@
 
 
 
+
+
+
 float vectorToAngle(const sf::Vector2f& movementVector) {
     // Calculate the angle in radians using atan2
     // Note: atan2 takes (y, x) but we're using (x, -y) to get the correct orientation
@@ -20,19 +23,19 @@ float vectorToAngle(const sf::Vector2f& movementVector) {
 }
 
 
-sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& view) {
+sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& playerView) {
     sf::Vector2i mousePixelPos = sf::Mouse::getPosition(window);
 
-    // Convert to world coordinates using the current view
-    return window.mapPixelToCoords(mousePixelPos, view);
+    // Convert to world coordinates using the current playerView
+    return window.mapPixelToCoords(mousePixelPos, playerView);
 }
 
 sf::Vector2f getMouseWorldPos(
     const std::shared_ptr<sf::RenderWindow>& window, 
-    const std::shared_ptr < sf::View>& view) {
+    const std::shared_ptr < sf::View>& playerView) {
     assert(window && "window is null in getMouseWorldPos!");
-    assert(view && "view is null in getMouseWorldPos!");
-    return getMouseWorldPos(*window, *view);
+    assert(playerView && "view is null in getMouseWorldPos!");
+    return getMouseWorldPos(*window, *playerView);
 }
 
 

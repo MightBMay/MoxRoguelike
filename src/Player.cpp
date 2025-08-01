@@ -1,15 +1,23 @@
 #include "Player.h"
 #include "GameObject.h"
+#include "Global.h"
 #include <math.h>
 #include "Projectile.h"
 #include "Sow_Projectile.h"
 #include "Reap_Projectile.h"
 #include "Papyrmancer_Reap.h"
 #include "UI_CooldownSprite.h"
+#include "UI_AbilityBar.h"
+
+
+Player::Player(int health) : health(health) {
+	abilityBarUI = std::make_shared<AbilityBar>();
+}
 
 void Player::update(float deltatime) {
 	if (direction.lengthSquared() < 0.15f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
+	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
 
 void Player::ProcessEvent(const std::optional<sf::Event>& event) {
@@ -96,41 +104,26 @@ void Player::UpdateFacingDirection() {
 	}
 }
 
-void Player::CreateWeapons(
-	std::shared_ptr<sf::RenderWindow> window,
-	std::array<std::weak_ptr<WeaponBase>, 3>& weaponArray,
-	std::array<std::shared_ptr<GameObject>, 3>& cdSprites) {
+void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} };		
 
 	 auto weaponQ = parent->addComponent<Weapon<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
+		std::make_shared<WeaponStats>(1, 500, 0, 32, 0.2f, 1),
 		window);
-	weaponArray[0] = std::static_pointer_cast<WeaponBase>(weaponQ.lock());
-	cdSprites[0] = GameObject::Create("../assets/sprites/cardboard.png", rect);
+	 abilityBarUI->LinkWeapon(0,rect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
+
 
 	auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 1),
+		std::make_shared<WeaponStats>(1, 1500, 0, 32, 1, 1),
 		window);
-	weaponArray[1] = std::static_pointer_cast<WeaponBase>(weaponE.lock());
-	cdSprites[1] = GameObject::Create("../assets/sprites/cardboard.png", rect);
+	abilityBarUI->LinkWeapon(1, rect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
 	auto weaponR = parent->addComponent<Weapon<Projectile>>(
 		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
 		window);
-	weaponArray[2] = std::static_pointer_cast<WeaponBase>(weaponR.lock());
-	cdSprites[2] = GameObject::Create("../assets/sprites/cardboard.png", rect);
 
+	abilityBarUI->LinkWeapon(2, rect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
 
-
-
-	for (int i = 0; i < 3; i++) {
-		auto& cdSprite = cdSprites[i];
-		cdSprite->setPosition(64 + (136 * i), 64);
-		cdSprite->setOrigin(64, 64);
-		cdSprite->addComponent<UI_CooldownSprite>(window, weaponArray[i], rect);
-		cdSprites[i] = cdSprite;
-
-	}
 }

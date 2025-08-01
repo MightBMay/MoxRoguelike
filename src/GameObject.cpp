@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Component.h"
-
+#include "Global.h"
+#include "UI.h"
 
 
 GameObject::GameObject() { };
@@ -199,13 +200,31 @@ void GameObjectManager::updateAll(float deltaTime) {
 }
 
 void GameObjectManager::renderAll(sf::RenderTarget& target) {
+    constexpr int UI_LAYER_MIN = -100;
+    constexpr int UI_LAYER_MAX = 100;
+    const auto defaultView = target.getDefaultView();
+
+    bool currentViewIsUI = false;
+    target.setView(*playerView); // Start with game view
+
     for (auto& [layer, objects] : renderLayers_) {
+        // Determine view type purely by layer number
+        bool layerIsUI = (layer <= UI_LAYER_MIN) || (layer >= UI_LAYER_MAX);
+
+        // Only switch views when crossing UI/non-UI boundary
+        if (layerIsUI != currentViewIsUI) {
+            target.setView(layerIsUI ? defaultView : *playerView);
+            currentViewIsUI = layerIsUI;
+        }
+
+        // Draw all objects in this layer
         for (auto& obj : objects) {
-            if (obj.lock()) {
-                obj.lock()->draw(target, sf::RenderStates::Default);
+            if (auto shared = obj.lock()) {
+                shared->draw(target, sf::RenderStates::Default);
             }
         }
     }
+
 }
 
 

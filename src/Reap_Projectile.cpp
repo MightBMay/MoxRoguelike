@@ -23,7 +23,7 @@ void Reap_Projectile::update(float deltaTime) {
 	sf::Vector2f newDirection = playerP->getPosition() - curPos;
 	float distanceSqr = newDirection.lengthSquared();
 	if (distanceSqr <= 25) {
-		ProjectilePool::release(parent);
+		Projectile::projPool.release(parent);
 		return;
 	}
 	direction = newDirection.normalized();
