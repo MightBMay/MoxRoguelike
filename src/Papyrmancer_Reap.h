@@ -15,7 +15,9 @@ public:
 		if (sowedEnemies.size() <= 0) return;
 		const sf::Vector2f zero = { 0,0 }; // can initially set direction to 0, as it is overwritten in update().
 		for (auto& enemy : sowedEnemies) { // for all sowed enemies,
+			if (!enemy->isActive()) continue;
 			auto projectile = Projectile::projPool.make<Reap_Projectile>(zero, stats); 
+			if (!projectile) return;
 			// spawn projectile with no direction, with ptr to weapons stats.
 			projectile->setPosition(enemy->getPosition()); // set position to start from the enemy.
 		}

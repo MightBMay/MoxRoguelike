@@ -35,7 +35,7 @@ public:
 	Enemy(int health, int damage, float attackSpeed, float speed, float size) :
 		health(health), damage(damage), speed(speed), size(size* size), attackSpeed(1 / attackSpeed), halfSize(size / 2) {}
 
-	virtual void takeDamage(int damage);
+	virtual bool takeDamage(int damage);
 
 	virtual void Attack(float deltaTime, GameObject* player);
 

@@ -169,7 +169,7 @@ int main() {
 
 		// Update and render
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
-
+		second_Timer.update(deltaTime);
 		window->clear();
 		
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.

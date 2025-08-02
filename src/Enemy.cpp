@@ -67,15 +67,16 @@ void Enemy::Attack(float deltaTime, GameObject* player) {
 	}
 }
 
-void Enemy::takeDamage(int damage) {
+bool Enemy::takeDamage(int damage) {
 	health -= damage;
 	if (health <= 0) {
 		Destroy();
-		return;
+		return true;
 	}
 
 	hitFlickerTimer.start(true);
 	parent->getSprite()->setColor(hitColour);
+	return false;
 
 }
 
