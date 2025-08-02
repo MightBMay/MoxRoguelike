@@ -92,9 +92,10 @@ const sf::Transform& GameObject::getTransform() const {
 }
 
 void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-    if (sprite) {
-        target.draw(*sprite, states);
-    }
+    if (!sprite) return;
+    if (shader) states.shader = shader.get();
+    
+    target.draw(*sprite, states);
 }
 
 void GameObject::updateTransform() const {

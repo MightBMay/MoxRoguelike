@@ -22,7 +22,7 @@ public:
 		auto& cdSprite = GameObject::Create(path, rect); 
 		cdSprite->setPosition(basePosition + offsetPerAbility); // set position accordingly
 		cdSprite->setOrigin(64, 64); // center icon.
-		GameObjectManager::getInstance().setRenderLayer(cdSprite, 100); // set gameobject base layer to 100 
+		GameObjectManager::getInstance().setRenderLayer(cdSprite, 110); // set gameobject base layer to 100 
 		cdSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 		weaponHolder[index] = wepBase; // store weapon

@@ -159,6 +159,8 @@ public:
     bool hasComponents() const { return !components.empty(); }
     void Log() const;
 
+    void setShader(std::shared_ptr<sf::Shader>& newShader) { shader = newShader; }
+
     void handleEvent(const std::optional<sf::Event>& event) {
         for (auto& component : components) {
             component->ProcessEvent(event);
@@ -171,8 +173,11 @@ public:
     size_t getPoolIndex() { return poolIndex; }
     void setPoolIndex(size_t value) { poolIndex = value; }
 private:
+   
     std::vector<std::shared_ptr<Component>> components;
     std::unordered_map<std::type_index, std::weak_ptr<Component>> componentTypeMap;
+
+    std::shared_ptr<sf::Shader> shader;
 
     // Transform properties
     sf::Vector2f position{ 0.f, 0.f };

@@ -27,5 +27,5 @@ private:
 	static inline const float duration = 7.5f;
 	float remainingDuration = duration;
 	static inline std::unordered_set<std::shared_ptr<GameObject>> sowedEnemies;
-	static inline std::string spritePath = "../assets/sprites/cardboard.png";
+	static inline std::string spritePath = "../assets/sprites/projectiles/papyrmancer_sow.png";
 };

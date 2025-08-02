@@ -29,7 +29,8 @@ void Enemy::update(float deltatime) {
 	if (newSqrMag <= halfSize) { direction = { 0,0 }; }
 	else if (newSqrMag > 0) {// avoids normalizing zero vector, which crashes.
 		direction = newDirection.normalized();
-		parent->move(direction * speed * deltatime);
+		// "knockback" is handled in getspeed().
+		parent->move(direction * getSpeed() * deltatime);
 	}
 
 	// checks attack timer and range check on player, and deals damage if it should.

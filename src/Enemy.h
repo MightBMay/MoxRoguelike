@@ -35,6 +35,11 @@ public:
 	Enemy(int health, int damage, float attackSpeed, float speed, float size) :
 		health(health), damage(damage), speed(speed), size(size* size), attackSpeed(1 / attackSpeed), halfSize(size / 2) {}
 
+	float getSpeed() {
+				// can invert speed to make it simulate knockback.
+		return speed * (hitFlickerTimer.inProgress() ? -0.45f : 1);
+	}
+
 	virtual bool takeDamage(int damage);
 
 	virtual void Attack(float deltaTime, GameObject* player);

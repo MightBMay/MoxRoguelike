@@ -37,7 +37,7 @@ public:
             remainingDuration = 0;
         }
     }
-
+    inline bool inProgress() { return remainingDuration >= 0 && isStarted; }
     inline void setLooping(bool value) { isLooping = value; }
     inline void cancel() { isStarted = false; remainingDuration = 0; }
     inline void pause() {  isStarted = false; }

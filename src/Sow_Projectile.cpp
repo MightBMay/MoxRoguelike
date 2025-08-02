@@ -30,7 +30,8 @@ void Sow_Projectile::update(float deltaTime) {
 		float adjustedSpeed = minSpeed + (maxSpeed - minSpeed) * speedFactor;
 		parent->move(direction * adjustedSpeed * deltaTime);
 	}
-	parent->rotate(360 * deltaTime); // spin projectile as some kind of animation.
+
+	parent->rotate(720 * deltaTime); // spin projectile as some kind of animation.
 
 	remainingDuration -= deltaTime;
 	if (remainingDuration <= 0)
@@ -52,11 +53,11 @@ void Sow_Projectile::update(float deltaTime) {
 void Sow_Projectile::init() {
 	parent->setSprite(
 		getSpritePath(),
-		{ {0,0},{64,64} }
+		{ {0,0},{32,32} }
 	); // load the correct sprite for the projectile
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
 	parent->setPosition(startPos); // actually move projectile to the player position as well.
 	parent->setRotation(vectorToAngle(direction));
-	parent->setOrigin(32, 32);
+	parent->setOrigin(16, 16);
 
 }

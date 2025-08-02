@@ -11,6 +11,7 @@
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
 #include "Background.h"
+#include "Vignette.h"
 #include "Global.h"
 #include "MSprite.h"
 #include "GameObject.h"
@@ -74,7 +75,7 @@ int main() {
 #pragma region create window
 	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	//window->setFramerateLimit(144); // cap fps
+	window->setFramerateLimit(144); // cap fps
 
 	
 
@@ -104,7 +105,8 @@ int main() {
 	std::weak_ptr<Player> p_move; // get pointer to playerObj's movement component.
 	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
 
-
+	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObj->addComponent<Vignette>();
 #pragma endregion
 
 
@@ -122,8 +124,8 @@ int main() {
 
 #pragma endregion
 
-	for (int i = 0; i < 1028; i++)
-		CreateTestEnemy(manager, enemyManager);
+	//for (int i = 0; i < 1028; i++)
+	//	CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
