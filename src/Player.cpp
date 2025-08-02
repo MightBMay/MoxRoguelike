@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Global.h"
 #include <math.h>
+#include "Timer.h"
 #include "Projectile.h"
 #include "Sow_Projectile.h"
 #include "Reap_Projectile.h"
@@ -10,15 +11,28 @@
 #include "UI_AbilityBar.h"
 
 
-Player::Player(int health) : health(health) {
+Player::Player(int health) : health(health), hitFlickerTimer(hitFlickerDuration){
 	abilityBarUI = std::make_shared<AbilityBar>();
+}
+void Player::init() {
+	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
 }
 
 void Player::update(float deltatime) {
+	hitFlickerTimer.update(deltatime);
+
 	if (direction.lengthSquared() < 0.15f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
 	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
+
+void Player::takeDamage(int damage){
+	health -= damage;
+	_isVulnrable = false;
+	hitFlickerTimer.start();
+	parent->getSprite()->setColor(hitColour);
+}
+
 
 void Player::ProcessEvent(const std::optional<sf::Event>& event) {
 

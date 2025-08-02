@@ -1,12 +1,14 @@
 uniform vec2 cameraPos;
+uniform vec2 windowSize;     // Actual window size in pixels
+
 const float fadeRadius  = 900;
 const vec2 resolution = vec2(1920.0,1080.0);
 const float aspectRatio = 1.777777777777778;
 const vec2 cameraZoom = resolution;
 
 vec2 worldPos = cameraPos + vec2(
-   (gl_FragCoord.x - 0.5 * resolution.x),
-    -(gl_FragCoord.y - 0.5 * resolution.y)
+   (gl_FragCoord.x - 0.5 * windowSize.x) * (resolution.x/windowSize.x),
+    -(gl_FragCoord.y - 0.5 * windowSize.y) * (resolution.y/windowSize.y)
 );
 
 void main(){

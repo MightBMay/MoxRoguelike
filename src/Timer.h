@@ -1,5 +1,6 @@
 #pragma once
 #include "MEvent.h"
+#include <iostream>
 class Timer {
 public:
     Timer(float duration, bool looping = false) :duration(duration), isLooping(looping) {}

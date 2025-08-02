@@ -2,12 +2,15 @@
 #include "Component.h"
 #include "Weapon.h"
 
+
+
+class Timer;
 class GameObject;
 class AbilityBar;
 
-class Player : public Component {
+class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
-
+	
 	int health = 0;
 	float speed = 300.0f;
 	float size = 32;
@@ -17,20 +20,30 @@ public:
 
 	Player(int health);
 
+	static bool isVulnrable() { return _isVulnrable; }
+
 	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window);
 
-	virtual void takeDamage(int damage) {
-		health -= damage;
-	}
+	virtual void takeDamage(int damage);
+	void init()override;
 	void update(float deltatime) override;
 	void ProcessEvent(const std::optional<sf::Event>& event)override;
 	virtual void Destroy() override {}
 
 protected:
 	std::shared_ptr<AbilityBar> abilityBarUI;
+	Timer hitFlickerTimer{ hitFlickerDuration, false};
+
+	void ResetHitFlicker() {
+		parent->getSprite()->setColor(sf::Color::White);
+		_isVulnrable = true;
+	}
+
 
 private:
-
+	static inline bool _isVulnrable = true;
+	static constexpr float hitFlickerDuration = 0.125f;
+	static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
 	void UpdateFacingDirection();
 
 

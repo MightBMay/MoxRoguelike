@@ -35,6 +35,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
 	player = playerObj->addComponent<Player>(3);
+	player.lock()->init();
 	manager.setRenderLayer(playerObj, 5);
 
 	player.lock()->CreateWeapons(window);

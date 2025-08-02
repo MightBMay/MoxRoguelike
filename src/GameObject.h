@@ -159,7 +159,7 @@ public:
     bool hasComponents() const { return !components.empty(); }
     void Log() const;
 
-    void setShader(std::shared_ptr<sf::Shader>& newShader) { shader = newShader; }
+    void setShader(std::shared_ptr<sf::Shader> newShader) { shader = newShader; }
 
     void handleEvent(const std::optional<sf::Event>& event) {
         for (auto& component : components) {

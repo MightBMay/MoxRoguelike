@@ -15,5 +15,6 @@ void Vignette::init() {
 }
 void Vignette::update(float deltaTime) {
 	vignetteShader->setUniform("cameraPos", playerView->getCenter());
+	vignetteShader->setUniform("windowSize", sf::Vector2f(window->getSize()));
 }
 void Vignette::Destroy() {}

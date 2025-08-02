@@ -4,8 +4,6 @@
 #include "Timer.h"
 
 class GameObject;
-static constexpr float hitFlickerDuration = 0.125f;
-static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
 
 class Enemy : public Component, public std::enable_shared_from_this<Enemy> {
 public:
@@ -61,6 +59,10 @@ protected:
 
 
 private:
+	static constexpr float hitFlickerDuration = 0.125f;
+	static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
+
+
 	static inline GameObject* _player = nullptr;
 	float halfSize = 0;// used for some checks, but is a waste to calculate per frame per enemy.
 	void UpdateFacingDirection();

@@ -8,7 +8,7 @@
 
 void Enemy::init() {
 	EnemyManager::getInstance().add(parent->shared_from_this());
-	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
+		hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
 	// upon adding enemymovement, this gameobject becomes an enemy.
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
 	// we need a seperate manager for enemies to store their shared_ptr's.
@@ -20,7 +20,7 @@ void Enemy::Destroy() {
 }
 
 void Enemy::SetPlayer(GameObject* player) {
-	_player = player; // called once near player creation to assign a target.
+	_player = player; // called once near playerObj creation to assign a target.
 }
 void Enemy::update(float deltatime) {
 	static const sf::Vector2f* playerPos = &_player->getPosition();
@@ -33,39 +33,46 @@ void Enemy::update(float deltatime) {
 		parent->move(direction * getSpeed() * deltatime);
 	}
 
-	// checks attack timer and range check on player, and deals damage if it should.
-	Attack(deltatime, _player);
+	// checks attack timer and range check on playerObj, and deals damage if it should. 
+	if (Player::isVulnrable()) {
+		Attack(deltatime, _player);
+	}
+	else {
+		std::cout << "invuln";
+	}
 	hitFlickerTimer.update(deltatime);
 
 
 
 }
 
-void Enemy::Attack(float deltaTime, GameObject* player) {
-	if (attackTimer <= 0) { // if attack off cd and in range, 
-		// 32 is the radius of the player hitbox. 
-		constexpr int playerSize = 32 * 32; // squared player size, because we use sqr magnitude.
-		if ((player->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= size) {
+void Enemy::Attack(float deltaTime, GameObject* playerObj) {
+	if (attackTimer >= 0){ // if attack isn't ready, decrement timer and return;
+		attackTimer -= deltaTime;
+		return;
+	}
+	//otherwise, attack.
+
+	// 32 is the radius of the playerObj hitbox. 
+	constexpr int playerSize = 32 * 32; // squared playerObj size, because we use sqr magnitude.
+	if ((playerObj->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= size) {
 
 #pragma region make hitbox sprite
-			auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0.125f);
-			if (hitbox) {
-				hitbox->setSprite("../assets/sprites/shapes/circle_32.png", sf::IntRect{ {0,0},{32,32} });
-				hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
-				hitbox->setPosition(parent->getPosition());
-				hitbox->setOrigin(16, 16);
-				hitbox->setScale(attackSize, attackSize);
-			}
+		auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0.125f);
+		if (hitbox) {
+			hitbox->setSprite("../assets/sprites/shapes/circle_32.png", sf::IntRect{ {0,0},{32,32} });
+			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
+			hitbox->setPosition(parent->getPosition());
+			hitbox->setOrigin(16, 16);
+			hitbox->setScale(attackSize, attackSize);
+		}
 #pragma endregion
 
-			player->getDerivativesOfComponent<Player>()->takeDamage(damage); // dmg player (or subclass of player)
-			attackTimer = attackSpeed; // reset attack timer.
-		}
+		auto player = playerObj->getDerivativesOfComponent<Player>();
+		player->takeDamage(damage); // dmg playerObj (or subclass of playerObj)
+		attackTimer = attackSpeed; // reset attack timer.
 	}
-	else
-	{
-		attackTimer -= deltaTime; // reduce attack timer.
-	}
+
 }
 
 bool Enemy::takeDamage(int damage) {
@@ -91,6 +98,6 @@ void Enemy::UpdateFacingDirection() {
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
 	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
 		facingDirection = newFacingDirection; // store new facing direction
-		parent->scaleObject(-1, 1); // flip player.
+		parent->scaleObject(-1, 1); // flip playerObj.
 	}
 }

@@ -28,7 +28,6 @@ void Reap_Projectile::update(float deltaTime) {
 	}
 	direction = newDirection.normalized();
 	parent->setRotation(vectorToAngle(direction));
-
 	parent->move(direction * statsP->speed * deltaTime);
 
 
@@ -40,6 +39,7 @@ void Reap_Projectile::update(float deltaTime) {
 	}
 
 }
+
 
 void Reap_Projectile::init() {
 	parent->setSprite(
