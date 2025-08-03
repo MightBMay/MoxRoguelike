@@ -37,9 +37,6 @@ void Enemy::update(float deltatime) {
 	if (Player::isVulnrable()) {
 		Attack(deltatime, _player);
 	}
-	else {
-		std::cout << "invuln";
-	}
 	hitFlickerTimer.update(deltatime);
 
 
@@ -58,7 +55,7 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 	if ((playerObj->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= size) {
 
 #pragma region make hitbox sprite
-		auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0.125f);
+		auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0,0.125f);
 		if (hitbox) {
 			hitbox->setSprite("../assets/sprites/shapes/circle_32.png", sf::IntRect{ {0,0},{32,32} });
 			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));

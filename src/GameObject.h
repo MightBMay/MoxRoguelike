@@ -4,9 +4,10 @@
 #include <typeindex>
 #include <unordered_map>
 #include <iostream>
-
 #include <SFML/Graphics.hpp>
 
+
+#include "Renderable.h"
 #include "Component.h"
 #include "MSprite.h"
 
@@ -123,6 +124,7 @@ public:
     static void Destroy(std::shared_ptr<GameObject>& gameObject);
 
     const std::shared_ptr<MSprite> getSprite() const {return sprite; }
+    const std::shared_ptr<Renderable>& getRenderable() const { return renderable; }
 
     // Transform interface
     void setPosition(float x, float y);
@@ -156,10 +158,11 @@ public:
     const sf::Vector2f& getScale() const { return scale; }
     const sf::Transform& getTransform() const;
     const bool isActive()const { return _isActive; }
+    const bool ownsDrawable(const std::shared_ptr<sf::Drawable> drawable) { return sprite == drawable; }
     bool hasComponents() const { return !components.empty(); }
     void Log() const;
 
-    void setShader(std::shared_ptr<sf::Shader> newShader) { shader = newShader; }
+    void setShader(std::shared_ptr<sf::Shader> newShader) { renderable->shader = newShader; }
 
     void handleEvent(const std::optional<sf::Event>& event) {
         for (auto& component : components) {
@@ -177,7 +180,7 @@ private:
     std::vector<std::shared_ptr<Component>> components;
     std::unordered_map<std::type_index, std::weak_ptr<Component>> componentTypeMap;
 
-    std::shared_ptr<sf::Shader> shader;
+   
 
     // Transform properties
     sf::Vector2f position{ 0.f, 0.f };
@@ -192,6 +195,7 @@ private:
     // used to significantly improve GameObjectPool finding of the object.
     size_t poolIndex = -1;
     // Rendering
+    std::shared_ptr<Renderable> renderable;
     std::shared_ptr<MSprite> sprite;
 
     void updateTransform() const;
@@ -215,11 +219,12 @@ public:
 
     // Update and render
     void updateAll(float deltaTime);
-    void renderAll(sf::RenderTarget& target);
+    void renderAll(sf::RenderTarget& target, sf::RenderStates state = sf::RenderStates::Default);
+    void registerExternalRenderable(std::shared_ptr<Renderable> drawable, int layer = 0);
 
     void processEvent(const std::optional<sf::Event>& event);
-
-
+    
+    int ignoreLayer= 10;
     // Layer management
     void setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer);
     int getRenderLayer(const std::shared_ptr<GameObject>& obj) const;
@@ -231,5 +236,5 @@ private:
 
 
     std::vector<std::weak_ptr<GameObject>> gameObjects_;
-    std::map<int, std::vector<std::weak_ptr<GameObject>>> renderLayers_;
+    std::map<int, std::vector<std::shared_ptr<Renderable>>> renderLayers_;
 };

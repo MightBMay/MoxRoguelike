@@ -48,5 +48,7 @@ void Reap_Projectile::init() {
 	); // load the correct sprite for the projectile
 	parent->setRotation(vectorToAngle(direction));
 	parent->setOrigin(16, 16);
+	
+
 
 }

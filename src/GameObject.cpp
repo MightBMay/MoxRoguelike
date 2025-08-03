@@ -4,9 +4,10 @@
 #include "UI.h"
 
 
-GameObject::GameObject() { };
+GameObject::GameObject() { renderable = std::make_shared<Renderable>(); };
 GameObject::GameObject(const std::string& path, const sf::IntRect& rect) {
     sprite = std::make_shared<MSprite>(path, rect);
+    renderable = std::make_shared<Renderable>(sprite, nullptr);
 };
 
 
@@ -65,12 +66,11 @@ void GameObject::scaleObject(float factorX, float factorY) {
 // Sprite management
 void GameObject::setSprite(const std::string& path, const sf::IntRect& rect) {
     sprite = std::make_shared<MSprite>(path, rect);
-    // Sync transform with sprite
-    if (sprite) {
-        sprite->setPosition(position);
-        sprite->setRotation(sf::degrees(rotation));
-        sprite->setScale(scale);
-    }
+    sprite->setPosition(position);
+    sprite->setRotation(sf::degrees(rotation));
+    sprite->setScale(scale);
+    renderable->drawable = sprite;
+ 
 }
 
 
@@ -93,7 +93,6 @@ const sf::Transform& GameObject::getTransform() const {
 
 void GameObject::draw(sf::RenderTarget& target, sf::RenderStates states) const {
     if (!sprite) return;
-    if (shader) states.shader = shader.get();
     
     target.draw(*sprite, states);
 }
@@ -138,7 +137,7 @@ GameObjectManager& GameObjectManager::getInstance() {
 
 void GameObjectManager::add(std::weak_ptr<GameObject> obj, int renderLayer) {
     auto sharedObj = obj.lock();
-    if (!sharedObj)return;
+    if (!sharedObj) { std::cout << "gameobject ptr invalid"; return; }
 
     auto it = std::find_if(gameObjects_.begin(), gameObjects_.end(),
         [&sharedObj](const std::weak_ptr<GameObject>& weak) {
@@ -147,12 +146,18 @@ void GameObjectManager::add(std::weak_ptr<GameObject> obj, int renderLayer) {
 
     if (it == gameObjects_.end()) {
         gameObjects_.push_back(obj);
-        renderLayers_[0].push_back(obj); // Default layer 0
+
+        if(sharedObj)
+            renderLayers_[renderLayer].push_back(sharedObj->getRenderable()); // Default layer 0
+    }
+    else {
+        std::cout << "gameobject already in list";
     }
 }
 
 void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
     auto sharedObj = obj.lock();
+    const std::shared_ptr<sf::Drawable> targetDrawable = sharedObj->getRenderable()->drawable.lock();
     if (!sharedObj) return;
 
     // Remove from main list
@@ -164,15 +169,23 @@ void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
         gameObjects_.end()
     );
 
-    // Remove from all layers
-    for (auto& [layer, objects] : renderLayers_) {
-        objects.erase(
-            std::remove_if(objects.begin(), objects.end(),
-                [&sharedObj](const std::weak_ptr<GameObject>& weak) {
-                    return weak.lock() == sharedObj;
-                }),
-            objects.end()
+    if (!targetDrawable)return; // exit if invalid drawable.
+
+    for (auto& [layer, renderables] : renderLayers_) {
+        // Use std::remove_if to erase matching Renderables
+        auto newEnd = std::remove_if(
+            renderables.begin(),
+            renderables.end(),
+            [&targetDrawable](const std::shared_ptr<Renderable>& r) {
+                // Compare the underlying drawable pointers
+                auto vectorDrawable = r->drawable.lock();
+                
+                return r->drawable.lock() == targetDrawable;
+            }
         );
+
+        // Erase the removed elements
+        renderables.erase(newEnd, renderables.end());
     }
 }
 
@@ -200,7 +213,15 @@ void GameObjectManager::updateAll(float deltaTime) {
     }
 }
 
-void GameObjectManager::renderAll(sf::RenderTarget& target) {
+void GameObjectManager::registerExternalRenderable(
+    std::shared_ptr<Renderable> renderable, int layer) {
+    renderLayers_[layer].push_back(renderable);
+
+}
+
+
+
+void GameObjectManager::renderAll(sf::RenderTarget& target, sf::RenderStates state) {
     constexpr int UI_LAYER_MIN = -100;
     constexpr int UI_LAYER_MAX = 100;
     const auto defaultView = target.getDefaultView();
@@ -208,7 +229,8 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
     bool currentViewIsUI = false;
     target.setView(*playerView); // Start with game view
 
-    for (auto& [layer, objects] : renderLayers_) {
+    for (auto& [layer, renderables] : renderLayers_) {
+
         // Determine view type purely by layer number
         bool layerIsUI = (layer <= UI_LAYER_MIN) || (layer >= UI_LAYER_MAX);
 
@@ -218,13 +240,22 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
             currentViewIsUI = layerIsUI;
         }
 
-        // Draw all objects in this layer
-        for (auto& obj : objects) {
-            if (auto shared = obj.lock()) {
-                shared->draw(target, sf::RenderStates::Default);
+        // Draw all renderables in this layer
+        for (auto& obj : renderables) {
+            if (obj) {
+                if (!obj->drawable.lock())
+                    continue; // go next if invalid weakptr.
+
+                if (obj->shader) {
+                    state.shader = obj->shader.get(); // get shader if it exists.
+                }
+
+                target.draw(*obj->drawable.lock(),state );
             }
         }
     }
+
+    target.setView(*playerView);
 
 }
 
@@ -246,35 +277,37 @@ void GameObjectManager::processEvent(const std::optional<sf::Event>& event) {
 void GameObjectManager::setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer) {
     if (!obj) return;
 
-    // Remove from all current layers
-    for (auto& [layer, objects] : renderLayers_) {
-        objects.erase(
+    auto targetRenderable = obj->getRenderable();
+
+    // Remove from all layers
+    for (auto& [layer, renderables] : renderLayers_) {
+        renderables.erase(
             std::remove_if(
-                objects.begin(), 
-                objects.end(), 
-                [&obj](const std::weak_ptr<GameObject>& weakOther) {
-                    auto other = weakOther.lock();
-                    return obj == other && other;
+                renderables.begin(),
+                renderables.end(),
+                [&targetRenderable](const std::shared_ptr<Renderable>& r) {
+                        return r->drawable.lock() == targetRenderable->drawable.lock();
                 }
             ),
-            objects.end()
+            renderables.end()
         );
     }
 
-    // Add to new layer
-    renderLayers_[newLayer].push_back(obj);
+    // Add weak reference to the authoritative Renderable
+    renderLayers_[newLayer].emplace_back(targetRenderable);
 }
 
 int GameObjectManager::getRenderLayer(const std::shared_ptr<GameObject>& obj) const {
     if (!obj) return 0;
 
-    for (const auto& [layer, weakObjects] : renderLayers_) {
-        auto it = std::find_if(weakObjects.begin(), weakObjects.end(),
-            [&obj](const std::weak_ptr<GameObject>& weakOther) {
-                auto other = weakOther.lock();
-                return other && other == obj;
+
+
+    for (const auto& [layer, renderables] : renderLayers_) {
+        auto it = std::find_if(renderables.begin(), renderables.end(),
+            [&obj](const std::shared_ptr<Renderable>& r) {
+                return r->drawable.lock() == obj->getRenderable()->drawable.lock();
             });
-        if (it != weakObjects.end()) {
+        if (it != renderables.end()) {
             return layer;
         }
     }

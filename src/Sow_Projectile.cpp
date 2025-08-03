@@ -55,6 +55,7 @@ void Sow_Projectile::init() {
 		getSpritePath(),
 		{ {0,0},{32,32} }
 	); // load the correct sprite for the projectile
+	std::cout << "hi: " << GameObjectManager::getInstance().getRenderLayer(parent);
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
 	parent->setPosition(startPos); // actually move projectile to the player position as well.
 	parent->setRotation(vectorToAngle(direction));

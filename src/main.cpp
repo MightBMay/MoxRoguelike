@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "GameObject.h"
+#include "MSprite.h"
 #include "Utility.h"
 
 #include "TextureManager.h"
@@ -13,9 +15,10 @@
 #include "Background.h"
 #include "Vignette.h"
 #include "Global.h"
-#include "MSprite.h"
-#include "GameObject.h"
-#include "CameraController.h" // can be used as an alternative camera controller. 
+
+#include "TrailRenderer.h"
+
+//#include "CameraController.h"  can be used as an alternative camera controller. 
 							  // currently just manually tracking in player.cpp/h;
 
 #include "Player.h"
@@ -25,7 +28,9 @@ std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
-std::shared_ptr<CameraController> camController;
+//std::weak_ptr<TrailRenderer> trail;
+
+//std::shared_ptr<CameraController> camController;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
@@ -39,8 +44,12 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	manager.setRenderLayer(playerObj, 5);
 
 	player.lock()->CreateWeapons(window);
+
+	
 	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj.get());
+
+	//playerObj->addComponent<TrailRenderer>(3, 5);
 
 
 }
@@ -114,15 +123,15 @@ int main() {
 #pragma region make background
 
 
-
+	/*
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} }
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
-	manager.setRenderLayer(Background, -100); // move to layer -10 to stay behind things.
-
+	manager.setRenderLayer(Background, -110); // move to layer -10 to stay behind things.
+	*/
 #pragma endregion
 
 	//for (int i = 0; i < 1028; i++)
@@ -144,7 +153,6 @@ int main() {
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
-
 					CreateTestEnemy(manager, enemyManager);
 					std::cout << enemyManager.count();
 					
@@ -176,7 +184,6 @@ int main() {
 		window->clear();
 		
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.
-
 
 #pragma region FPS logging
 		timeSinceLastUpdate += fpsClock.restart();

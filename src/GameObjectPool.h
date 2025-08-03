@@ -28,7 +28,7 @@ public:
 	int size() { return _pool.size(); }
 
 	template <typename ComponentType, typename... Args>
-	std::shared_ptr<GameObject> make(Args&&... args) {
+	std::shared_ptr<GameObject> make(int renderLayer = 0, Args&&... args) {
 		static_assert(
 			std::is_base_of_v<BaseComponentType, ComponentType>,
 			"ComponentType must inherit from BaseComponentType"
@@ -41,16 +41,19 @@ public:
 			return nullptr;
 		}
 		auto obj = _pool[next_available++];
-		if (!obj) std::cout << "NULL: "<<next_available;
 		obj->setActive(true);
 		obj->removeAllComponents();
 		obj->addComponent<ComponentType>(std::forward<Args>(args)...);
+		GameObjectManager::getInstance().add(obj, renderLayer);
+
+		
 		return obj;
 
 	}
 
 	void release(std::shared_ptr<GameObject> obj) {
 		obj->setActive(false);
+		GameObjectManager::getInstance().remove(obj);
 		obj->removeSprite();
 
 
