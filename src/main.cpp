@@ -133,7 +133,7 @@ int main() {
 	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
 											  //-100 because background is set to be UI so
 											  // rendering will draw it using default sf::view . 
-	
+
 #pragma endregion
 
 	//for (int i = 0; i < 1028; i++)
@@ -193,7 +193,7 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			//std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
 
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;

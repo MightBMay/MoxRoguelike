@@ -219,7 +219,7 @@ public:
 
     // Update and render
     void updateAll(float deltaTime);
-    void renderAll(sf::RenderTarget& target, sf::RenderStates state = sf::RenderStates::Default);
+    void renderAll(sf::RenderTarget& target);
     void registerExternalRenderable(std::shared_ptr<Renderable> drawable, int layer = 0);
 
     void processEvent(const std::optional<sf::Event>& event);

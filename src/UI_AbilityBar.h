@@ -19,14 +19,17 @@ public:
 		// calculate offset based off how many abilities
 		const sf::Vector2f offsetPerAbility = sf::Vector2f( 64 + (132 * index), 64 ); 
 		// make gameobject with desired sprite and rect.
-		auto& cdSprite = GameObject::Create(path, rect); 
-		cdSprite->setPosition(basePosition + offsetPerAbility); // set position accordingly
-		cdSprite->setOrigin(64, 64); // center icon.
-		GameObjectManager::getInstance().setRenderLayer(cdSprite, 110); // set gameobject base layer to 100 
-		cdSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+		auto& abilitySprite = GameObject::Create(path, rect); 
+		abilitySprite->setPosition(basePosition + offsetPerAbility); // set position accordingly
+		abilitySprite->setOrigin(64, 64); // center icon.
+		abilitySprite->setAsUI(true);
+		GameObjectManager::getInstance().setRenderLayer(abilitySprite, 110);
+
+		std::cout<<"\nLayer: "<<GameObjectManager::getInstance().getRenderLayer(abilitySprite);
+		abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 		weaponHolder[index] = wepBase; // store weapon
-		abilityCDSprites[index] = cdSprite; // store sprite
+		abilityCDSprites[index] = abilitySprite; // store sprite
 
 	}
 

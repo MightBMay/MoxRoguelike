@@ -65,9 +65,7 @@ void GameObject::scaleObject(float factorX, float factorY) {
 
 // Sprite management
 void GameObject::setSprite(const std::string& path, const sf::IntRect& rect) {
-    std::cout << "Creating sprite for: " << path << "\n";
     sprite = std::make_shared<MSprite>(path, rect);
-    std::cout << "Sprite created, texture valid: " << (sprite->getTexture().getSize().x) << "\n";
     renderable->drawable = sprite;
     sprite->setPosition(position);
     sprite->setRotation(sf::degrees(rotation));
@@ -221,7 +219,7 @@ void GameObjectManager::registerExternalRenderable(
 
 
 
-void GameObjectManager::renderAll(sf::RenderTarget& target, sf::RenderStates state) {
+void GameObjectManager::renderAll(sf::RenderTarget& target) {
     constexpr int UI_LAYER_MIN = -100;
     constexpr int UI_LAYER_MAX = 100;
     const auto defaultView = target.getDefaultView();
@@ -243,16 +241,23 @@ void GameObjectManager::renderAll(sf::RenderTarget& target, sf::RenderStates sta
         // Draw all renderables in this layer
         for (auto& obj : renderables) {
             if (obj) {
-                if (!obj->drawable.lock()) {
-                    continue; // go next if invalid weakptr.
-                    std::cout << "Null drawable";
-                }
+              
+                if (!obj->drawable.lock()) continue;
+                    
 
-                if (obj->shader) {
+                
+
+                if (obj->shader) {// only make state if shader exists.
+                    sf::RenderStates state = sf::RenderStates::Default; 
                     state.shader = obj->shader.get(); // get shader if it exists.
+
+                    target.draw(*obj->drawable.lock(), state);
                 }
 
-                target.draw(*obj->drawable.lock(),state );
+                // otherwise draw normally
+                else target.draw(*obj->drawable.lock());
+                    
+                
             }
         }
     }
