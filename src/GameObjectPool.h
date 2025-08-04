@@ -45,8 +45,6 @@ public:
 		obj->removeAllComponents();
 		obj->addComponent<ComponentType>(std::forward<Args>(args)...);
 		std::string path = obj->getSprite()->getPath();
-		if (path.empty()) { std::cout << "\n path null"; }
-		std::cout << "\n" << path;
 		GameObjectManager::getInstance().add(obj, renderLayer);
 		
 		return obj;
@@ -57,6 +55,7 @@ public:
 		obj->setActive(false);
 		GameObjectManager::getInstance().remove(obj);
 		obj->removeSprite();
+		
 
 
 		int index = obj->getPoolIndex();

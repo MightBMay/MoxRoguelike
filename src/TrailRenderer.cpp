@@ -1,6 +1,10 @@
 #include "TrailRenderer.h"
 #include "GameObject.h"
 
+TrailRenderer::TrailRenderer(float duration, float thickness, sf::Color startColour, sf::Color endColour)
+    : duration(duration), startColour(startColour),endColour(endColour), thickness(thickness) {
+}
+
 void TrailRenderer::update(float deltaTime) {
 
 	auto now = std::chrono::steady_clock::now();
@@ -21,16 +25,29 @@ void TrailRenderer::update(float deltaTime) {
 	}
 }
 
+void TrailRenderer::init() {
+    std::shared_ptr<sf::Drawable> drawable = std::static_pointer_cast<sf::Drawable>(shared_from_this());
+    renderable = std::make_shared<Renderable>(drawable, nullptr);
+
+   // LoadShader("../assets/sprites/cardboard.png");
+
+
+    GameObjectManager::getInstance().addExternalRenderable(renderable);
+}
 
 void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) const  {
-    if (points.size() < 2) return;
+    if (points.size() < 2 || !emitting) return;
 
     // Create a vertex array for the line strip
     sf::VertexArray line(sf::PrimitiveType::TriangleStrip, (points.size() - 1) * 2);
 
     for (size_t i = 0; i < points.size() - 1; i++) {
         sf::Vector2f direction = points[i + 1].position - points[i].position;
-        sf::Vector2f unitDirection = direction / std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+
+        // Safeguard against division by zero
+        sf::Vector2f unitDirection = 
+            (magnitude > 0.0001f) ? direction / magnitude : sf::Vector2f(1.f, 0.f); // Default direction if points are too close
         sf::Vector2f unitPerpendicular(-unitDirection.y, unitDirection.x);
 
         sf::Vector2f offset = (thickness / 2.f) * unitPerpendicular;
@@ -43,8 +60,8 @@ void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) cons
         float alpha1 = 255 * (1.f - (elapsed1 / duration));
         float alpha2 = 255 * (1.f - (elapsed2 / duration));
 
-        sf::Color color1 = colour;
-        sf::Color color2 = colour;
+        sf::Color color1 = startColour;
+        sf::Color color2 = endColour;
         color1.a = static_cast<uint8_t>(alpha1);
         color2.a = static_cast<uint8_t>(alpha2);
 
@@ -55,6 +72,26 @@ void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) cons
         line[i * 2 + 1].position = points[i].position - offset;
         line[i * 2 + 1].color = color1;
     }
+    /*
+    if (renderable->shader != nullptr) {
+       
+        states.texture = texture.get(); 
+
+        states.shader = renderable->shader.get(); 
+
+        if (auto shader = renderable->shader.get()) { 
+            shader->setUniform("trailTexture", sf::Shader::CurrentTexture);
+
+        }
+
+    }
+    */
+
+
 
     window.draw(line, states);
+}
+
+void TrailRenderer::Destroy() {
+    GameObjectManager::getInstance().removeExternalRenderable(renderable);
 }

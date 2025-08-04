@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
+#include "TrailRenderer.h"
 #include "Weapon.h"
 #include "Global.h"
 
@@ -34,8 +35,11 @@ void Sow_Projectile::update(float deltaTime) {
 	parent->rotate(720 * deltaTime); // spin projectile as some kind of animation.
 
 	remainingDuration -= deltaTime;
-	if (remainingDuration <= 0)
+	if (remainingDuration <= 0) {
 		Projectile::projPool.release(parent);
+		std::cout<<parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
+												// it looping the last trail until new proj made.
+	}
 	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
@@ -60,5 +64,7 @@ void Sow_Projectile::init() {
 	parent->setPosition(startPos); // actually move projectile to the player position as well.
 	parent->setRotation(vectorToAngle(direction));
 	parent->setOrigin(16, 16);
+
+	parent->addComponent<TrailRenderer>(1, 30, sf::Color(0.835,0.643,0.416), sf::Color(0.835, 0.643, 0.416));
 
 }

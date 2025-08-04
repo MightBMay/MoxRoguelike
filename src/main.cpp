@@ -49,7 +49,6 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj.get());
 
-	//playerObj->addComponent<TrailRenderer>(3, 5);
 
 
 }
@@ -133,7 +132,7 @@ int main() {
 	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
 											  //-100 because background is set to be UI so
 											  // rendering will draw it using default sf::view . 
-
+	
 #pragma endregion
 
 	//for (int i = 0; i < 1028; i++)
@@ -155,11 +154,10 @@ int main() {
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
+					
 					CreateTestEnemy(manager, enemyManager);
 					std::cout << enemyManager.count();
-					
-	
-
+				
 				}
 				
 				/* unused atm, moved the input stuff to their own component.

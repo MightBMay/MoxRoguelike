@@ -57,6 +57,11 @@ public:
         return component; // Return weak_ptr implicitly convertible from shared_ptr
     }
 
+    void addComponent(std::shared_ptr<Component> component) {
+        if (!component) { std::cout << "\nTried to add invalid component ptr\n"; return; }
+        components.push_back(component);
+    }
+
     // Get a component by exact type. Return shared_ptr for safe lifetime mgmt.
     template <typename T>
     std::shared_ptr<T> getComponent() {
@@ -115,8 +120,15 @@ public:
     }
 
     void update(float deltaTime) {
-        for (auto& component : components) {
-            component->update(deltaTime);
+
+        for (size_t i = 0; i < components.size(); ) {
+            components[i]->update(deltaTime);
+            if (!components[i]) {
+                components.erase(components.begin() + i);
+            }
+            else {
+                i++;
+            }
         }
     }
 
@@ -214,13 +226,16 @@ public:
 
     // Object management
     void add(std::weak_ptr<GameObject> obj, int renderLayer = 0);
+    void addExternalRenderable(std::shared_ptr<Renderable> drawable, int layer = 0);
+
     void remove(std::weak_ptr<GameObject> obj);
+    void removeExternalRenderable(std::shared_ptr<Renderable> renderable);
     void clearAll();
 
     // Update and render
     void updateAll(float deltaTime);
     void renderAll(sf::RenderTarget& target);
-    void registerExternalRenderable(std::shared_ptr<Renderable> drawable, int layer = 0);
+   
 
     void processEvent(const std::optional<sf::Event>& event);
     
@@ -228,6 +243,14 @@ public:
     // Layer management
     void setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer);
     int getRenderLayer(const std::shared_ptr<GameObject>& obj) const;
+
+    void log() {
+        std::cout << "\n#Gameobjects: " << gameObjects_.size() <<
+            "\nrender layers: " << renderLayers_.size()<<"\n";
+        for (auto& [layer, renderables] : renderLayers_) {
+            std::cout << layer << ": " << renderables.size()<<"\n";
+        }
+    }
 
 private:
     GameObjectManager() = default;

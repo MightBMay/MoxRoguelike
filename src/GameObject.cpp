@@ -187,6 +187,28 @@ void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
     }
 }
 
+void GameObjectManager::addExternalRenderable(
+    std::shared_ptr<Renderable> renderable, int layer) {
+    if (!renderable) { std::cout << "invalid renderable ptr"; return; }// double check ptr
+    renderLayers_[layer].push_back(renderable);
+
+}
+
+
+void GameObjectManager::removeExternalRenderable(std::shared_ptr<Renderable> target) {
+    for (auto& [layer, renderables] : renderLayers_) {
+        auto newEnd = std::remove_if(
+            renderables.begin(),
+            renderables.end(),
+            [&target](const std::shared_ptr<Renderable>& r) {
+                return r == target && target; // && target to ensure both cannot be null.
+            }
+
+        );
+        renderables.erase(newEnd, renderables.end());
+    }
+}
+
 void GameObjectManager::clearAll() {
     gameObjects_.clear();
     renderLayers_.clear();
@@ -209,12 +231,6 @@ void GameObjectManager::updateAll(float deltaTime) {
         // only increments if element was not removed
         i++;
     }
-}
-
-void GameObjectManager::registerExternalRenderable(
-    std::shared_ptr<Renderable> renderable, int layer) {
-    renderLayers_[layer].push_back(renderable);
-
 }
 
 

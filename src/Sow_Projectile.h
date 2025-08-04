@@ -1,5 +1,6 @@
 #pragma once
 #include "Projectile.h"
+#include "TrailRenderer.h"
 class EnemyManager;
 class GameObject;
 struct WeaponStats;
@@ -22,7 +23,7 @@ public:
 	
 
 protected:
-
+	
 private:
 	static inline const float duration = 7.5f;
 	float remainingDuration = duration;
