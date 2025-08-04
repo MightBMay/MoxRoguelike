@@ -9,10 +9,11 @@ Projectile::Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats)
 	stats(stats), pierceCount(stats.lock()->pierce), direction(direction) {}
 
 void Projectile::init() {
-	parent->setSprite(getSpritePath()); // load the correct sprite for the projectile
+	parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
-	parent->setPosition(startPos); // actually move projectile to the player position as well.
+	parent->setOrigin(16, 16);
 	parent->setRotation(vectorToAngle(direction));
+	parent->setPosition(startPos); // actually move projectile to the player position as well.
 
 }
 

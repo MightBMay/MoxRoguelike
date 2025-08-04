@@ -65,11 +65,14 @@ void GameObject::scaleObject(float factorX, float factorY) {
 
 // Sprite management
 void GameObject::setSprite(const std::string& path, const sf::IntRect& rect) {
+    std::cout << "Creating sprite for: " << path << "\n";
     sprite = std::make_shared<MSprite>(path, rect);
+    std::cout << "Sprite created, texture valid: " << (sprite->getTexture().getSize().x) << "\n";
+    renderable->drawable = sprite;
     sprite->setPosition(position);
     sprite->setRotation(sf::degrees(rotation));
     sprite->setScale(scale);
-    renderable->drawable = sprite;
+   
  
 }
 
@@ -144,15 +147,14 @@ void GameObjectManager::add(std::weak_ptr<GameObject> obj, int renderLayer) {
             return weak.lock() == sharedObj;
         });
 
-    if (it == gameObjects_.end()) {
+    if (it == gameObjects_.end()) 
         gameObjects_.push_back(obj);
 
-        if(sharedObj)
-            renderLayers_[renderLayer].push_back(sharedObj->getRenderable()); // Default layer 0
-    }
-    else {
-        std::cout << "gameobject already in list";
-    }
+    
+    if (sharedObj->getRenderable()->drawable.lock()) 
+        renderLayers_[renderLayer].push_back(sharedObj->getRenderable()); // Default layer 0
+    
+   
 }
 
 void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
@@ -169,7 +171,7 @@ void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
         gameObjects_.end()
     );
 
-    if (!targetDrawable)return; // exit if invalid drawable.
+    if (!targetDrawable) { std::cout << "drawable null\n"; return; }// exit if invalid drawable.
 
     for (auto& [layer, renderables] : renderLayers_) {
         // Use std::remove_if to erase matching Renderables
@@ -177,10 +179,8 @@ void GameObjectManager::remove(std::weak_ptr<GameObject> obj) {
             renderables.begin(),
             renderables.end(),
             [&targetDrawable](const std::shared_ptr<Renderable>& r) {
-                // Compare the underlying drawable pointers
-                auto vectorDrawable = r->drawable.lock();
-                
-                return r->drawable.lock() == targetDrawable;
+                // Compare the underlying drawable pointers`
+                return  r->drawable.lock() == targetDrawable;
             }
         );
 
@@ -243,8 +243,10 @@ void GameObjectManager::renderAll(sf::RenderTarget& target, sf::RenderStates sta
         // Draw all renderables in this layer
         for (auto& obj : renderables) {
             if (obj) {
-                if (!obj->drawable.lock())
+                if (!obj->drawable.lock()) {
                     continue; // go next if invalid weakptr.
+                    std::cout << "Null drawable";
+                }
 
                 if (obj->shader) {
                     state.shader = obj->shader.get(); // get shader if it exists.

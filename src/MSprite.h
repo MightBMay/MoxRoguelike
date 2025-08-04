@@ -21,6 +21,8 @@ public:
         textureRef(TextureManager::getTexture(path)),  // keep ref alive
         texturePath(path)
     {
+        //debug
+        if (!textureRef) throw std::runtime_error("Failed to load texture:" + path);
         if (rect != sf::IntRect()) {
             setTextureRect(rect);
         }

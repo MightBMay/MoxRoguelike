@@ -7,6 +7,7 @@
 #include "Sow_Projectile.h"
 #include "Reap_Projectile.h"
 #include "Papyrmancer_Reap.h"
+#include "Papyrmancer_Sow.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
 
@@ -122,8 +123,8 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
-	 auto weaponQ = parent->addComponent<Weapon<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 0, 32, 0.2f, 1),
+	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
+		std::make_shared<WeaponStats>(1, 500, 0, 32, 1, 1),
 		window);
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
@@ -135,7 +136,7 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 
 
 	auto weaponR = parent->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 0.2f, 1),
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 1),
 		window);
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));

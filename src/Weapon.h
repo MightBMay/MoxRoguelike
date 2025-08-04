@@ -84,7 +84,7 @@ public:
 
 	virtual void Fire() override{
 		sf::Vector2f direction = getMouseWorldPos(window, playerView) -parent->getPosition();
-		projPool.make<projectileType>(5,direction.normalized(), stats);		
+		auto projectile = projPool.make<projectileType>(5,direction.normalized(), stats);		
 		attackTimer = stats->attackSpeed;
 
 	}

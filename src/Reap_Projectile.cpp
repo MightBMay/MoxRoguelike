@@ -18,7 +18,7 @@ void Reap_Projectile::update(float deltaTime) {
 	if (!playerP || !statsP) return;
 
 
-	sf::Vector2f curPos = parent->getPosition();
+	sf::Vector2f curPos = parent->getPosition(); 
 	
 	sf::Vector2f newDirection = playerP->getPosition() - curPos;
 	float distanceSqr = newDirection.lengthSquared();
@@ -46,6 +46,7 @@ void Reap_Projectile::init() {
 		getSpritePath(),
 		{ {0,0},{32,32} }
 	); // load the correct sprite for the projectile
+
 	parent->setRotation(vectorToAngle(direction));
 	parent->setOrigin(16, 16);
 	

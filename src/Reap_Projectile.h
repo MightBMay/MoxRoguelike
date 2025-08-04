@@ -23,6 +23,6 @@ protected:
 private:
 	const float duration = 7.5f;
 	float remainingDuration = duration;
-	static inline std::string spritePath = "../assets/sprites/projectiles/default.png";
+	static inline const std::string spritePath = "../assets/sprites/projectiles/default.png";
 };
 

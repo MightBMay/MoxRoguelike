@@ -123,15 +123,17 @@ int main() {
 #pragma region make background
 
 
-	/*
+	
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} }
 	);
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
-	manager.setRenderLayer(Background, -110); // move to layer -10 to stay behind things.
-	*/
+	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
+											  //-100 because background is set to be UI so
+											  // rendering will draw it using default sf::view . 
+	
 #pragma endregion
 
 	//for (int i = 0; i < 1028; i++)
@@ -191,7 +193,7 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+			//std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
 
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;
