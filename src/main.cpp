@@ -12,7 +12,6 @@
 #include "Weapon.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
-#include "UI_AbilityDescription.h"
 #include "UI_AbilityBar.h"
 #include "Background.h"
 #include "Vignette.h"
@@ -49,21 +48,6 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	
 	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj.get());
-
-	
-	abilDesc = GameObject::Create(); //"../assets/sprites/cardboard.png", { {0,0},{395,300} }
-	//abilDesc->getSprite()->SetRepeated(true);
-	//abilDesc->getSprite()->setColor(sf::Color(192, 192, 192, 255));
-	
-	abilDesc->setPosition(1528,652 );
-	
-	abilDesc->setAsUI(true);
-	manager.setRenderLayer(abilDesc, 120);
-	auto temp =abilDesc->addComponent<UI_AbilityDescription>(window);
-
-	temp.lock()->setDescription(
-		playerShared->getAbilityBar()->weaponHolder[1].lock()
-	);
 
 
 
@@ -151,8 +135,8 @@ int main() {
 	*/
 #pragma endregion
 
-	//for (int i = 0; i < 1028; i++)
-	//	CreateTestEnemy(manager, enemyManager);
+	for (int i = 0; i < 1028; i++)
+		CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {

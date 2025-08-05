@@ -15,6 +15,11 @@ void UI_AbilityDescription::init() {
 	bgTexture = *TextureManager::getTexture(panelBGPath);
 	bgTexture.setRepeated(true);
 
+	sf::Sprite tempSprite(bgTexture); // Construct with texture
+	tempSprite.setTextureRect({ {0, 0}, {390, 300} }); // Set sub-rectangle
+	bgSprite = std::make_shared<sf::Sprite>(tempSprite); // Copy into shared_ptr
+	bgSprite->setColor(sf::Color(192, 192, 192));
+
 }
 
 void UI_AbilityDescription::update(float deltaTime){}

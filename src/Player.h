@@ -7,6 +7,7 @@
 class Timer;
 class GameObject;
 class AbilityBar;
+class UI_AbilityDescription;
 
 class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
@@ -31,6 +32,7 @@ public:
 	virtual void Destroy() override {}
 
 protected:
+	std::shared_ptr < GameObject> abilityDescription;
 	std::shared_ptr<AbilityBar> abilityBarUI;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
 

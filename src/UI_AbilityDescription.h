@@ -25,9 +25,8 @@ public:
 		
 		rt->clear(sf::Color::Transparent);	
 		
-		sf::Sprite bgSprite(bgTexture, { {0,0}, {390,300} });
 		
-		rt->draw(bgSprite);
+		rt->draw(*bgSprite);
 		rt->draw(*text);
 		rt->display();
 
@@ -66,6 +65,7 @@ private:
 	static inline std::shared_ptr<sf::Text> text;
 	static inline std::shared_ptr<sf::RenderTexture> rt;
 	static inline sf::Texture bgTexture;
+	static inline std::shared_ptr<sf::Sprite> bgSprite;
 	// eventually move this into texture manager to cache it prob
 	static inline std::shared_ptr<sf::Font> font;
 	static inline const std::string panelBGPath = "../assets/sprites/cardboard.png";

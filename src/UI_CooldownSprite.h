@@ -56,23 +56,22 @@ public:
 	/// <param name="weapon"> used to susbscribe to weapon's cooldown event.</param>
 	/// <param name="rect"> rect of the white sprite used to create a sprite.</param>
 	/// <param name="path"> path of the sprite used to cover the parent gameobjects sprite. defaults to a white square.</param>
-	UI_CooldownSprite(int index, std::shared_ptr<sf::RenderWindow> window, std::weak_ptr<WeaponBase> weapon, sf::IntRect rect,
+	UI_CooldownSprite(std::shared_ptr<sf::RenderWindow> window, std::weak_ptr<WeaponBase> weapon, sf::IntRect rect,
 		std::string path = "../assets/sprites/shapes/bl_square_128.png");
 	virtual void init() override;
 	virtual void OnHover() {
-		UI_AbilityDescription::setDescription(weapon.lock());
-		hoveringAny[spriteIndex] = true;
-	}
-	virtual void OnHoverExit() {
-		hoveringAny[spriteIndex] = false;
-		std::cout << "\n";
-		for (bool value : hoveringAny) {
-			std::cout << value << ", ";
-				if (value)
-					return; // if any of the other sprites are hovered, do not clear description ui.
-			// prevents description from not rendering when flicking between cdSprites.
+		if (currentlyHovered && currentlyHovered!= this) {
+			currentlyHovered->OnHoverExit();
 		}
-		UI_AbilityDescription::clear();
+		currentlyHovered= this;
+		UI_AbilityDescription::setDescription(weapon.lock());
+	}
+
+	virtual void OnHoverExit() {
+		if (currentlyHovered== this) {
+			currentlyHovered= nullptr;
+			UI_AbilityDescription::clear();
+		}
 	}
 	virtual void OnClick(const Button& mouseButton) {}
 	virtual void Destroy() override {
@@ -84,8 +83,7 @@ public:
 
 
 private:
-	// used to check if any of the multiple cdsprites are being hovered.
-	std::array<bool, 3>hoveringAny{};
+	static inline UI_CooldownSprite* currentlyHovered = nullptr;
 	std::shared_ptr<GameObject> cooldownObject;
 	int spriteIndex;
 	int eventSubscriptionID=-1; // used to track and unsubscribe to events.

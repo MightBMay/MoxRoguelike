@@ -12,7 +12,9 @@ public:
 	static std::unordered_set<std::shared_ptr<GameObject>>& GetSowedEnemies() {
 		return sowedEnemies;
 	}
-	static void ClearSowedEnemies() { sowedEnemies.clear(); }
+	static void ClearSowedEnemies() {
+		sowedEnemies.clear();
+	}
 	void update(float deltaTime) override final;
 	const std::string& getSpritePath() const final{
 		return spritePath;

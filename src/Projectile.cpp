@@ -3,6 +3,7 @@
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "Weapon.h"
+#include "TrailRenderer.h"
 
 
 Projectile::Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats) :
@@ -14,7 +15,7 @@ void Projectile::init() {
 	parent->setOrigin(16, 16);
 	parent->setRotation(vectorToAngle(direction));
 	parent->setPosition(startPos); // actually move projectile to the player position as well.
-
+	parent->addComponent<TrailRenderer>(0.125f, 20);
 }
 
 
@@ -24,8 +25,12 @@ void Projectile::update(float deltaTime) {
 	parent->move(direction * statsP->speed * deltaTime);
 	auto curPos = parent->getPosition();
 
-	if ((curPos - startPos).lengthSquared() >= statsP->range)
+	if ((curPos - startPos).lengthSquared() >= statsP->range) {
 		projPool.release(parent);
+		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
+		// it looping the last trail until new proj made.
+
+	}
 
 	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
 	// iterate over all enemies within range of projectile.
@@ -36,6 +41,8 @@ void Projectile::update(float deltaTime) {
 		--pierceCount; // decrement and check pierce.
 		if (pierceCount <= 0) {
 			projPool.release(parent); // if no more pierce, remove.
+			parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
+			// it looping the last trail until new proj made.
 			break;
 		}
 

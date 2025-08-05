@@ -124,21 +124,27 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 0, 32, 1, 1),
+		std::make_shared<WeaponStats>(1, 500, 0, 32, 0.0666f, 1),
 		window);
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
 
 	auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
-		std::make_shared<WeaponStats>(1, 1500, 0, 32, 1, 1),
+		std::make_shared<WeaponStats>(1, 1500, 0, 32, .4, 1),
 		window);
 	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
 	auto weaponR = parent->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 1, 1),
+		std::make_shared<WeaponStats>(1, 500, 500, 32, 5, 1),
 		window);
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
+
+	abilityDescription = GameObject::Create();
+	abilityDescription->setPosition(1528, 652);
+	abilityDescription->setAsUI(true);
+	GameObjectManager::getInstance().setRenderLayer(abilityDescription, 120);
+	abilityDescription->addComponent<UI_AbilityDescription>(window);
 
 }
