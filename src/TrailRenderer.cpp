@@ -45,13 +45,6 @@ void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) cons
         sf::Vector2f direction = points[i + 1].position - points[i].position;
         float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
 
-        // Safeguard against division by zero
-        sf::Vector2f unitDirection = 
-            (magnitude > 0.0001f) ? direction / magnitude : sf::Vector2f(1.f, 0.f); // Default direction if points are too close
-        sf::Vector2f unitPerpendicular(-unitDirection.y, unitDirection.x);
-
-        sf::Vector2f offset = (thickness / 2.f) * unitPerpendicular;
-
         // Calculate alpha based on point age
         auto now = std::chrono::steady_clock::now();
         float elapsed1 = std::chrono::duration_cast<std::chrono::duration<float>>(now - points[i].creationTime).count();
@@ -60,11 +53,25 @@ void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) cons
         float alpha1 = 255 * (1.f - (elapsed1 / duration));
         float alpha2 = 255 * (1.f - (elapsed2 / duration));
 
+        // Safeguard against division by zero
+        sf::Vector2f unitDirection = 
+            (magnitude > 0.0001f) ? direction / magnitude : sf::Vector2f(1.f, 0.f); // Default direction if points are too close
+        sf::Vector2f unitPerpendicular(-unitDirection.y, unitDirection.x);
+
+        sf::Vector2f offset = 
+            thickness* // base thickness
+            (alpha2/255) // multiplied by alpha (0-1) to scale tip down.
+            / 2.f // /2 because offset is half thickness in both ways.
+            * unitPerpendicular;// direction.
+
+ 
+
+
         sf::Color color1 = startColour;
         sf::Color color2 = endColour;
-        color1.a = static_cast<uint8_t>(alpha1);
-        color2.a = static_cast<uint8_t>(alpha2);
-
+        color1.a = alpha1;
+        color2.a = alpha2;
+ 
         // Add the two vertices for this segment
         line[i * 2].position = points[i].position + offset;
         line[i * 2].color = color1;

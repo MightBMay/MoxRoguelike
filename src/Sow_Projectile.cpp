@@ -65,6 +65,6 @@ void Sow_Projectile::init() {
 	parent->setRotation(vectorToAngle(direction));
 	parent->setOrigin(16, 16);
 
-	parent->addComponent<TrailRenderer>(1, 30, sf::Color(0.835,0.643,0.416), sf::Color(0.835, 0.643, 0.416));
+	parent->addComponent<TrailRenderer>(0.125f, 30, sf::Color(213,164,106), sf::Color(213, 164, 106));
 
 }
