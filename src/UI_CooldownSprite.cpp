@@ -9,12 +9,12 @@
 
 
 UI_CooldownSprite::UI_CooldownSprite(
-	
+	int index,
 	std::shared_ptr<sf::RenderWindow> window,  // all UI needs this to call base constructor
 	std::weak_ptr<WeaponBase> weapon, // used to assign a weapon's cooldown to this component
 	sf::IntRect rect, 
 	std::string path) :
-	UI_Element(window), weapon(weapon) {
+	UI_Element(window), weapon(weapon), spriteIndex(index) {
 	cooldownObject= GameObject::Create(
 		path,
 		rect);

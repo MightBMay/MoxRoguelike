@@ -47,7 +47,7 @@ bool UI_Element::isHovering() {
 
     // get mouse pos (world coordinates)
     auto desktopPos = sf::Mouse::getPosition(*window);
-    auto mousePos = window->mapPixelToCoords(desktopPos);
+    auto mousePos = window->mapPixelToCoords(desktopPos, window->getDefaultView() );
 
 
 

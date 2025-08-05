@@ -51,11 +51,12 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	Enemy::SetPlayer(playerObj.get());
 
 	
-	abilDesc = GameObject::Create("../assets/sprites/cardboard.png", { {0,0},{395,300} }); //
-	abilDesc->getSprite()->SetRepeated(true);
-
+	abilDesc = GameObject::Create(); //"../assets/sprites/cardboard.png", { {0,0},{395,300} }
+	//abilDesc->getSprite()->SetRepeated(true);
+	//abilDesc->getSprite()->setColor(sf::Color(192, 192, 192, 255));
+	
 	abilDesc->setPosition(1528,652 );
-	abilDesc->getSprite()->setColor(sf::Color(192, 192, 192, 255));
+	
 	abilDesc->setAsUI(true);
 	manager.setRenderLayer(abilDesc, 120);
 	auto temp =abilDesc->addComponent<UI_AbilityDescription>(window);

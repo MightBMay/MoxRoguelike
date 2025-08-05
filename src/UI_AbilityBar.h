@@ -24,7 +24,7 @@ public:
 		abilitySprite->setOrigin(64, 64); // center icon.
 		abilitySprite->setAsUI(true);
 		GameObjectManager::getInstance().setRenderLayer(abilitySprite, 110);
-		abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+		abilitySprite->addComponent<UI_CooldownSprite>(index, window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 		weaponHolder[index] = wepBase; // store weapon
 		abilityCDSprites[index] = abilitySprite; // store sprite
