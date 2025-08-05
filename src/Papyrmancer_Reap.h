@@ -39,4 +39,9 @@ public:
 			}
 		}
 	}
+
+	const std::string getDescription() const override {
+		return
+			"Papyrmancer Reap\nShoot a projectile from\nall enemies marked with\nsow towards the player,\ndealing damage to enemies\non the path back.";
+	};
 };

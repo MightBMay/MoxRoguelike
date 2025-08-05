@@ -23,7 +23,7 @@ public:
 	static bool isVulnrable() { return _isVulnrable; }
 
 	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window);
-
+	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
 	virtual void takeDamage(int damage);
 	void init()override;
 	void update(float deltatime) override;

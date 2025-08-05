@@ -44,7 +44,6 @@ public:
 		obj->setActive(true);
 		obj->removeAllComponents();
 		obj->addComponent<ComponentType>(std::forward<Args>(args)...);
-		std::string path = obj->getSprite()->getPath();
 		GameObjectManager::getInstance().add(obj, renderLayer);
 		
 		return obj;

@@ -60,6 +60,8 @@ public:
 	float getAttackSpeed() const { return stats->attackSpeed; }
 	float getAttackTimer() const { return attackTimer; }
 
+	virtual const std::string getDescription() const = 0;
+
 protected:
 	std::shared_ptr<WeaponStats> stats;
 
@@ -104,6 +106,8 @@ public:
 			}
 		}
 	}
+	virtual const std::string getDescription() const override { return "weapon test class"; };
+	
 
 protected:
 	std::shared_ptr<sf::RenderWindow> window;

@@ -27,7 +27,6 @@ public:
         }
     }
 
-
     MSprite(std::shared_ptr<sf::Texture> texture) : sf::Sprite(*texture), textureRef(texture) {}
     ~MSprite() {
     }

@@ -12,6 +12,8 @@
 #include "Weapon.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
+#include "UI_AbilityDescription.h"
+#include "UI_AbilityBar.h"
 #include "Background.h"
 #include "Vignette.h"
 #include "Global.h"
@@ -28,9 +30,7 @@ std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
-//std::weak_ptr<TrailRenderer> trail;
-
-//std::shared_ptr<CameraController> camController;
+std::shared_ptr<GameObject> abilDesc;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
@@ -40,7 +40,8 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
 	player = playerObj->addComponent<Player>(3);
-	player.lock()->init();
+	auto playerShared = player.lock();
+	playerShared->init();
 	manager.setRenderLayer(playerObj, 5);
 
 	player.lock()->CreateWeapons(window);
@@ -48,6 +49,20 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	
 	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj.get());
+
+	
+	abilDesc = GameObject::Create("../assets/sprites/cardboard.png", { {0,0},{395,300} }); //
+	abilDesc->getSprite()->SetRepeated(true);
+
+	abilDesc->setPosition(1528,652 );
+	abilDesc->getSprite()->setColor(sf::Color(192, 192, 192, 255));
+	abilDesc->setAsUI(true);
+	manager.setRenderLayer(abilDesc, 120);
+	auto temp =abilDesc->addComponent<UI_AbilityDescription>(window);
+
+	temp.lock()->setDescription(
+		playerShared->getAbilityBar()->weaponHolder[1].lock()
+	);
 
 
 
@@ -122,7 +137,7 @@ int main() {
 #pragma region make background
 
 
-	
+	/*
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} }
@@ -132,7 +147,7 @@ int main() {
 	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
 											  //-100 because background is set to be UI so
 											  // rendering will draw it using default sf::view . 
-	
+	*/
 #pragma endregion
 
 	//for (int i = 0; i < 1028; i++)
@@ -191,7 +206,7 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+			//std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
 
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;
