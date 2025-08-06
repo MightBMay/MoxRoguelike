@@ -24,7 +24,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
-
+#include "TestEnemy.h"
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
@@ -61,7 +61,7 @@ void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
 	);
 
 	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<Enemy>(10, 1, 1, 125, 86).lock();
+	auto enemyMove = enemy->addComponent<TestEnemy>(5).lock();
 	enemyMove->init();
 
 
@@ -122,7 +122,7 @@ int main() {
 #pragma region make background
 
 
-	/*
+	
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} }
@@ -132,11 +132,11 @@ int main() {
 	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
 											  //-100 because background is set to be UI so
 											  // rendering will draw it using default sf::view . 
-	*/
+	
 #pragma endregion
 
-	for (int i = 0; i < 1028; i++)
-		CreateTestEnemy(manager, enemyManager);
+	//for (int i = 0; i < 1028; i++)
+	//	CreateTestEnemy(manager, enemyManager);
 
 
 	while (window->isOpen()) {
@@ -180,6 +180,7 @@ int main() {
 
 		// Update and render
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
+		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 		window->clear();
 		

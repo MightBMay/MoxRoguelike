@@ -36,7 +36,7 @@ void Projectile::update(float deltaTime) {
 	// iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->damage); // get the base Enemy component and take damage.
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 		--pierceCount; // decrement and check pierce.
 		if (pierceCount <= 0) {

@@ -46,9 +46,9 @@ void Sow_Projectile::update(float deltaTime) {
 			sowedEnemies.insert(enemy);
 		}
 
-		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re damage already damaged enemies.
+		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re _damage already damaged enemies.
 		// add to sow list wherever that is.
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->damage); // get the base Enemy component and take damage.
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 

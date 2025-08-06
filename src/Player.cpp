@@ -27,8 +27,8 @@ void Player::update(float deltatime) {
 	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
 
-void Player::takeDamage(int damage){
-	health -= damage;
+void Player::takeDamage(int _damage){
+	health -= _damage;
 	_isVulnrable = false;
 	hitFlickerTimer.start();
 	parent->getSprite()->setColor(hitColour);

@@ -13,7 +13,7 @@ struct WeaponStats
 
 public:
 	//s.e
-	const int damage=0;
+	const int _damage=0;
 	//s.e
 	const float speed=0;
 	// distance the projectile travels
@@ -29,8 +29,8 @@ public:
 	/// <summary>
 	/// remember, range and projRadius are SQUARED to avoid the root when calcualting.
 	/// </summary>
-	WeaponStats(int damage, float speed, int range, float projRadius, float attackSpeed, int pierce) :
-		damage(damage), speed(speed), range(range* range), 
+	WeaponStats(int _damage, float speed, int range, float projRadius, float attackSpeed, int pierce) :
+		_damage(_damage), speed(speed), range(range* range), 
 		projRadius(projRadius* projRadius), attackSpeed(1.0f/attackSpeed),
 		pierce(pierce) {}
 

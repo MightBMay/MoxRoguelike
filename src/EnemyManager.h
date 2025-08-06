@@ -4,6 +4,7 @@
 #include "TimedDestroy.h"
 #include <memory>
 #include <vector>
+#include "Utility.h"
 
 
 class GameObject;
@@ -15,7 +16,19 @@ public:
 	EnemyManager(const EnemyManager&) = delete;
 	EnemyManager& operator=(const EnemyManager&) = delete;
 	
+	static void HandleSpawning(float deltaTime) {
+		static float delay = 0;
 
+
+		if (delay <= 0) {
+			// spawn random enemies here
+			std::cout << "\nspawn enemies\n";
+			delay = rng::getInt(8, 16);
+		}
+		else {
+			delay -= deltaTime;
+		}
+	}
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::shared_ptr<GameObject>&);
 	void remove(std::shared_ptr<GameObject>&, bool DestroyObject);

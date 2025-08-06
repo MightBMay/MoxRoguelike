@@ -8,10 +8,24 @@
 
 void Enemy::init() {
 	EnemyManager::getInstance().add(parent->shared_from_this());
-		hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
+	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
 	// upon adding enemymovement, this gameobject becomes an enemy.
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
 	// we need a seperate manager for enemies to store their shared_ptr's.
+
+
+	_maxHp  = level * hpPerLevel();
+	_curHp  = _maxHp;
+	_damage = level * damagePerLevel();
+	_attackSpeed = attackSpeed();
+	float sizeRaw = size();
+	_size = sizeRaw * sizeRaw; // square size to save sqr root on distance checks.
+	_speed = speed();
+	_attackSize = attackSize();
+	halfSize = _size / 2.0;
+
+
+
 }
 void Enemy::Destroy() {
 	auto& parentPTR = parent;
@@ -33,7 +47,7 @@ void Enemy::update(float deltatime) {
 		parent->move(direction * getSpeed() * deltatime);
 	}
 
-	// checks attack timer and range check on playerObj, and deals damage if it should. 
+	// checks attack timer and range check on playerObj, and deals _damage if it should. 
 	if (Player::isVulnrable()) {
 		Attack(deltatime, _player);
 	}
@@ -52,7 +66,7 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 
 	// 32 is the radius of the playerObj hitbox. 
 	constexpr int playerSize = 32 * 32; // squared playerObj size, because we use sqr magnitude.
-	if ((playerObj->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= size) {
+	if ((playerObj->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= _size) {
 
 #pragma region make hitbox sprite
 		auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0,0.125f);
@@ -61,20 +75,21 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
 			hitbox->setPosition(parent->getPosition());
 			hitbox->setOrigin(16, 16);
-			hitbox->setScale(attackSize, attackSize);
+			hitbox->setScale(_attackSize, _attackSize);
 		}
 #pragma endregion
 
 		auto player = playerObj->getDerivativesOfComponent<Player>();
-		player->takeDamage(damage); // dmg playerObj (or subclass of playerObj)
-		attackTimer = attackSpeed; // reset attack timer.
+		player->takeDamage(_damage); // dmg playerObj (or subclass of playerObj)
+		attackTimer = _attackSpeed; // reset attack timer.
+		this->log();
 	}
 
 }
 
-bool Enemy::takeDamage(int damage) {
-	health -= damage;
-	if (health <= 0) {
+bool Enemy::takeDamage(int _damage) {
+	_curHp -= _damage;
+	if (_curHp <= 0) {
 		Destroy();
 		return true;
 	}

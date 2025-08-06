@@ -25,7 +25,7 @@ public:
 
 	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window);
 	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
-	virtual void takeDamage(int damage);
+	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
 	void ProcessEvent(const std::optional<sf::Event>& event)override;

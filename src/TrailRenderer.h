@@ -56,7 +56,7 @@ public :
 		thickness = newThickness;
 	}
 
-	void LoadShader(std::string texturePath) {
+	void LoadShader(std::string texturePath = "../assets/sprites/cardboard.png") {
 		auto shader = std::make_shared<sf::Shader>();
 		if (!shader->loadFromFile("../assets/shaders/trails/cardboard_trail.frag", sf::Shader::Type::Fragment)) {
 			std::cerr << "\nerror loading trail shader\n";
