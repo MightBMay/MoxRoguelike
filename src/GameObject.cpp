@@ -72,10 +72,10 @@ void GameObject::scaleObject(float factorX, float factorY) {
 // Sprite management
 void GameObject::setSprite(const std::string& path, const sf::IntRect& rect) {
     sprite = std::make_shared<MSprite>(path, rect);
-    renderable->drawable = sprite;
     sprite->setPosition(position);
     sprite->setRotation(sf::degrees(rotation));
     sprite->setScale(scale);
+    renderable->drawable = sprite;
    
  
 }

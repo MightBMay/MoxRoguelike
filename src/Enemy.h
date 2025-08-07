@@ -46,7 +46,7 @@ public:
 
 	static void SetPlayer(GameObject* player);
 	static GameObject* GetPlayer() { return _player; }
-	virtual void setSprite() const;
+	virtual void setSprite();
 	virtual void log() {
 		std::cout <<
 			"\nEnemy: " <<

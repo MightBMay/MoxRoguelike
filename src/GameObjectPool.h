@@ -8,9 +8,9 @@ class GameObjectPool
 {
 	std::vector<std::shared_ptr<GameObject>> _pool;
 	size_t next_available = 0;
-
+	
 public:
-	GameObjectPool() {
+	GameObjectPool(bool expandable = false) : expandable(expandable){
 
 	}
 
@@ -34,10 +34,13 @@ public:
 			);
 
 		if (next_available >= _pool.size()) {
-			// can be re-enabled to allow expansion.
-			//_pool.push_back(GameObject::Create());
-			//_pool.back()->setPoolIndex(_pool.size() - 1);
-			return nullptr;
+			if (!expandable) return nullptr;
+			// can be toggled here to allow expansion.
+			auto& obj = GameObject::Create(renderLayer);
+			obj->setPoolIndex(_pool.size() - 1);
+			_pool.push_back(obj);
+			return obj;
+			
 		}
 		auto obj = _pool[next_available++];
 		obj->setActive(true);
@@ -74,6 +77,6 @@ public:
 
 
 private:
-
+	bool expandable = false;
 };
 

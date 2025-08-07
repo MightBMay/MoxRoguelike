@@ -25,16 +25,21 @@ void Enemy::init() {
 	halfSize = _size / 2.0;
 
 	setSprite();
-
+	// have to manually add, since enemy object was created with no sprite, 
+	// it isn't added to renderlayers_ due to invalid drawable ptr.
+	GameObjectManager::getInstance().addExternalRenderable(parent->getRenderable(), 1);
 
 
 }
 
-void Enemy::setSprite() const {
+void Enemy::setSprite(){
 	parent->setSprite(
 		"../assets/sprites/twig.png",
 		sf::IntRect{ {0,0},{128,150} }
 	);
+	parent->setOrigin(64, 75);
+	
+	
 }
 
 void Enemy::Destroy() {
@@ -86,13 +91,17 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 			hitbox->setPosition(parent->getPosition());
 			hitbox->setOrigin(16, 16);
 			hitbox->setScale(_attackSize, _attackSize);
+			GameObjectManager::getInstance().add(hitbox, 0);
+		}
+		else
+		{
+			std::cout << "\nerror making hitbox visual";
 		}
 #pragma endregion
 
 		auto player = playerObj->getDerivativesOfComponent<Player>();
 		player->takeDamage(_damage); // dmg playerObj (or subclass of playerObj)
 		attackTimer = _attackSpeed; // reset attack timer.
-		this->log();
 	}
 
 }

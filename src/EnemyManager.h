@@ -22,6 +22,7 @@ public:
 	EnemyManager& operator=(const EnemyManager&) = delete;
 	
 
+	static void SpawnEnemy(int index, int level, int quantity);
 	static void SpawnEnemy(int index, int level);
 
 
@@ -31,7 +32,7 @@ public:
 
 		if (delay <= 0) {
 			// spawn random enemies here
-			std::cout << "\nspawn enemies\n";
+			//std::cout << "\nspawn enemies\n";
 			delay = rng::getInt(8, 16);
 		}
 		else {

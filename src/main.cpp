@@ -45,7 +45,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 
 	player.lock()->CreateWeapons(window);
 
-	
+
 	Projectile::player = playerObj;
 	Enemy::SetPlayer(playerObj.get());
 
@@ -53,40 +53,14 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 
 }
 
-void CreateTestEnemy(GameObjectManager& manager, EnemyManager& enemyManager) {
-	static GameObject* player = Enemy::GetPlayer();
-	std::shared_ptr<GameObject> enemy = GameObject::Create(
-		"../assets/sprites/twig.png",
-		sf::IntRect{ {0,0},{128,150} }
-	);
-
-	enemy->setOrigin(64, 75);
-	auto enemyMove = enemy->addComponent<TestEnemy>(5).lock();
-	enemyMove->init();
-
-
-
-	sf::Vector2f playerPos = player->getPosition();
-	enemy->setPosition(
-		playerPos +
-		sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
-
-	);
-
-	manager.setRenderLayer(enemy, 1);
-
-}
-
-
-
 
 int main() {
 #pragma region create window
-	window =std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
+	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	window->setFramerateLimit(144); // cap fps
+	//window->setFramerateLimit(144); // cap fps
 
-	
+
 
 #pragma endregion
 
@@ -106,7 +80,7 @@ int main() {
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 
 	auto& enemyManager = EnemyManager::getInstance();
-	
+
 	Projectile::projPool.init(512, 10);
 
 #pragma region make playerObj
@@ -122,22 +96,21 @@ int main() {
 #pragma region make background
 
 
-	
+
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
 		-110// move to layer -110 to stay behind things. 
 	);      //-100 because background is set to be UI so
-			// rendering will draw it using default sf::view . 
-	
+	// rendering will draw it using default sf::view . 
+
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
-											  
-	
+
+
 #pragma endregion
 
-	//for (int i = 0; i < 1028; i++)
-	//	CreateTestEnemy(manager, enemyManager);
+	EnemyManager::SpawnEnemy(0, 5, 1028);
 
 
 	while (window->isOpen()) {
@@ -154,13 +127,20 @@ int main() {
 
 			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 
-				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
+				switch (keyPressed->scancode)
+				{
+					case sf::Keyboard::Scancode::NumLock:
+						EnemyManager::SpawnEnemy(0, 5, 500);
+						break;
+
+
+					case sf::Keyboard::Scancode::Space:
+						std::cout<< "\nEnemies: "<<enemyManager.count();
+						break;
 					
-					EnemyManager::SpawnEnemy(0, 5);
-					std::cout << enemyManager.count();
-				
 				}
-				
+
+
 				/* unused atm, moved the input stuff to their own component.
 
 
@@ -184,7 +164,7 @@ int main() {
 		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 		window->clear();
-		
+
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.
 
 #pragma region FPS logging
@@ -193,7 +173,7 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			//std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
 
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;

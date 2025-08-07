@@ -18,6 +18,10 @@ EnemyManager& EnemyManager::getInstance() {
 }
 
 
+void EnemyManager::SpawnEnemy(int index, int level, int quantity) {
+    for (int i = 0; i < quantity; ++i)
+        SpawnEnemy(index, level);
+}
 void EnemyManager::SpawnEnemy(int index, int level) {
     static GameObject* player = Enemy::GetPlayer();
     std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);

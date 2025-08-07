@@ -12,7 +12,7 @@ constexpr size_t MAX_PROJECTILES = 512;
 class Projectile : public Component {
     friend class ProjectilePool;
 public:
-    static inline GameObjectPool<Projectile> projPool;
+    static inline GameObjectPool<Projectile> projPool{true};
     static inline std::weak_ptr<GameObject> player;
     int pierceCount = 0;
     sf::Vector2f direction = { 0,0 };
