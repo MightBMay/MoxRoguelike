@@ -34,14 +34,14 @@ std::shared_ptr<GameObject> abilDesc;
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
 		"../assets/sprites/gun.png",
-		sf::IntRect{ {0, 0}, {128, 128} }
+		sf::IntRect{ {0, 0}, {128, 128} },
+		5
 	);
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
 	player = playerObj->addComponent<Player>(3);
 	auto playerShared = player.lock();
 	playerShared->init();
-	manager.setRenderLayer(playerObj, 5);
 
 	player.lock()->CreateWeapons(window);
 
@@ -125,13 +125,14 @@ int main() {
 	
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
-		sf::IntRect{ {0,0},{1920,1080} }
-	);
+		sf::IntRect{ {0,0},{1920,1080} },
+		-110// move to layer -110 to stay behind things. 
+	);      //-100 because background is set to be UI so
+			// rendering will draw it using default sf::view . 
+	
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
-	manager.setRenderLayer(Background, -110); // move to layer -110 to stay behind things. 
-											  //-100 because background is set to be UI so
-											  // rendering will draw it using default sf::view . 
+											  
 	
 #pragma endregion
 
@@ -155,7 +156,7 @@ int main() {
 
 				if (keyPressed->scancode == sf::Keyboard::Scancode::Space) {
 					
-					CreateTestEnemy(manager, enemyManager);
+					EnemyManager::SpawnEnemy(0, 5);
 					std::cout << enemyManager.count();
 				
 				}

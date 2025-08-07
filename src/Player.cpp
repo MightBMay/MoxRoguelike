@@ -141,10 +141,9 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
 
-	abilityDescription = GameObject::Create();
+	abilityDescription = GameObject::Create(120);
 	abilityDescription->setPosition(1528, 652);
 	abilityDescription->setAsUI(true);
-	GameObjectManager::getInstance().setRenderLayer(abilityDescription, 120);
 	abilityDescription->addComponent<UI_AbilityDescription>(window);
 
 }

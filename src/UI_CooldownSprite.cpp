@@ -19,9 +19,6 @@ UI_CooldownSprite::UI_CooldownSprite(
 		rect);
 	cooldownObject->setAsUI(true);
 
-
-	//GameObjectManager::getInstance().setRenderLayer()
-
 }
 //initialize the UI_CooldownSprite.
 void UI_CooldownSprite::init(){

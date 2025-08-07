@@ -24,9 +24,19 @@ void Enemy::init() {
 	_attackSize = attackSize();
 	halfSize = _size / 2.0;
 
+	setSprite();
+
 
 
 }
+
+void Enemy::setSprite() const {
+	parent->setSprite(
+		"../assets/sprites/twig.png",
+		sf::IntRect{ {0,0},{128,150} }
+	);
+}
+
 void Enemy::Destroy() {
 	auto& parentPTR = parent;
 	EnemyManager::getInstance().remove(parentPTR, true);

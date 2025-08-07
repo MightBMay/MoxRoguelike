@@ -22,7 +22,8 @@ class GameObject : public std::enable_shared_from_this<GameObject>{
 public:
     // Constructors
     static std::shared_ptr<GameObject> Create();
-    static std::shared_ptr<GameObject> Create(const std::string& path, const sf::IntRect& rect = sf::IntRect());
+    static std::shared_ptr<GameObject> Create(const int renderLayer);
+    static std::shared_ptr<GameObject> Create(const std::string& path, const sf::IntRect& rect = sf::IntRect(), int renderLayer = 0);
 
 
     ~GameObject();

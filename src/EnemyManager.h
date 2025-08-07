@@ -2,12 +2,17 @@
 #include <SFML/Graphics.hpp>
 #include "GameObjectPool.h"
 #include "TimedDestroy.h"
+#include "GameObject.h"
 #include <memory>
 #include <vector>
+#include <functional>
 #include "Utility.h"
 
 
 class GameObject;
+using std::function, std::shared_ptr, std::map;
+
+
 
 class EnemyManager {
 public:
@@ -16,6 +21,10 @@ public:
 	EnemyManager(const EnemyManager&) = delete;
 	EnemyManager& operator=(const EnemyManager&) = delete;
 	
+
+	static void SpawnEnemy(int index, int level);
+
+
 	static void HandleSpawning(float deltaTime) {
 		static float delay = 0;
 
@@ -29,6 +38,10 @@ public:
 			delay -= deltaTime;
 		}
 	}
+
+
+
+
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::shared_ptr<GameObject>&);
 	void remove(std::shared_ptr<GameObject>&, bool DestroyObject);
@@ -51,4 +64,9 @@ private:
 
 	static inline GameObjectPool<TimedDestroy> hitboxVisuals;
 	std::vector<std::shared_ptr<GameObject>> enemyObjects_{};
+
+
+	static const map<int, function<void(shared_ptr<GameObject>, int)>> EnemyList;
+
+
 };

@@ -11,10 +11,16 @@ GameObject::GameObject(const std::string& path, const sf::IntRect& rect) {
 };
 
 
-std::shared_ptr<GameObject> GameObject::Create(const std::string& path, const sf::IntRect& rect) {
+std::shared_ptr<GameObject> GameObject::Create(const std::string& path, const sf::IntRect& rect, int renderLayer) {
     auto obj = std::shared_ptr<GameObject>(new GameObject(path, rect));
 
-    GameObjectManager::getInstance().add(obj);
+    GameObjectManager::getInstance().add(obj, renderLayer);
+    return obj;
+}
+
+std::shared_ptr<GameObject> GameObject::Create(const int renderLayer) {
+    auto obj = std::shared_ptr<GameObject>(new GameObject());
+    GameObjectManager::getInstance().add(obj,renderLayer);
     return obj;
 }
 
