@@ -3,6 +3,7 @@
 #include "GameObjectPool.h"
 #include "TimedDestroy.h"
 #include "GameObject.h"
+#include "Global.h"
 #include <memory>
 #include <vector>
 #include <functional>
@@ -42,6 +43,10 @@ public:
 
 
 
+	static inline int GetLevelFromTime() {
+		float t = (elapsed_seconds / 60.0f) + 2.0f;
+		return static_cast<int>(0.8f + 0.33f * t * t);
+	}
 
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::shared_ptr<GameObject>&);

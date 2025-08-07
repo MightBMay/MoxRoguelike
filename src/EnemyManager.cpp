@@ -37,6 +37,7 @@ void EnemyManager::SpawnEnemy(int index, int level) {
     );
 
 
+
 }
 
 void EnemyManager::add(std::shared_ptr<GameObject> obj) {

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
+#include <sstream>
 
 #include "GameObject.h"
 #include "MSprite.h"
@@ -58,7 +59,7 @@ int main() {
 #pragma region create window
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	//window->setFramerateLimit(144); // cap fps
+	window->setFramerateLimit(144); // cap fps
 
 
 
@@ -82,6 +83,17 @@ int main() {
 	auto& enemyManager = EnemyManager::getInstance();
 
 	Projectile::projPool.init(512, 10);
+#pragma region fps text stuff
+
+
+	std::ostringstream oss;
+	font.openFromFile("../assets/fonts/amazon ember.ttf");
+	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
+	fpsText->setOutlineThickness(2);
+	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
+	manager.addExternalRenderable(fpsTextRenderable, 1000);
+#pragma endregion
+
 
 #pragma region make playerObj
 	//std::shared_ptr<GameObject> playerObj; // declare playerObj
@@ -110,7 +122,11 @@ int main() {
 
 #pragma endregion
 
-	EnemyManager::SpawnEnemy(0, 5, 1028);
+	//EnemyManager::SpawnEnemy(0, 1, 1028);
+
+	second_Timer.start();
+	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
+		
 
 
 	while (window->isOpen()) {
@@ -130,12 +146,18 @@ int main() {
 				switch (keyPressed->scancode)
 				{
 					case sf::Keyboard::Scancode::NumLock:
-						EnemyManager::SpawnEnemy(0, 5, 500);
+						EnemyManager::SpawnEnemy(0, EnemyManager::GetLevelFromTime(), 1);
 						break;
 
 
 					case sf::Keyboard::Scancode::Space:
-						std::cout<< "\nEnemies: "<<enemyManager.count();
+						//std::cout<< "\nEnemies: "<<enemyManager.count();
+						std::cout << "\nlevel: "<<EnemyManager::GetLevelFromTime();
+						break;
+
+
+					case sf::Keyboard::Scancode::PageUp:
+						elapsed_seconds += 60;
 						break;
 					
 				}
@@ -173,8 +195,23 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			std::cout << "\rFPS: " << std::fixed << std::setprecision(1) << fps << std::flush;
+			oss.str("");// clear actual string
+			oss << "FPS: " << std::fixed << std::setprecision(1) << fps<< "\n";
 
+
+			int hours = elapsed_seconds / 3600;
+			int minutes = (elapsed_seconds / 60) % 60;
+			int seconds = elapsed_seconds % 60;
+
+			if (hours > 0)
+				oss << hours << ":";
+
+			oss << std::setfill('0') << std::setw(2) << minutes << ":"
+				<< std::setfill('0') << std::setw(2) << seconds;
+
+
+
+			fpsText->setString(oss.str());
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;
 		}

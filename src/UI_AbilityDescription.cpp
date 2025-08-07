@@ -8,7 +8,8 @@ void UI_AbilityDescription::init() {
 	}
 
 	text = std::make_shared<sf::Text>(*font);
-
+	text->setOutlineColor(sf::Color::Black);
+	text->setOutlineThickness(2);
 	rt = std::make_shared<sf::RenderTexture>(sf::Vector2u{390,300});
 	sprite = std::make_shared<sf::Sprite>(rt->getTexture());
 

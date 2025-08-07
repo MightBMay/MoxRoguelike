@@ -31,7 +31,7 @@ public:
         endEvent.invoke();
 
         if (isLooping) {
-            start();
+            start(true);
         }
         else {
             isStarted = false;
