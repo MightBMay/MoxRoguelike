@@ -28,14 +28,14 @@ public:
 	}
 
 	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
-		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
-			switch (mousePressed->button)
+		if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+			switch (keyPressed->scancode)
 			{
-			case sf::Mouse::Button::Right:
-				if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
-				break;
-			default:
-				break;
+				case sf::Keyboard::Scancode::E:
+					if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
+					break;
+				default:
+					break;
 			}
 		}
 	}

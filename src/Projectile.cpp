@@ -32,7 +32,7 @@ void Projectile::update(float deltaTime) {
 
 	}
 
-	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
+	auto inRangeEnemies = EnemyManager::getInstance().getInRange(curPos, statsP->projRadius);
 	// iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,

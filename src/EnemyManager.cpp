@@ -107,7 +107,7 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 /// <param name="position"></param>
 /// <param name="radius"></param>
 /// <returns></returns>
-std::vector<std::shared_ptr<GameObject>> EnemyManager::GetWithinRange(sf::Vector2f position, float radius) {
+std::vector<std::shared_ptr<GameObject>> EnemyManager::getInRange(sf::Vector2f& position, float radius) {
     std::vector<std::shared_ptr<GameObject>> inRange;
     for (auto& enemy : enemyObjects_) {
         if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemy>()->_size)
@@ -115,8 +115,43 @@ std::vector<std::shared_ptr<GameObject>> EnemyManager::GetWithinRange(sf::Vector
     }
     return inRange;
 }
+
+
 std::vector<std::shared_ptr<GameObject>> 
-EnemyManager::GetWithinRange(sf::FloatRect rect) {
+EnemyManager::getInRange(sf::FloatRect& rect) {
     std::vector<std::shared_ptr<GameObject>> inRange;
     return inRange;
+}
+
+
+std::shared_ptr<GameObject> EnemyManager::getFirstInRange(sf::Vector2f& position, float radius) {
+    for (auto& enemy : enemyObjects_) {
+        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemy>()->_size)
+            return enemy;
+    }
+    return nullptr;
+}
+
+/// <summary>
+/// Get the closest enemy object to the given position.
+/// </summary>
+/// <param name="position"> position to check distances from.</param>
+/// <param name="cutoffRadius"> maximum distance from position to check for. Keep in mind distance check uses square magnitude.</param>
+/// <returns> Closest enemy GameObject to given position. Keep in mind if you set a cutoff radius this CAN return nullptr.</returns>
+std::shared_ptr<GameObject> EnemyManager::getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr = std::numeric_limits<float>::infinity()) {
+    float closestDist = std::numeric_limits<float>::infinity();
+    std::shared_ptr<GameObject> closestObj = nullptr;
+    for (const auto& enemy : enemyObjects_) {
+        // get distance (squared)
+        const auto distance = (position - enemy->getPosition()).lengthSquared();
+        if (distance >= cutoffRadiusSqr) continue; // if outside radius, next enemy.
+
+        if (distance < closestDist) { // if closer than current closest, update.
+            closestDist = distance;
+            closestObj = enemy;
+        }
+
+    }
+
+    return closestObj;
 }

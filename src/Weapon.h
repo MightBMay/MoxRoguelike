@@ -41,6 +41,13 @@ private:
 
 class WeaponBase : public Component {
 
+private:
+	// Despite class abilities being programmed as weapons, 
+	// they should always be added manually in player::createweapons()
+	static const std::map<int, std::function<void(std::shared_ptr<GameObject>)>> weaponList;
+
+
+
 public:
 	WeaponBase(std::shared_ptr<WeaponStats>& stats):stats(stats){}
 

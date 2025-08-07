@@ -22,7 +22,7 @@ void Player::init() {
 void Player::update(float deltatime) {
 	hitFlickerTimer.update(deltatime);
 
-	if (direction.lengthSquared() < 0.15f) return; //only move if direction held.
+	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
 	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
@@ -40,19 +40,15 @@ void Player::ProcessEvent(const std::optional<sf::Event>& event) {
 
 	if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
 		switch (keyPressed->scancode) {
-		case sf::Keyboard::Scancode::Up:
 		case sf::Keyboard::Scancode::W:
 			direction.y = -1;
 			break;
-		case sf::Keyboard::Scancode::Down:
 		case sf::Keyboard::Scancode::S:
 			direction.y = 1;
 			break;
-		case sf::Keyboard::Scancode::Left:
 		case sf::Keyboard::Scancode::A:
 			direction.x = -1;
 			break;
-		case sf::Keyboard::Scancode::Right:
 		case sf::Keyboard::Scancode::D:
 			direction.x = 1;
 			break;
@@ -104,7 +100,7 @@ void Player::ProcessEvent(const std::optional<sf::Event>& event) {
 		}
 	}
 	
-	if (direction.lengthSquared() < 0)// only normalize if vector is non 0.
+	if (direction.lengthSquared() > 0)// only normalize if vector is non 0.
 		direction = direction.normalized(); 
 	UpdateFacingDirection();
 	
@@ -124,7 +120,7 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 0, 32, 0.0666f, 1),
+		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1),
 		window);
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 

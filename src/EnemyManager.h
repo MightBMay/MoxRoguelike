@@ -32,8 +32,7 @@ public:
 
 
 		if (delay <= 0) {
-			// spawn random enemies here
-			//std::cout << "\nspawn enemies\n";
+			SpawnEnemy(0, GetLevelFromTime(), rng::getInt(4,10));
 			delay = rng::getInt(8, 16);
 		}
 		else {
@@ -60,8 +59,11 @@ public:
 		return enemyObjects_.size();
 	}
 
-	std::vector<std::shared_ptr<GameObject>> GetWithinRange(sf::Vector2f position, float radius);
-	std::vector<std::shared_ptr<GameObject>> GetWithinRange(sf::FloatRect rect);
+	std::vector<std::shared_ptr<GameObject>> getInRange(sf::Vector2f& position, float radius);
+	std::vector<std::shared_ptr<GameObject>> getInRange(sf::FloatRect& rect);
+
+	std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
+	std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 
 
 private:
@@ -69,7 +71,7 @@ private:
 	~EnemyManager() = default;
 
 	static inline GameObjectPool<TimedDestroy> hitboxVisuals;
-	std::vector<std::shared_ptr<GameObject>> enemyObjects_{};
+	static inline std::vector<std::shared_ptr<GameObject>> enemyObjects_{};
 
 
 	static const map<int, function<void(shared_ptr<GameObject>, int)>> EnemyList;

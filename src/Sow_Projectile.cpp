@@ -18,7 +18,7 @@ void Sow_Projectile::update(float deltaTime) {
 	auto statsP = stats.lock();
 	static const float influenceRadiusSqr = 2500.0f; // 50px * 50px (adjust as needed)
 	static const float minSpeed = statsP->speed;
-	static const float maxSpeed = statsP->speed * 10.0f;
+	static const float maxSpeed = statsP->speed * 5.0f;
 	
 	sf::Vector2f mousePos = getMouseWorldPos(window, playerView);
 	sf::Vector2f curPos = parent->getPosition();
@@ -40,7 +40,7 @@ void Sow_Projectile::update(float deltaTime) {
 		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 												// it looping the last trail until new proj made.
 	}
-	auto inRangeEnemies = EnemyManager::getInstance().GetWithinRange(curPos, statsP->projRadius);
+	auto inRangeEnemies = EnemyManager::getInstance().getInRange(curPos, statsP->projRadius);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
 			sowedEnemies.insert(enemy);
