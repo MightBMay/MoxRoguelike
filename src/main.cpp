@@ -25,7 +25,9 @@
 
 #include "Player.h"
 #include "Enemy.h"
-#include "TestEnemy.h"
+#include "Input.h"
+
+
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
@@ -81,6 +83,8 @@ int main() {
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 
 	auto& enemyManager = EnemyManager::getInstance();
+	Input::Initialize();
+
 
 	Projectile::projPool.init(512, 10);
 #pragma region fps text stuff
@@ -135,7 +139,7 @@ int main() {
 		// Event handling (unchanged)
 		while (const std::optional event = window->pollEvent()) {
 
-
+			Input::HandleEvent(event);
 			if (event->is<sf::Event::Closed>()) {
 				window->close();
 			}
@@ -182,6 +186,7 @@ int main() {
 		}
 
 		// Update and render
+		Input::Update();
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
 		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);

@@ -10,7 +10,7 @@
 #include "Papyrmancer_Sow.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
-
+#include "Input.h"
 
 Player::Player(int health) : health(health), hitFlickerTimer(hitFlickerDuration){
 	abilityBarUI = std::make_shared<AbilityBar>();
@@ -21,6 +21,10 @@ void Player::init() {
 
 void Player::update(float deltatime) {
 	hitFlickerTimer.update(deltatime);
+
+
+	
+
 
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	parent->move( direction * speed * deltatime );
@@ -36,9 +40,10 @@ void Player::takeDamage(int _damage){
 
 
 void Player::ProcessEvent(const std::optional<sf::Event>& event) {
-
+	
 
 	if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+		
 		switch (keyPressed->scancode) {
 		case sf::Keyboard::Scancode::W:
 			direction.y = -1;
