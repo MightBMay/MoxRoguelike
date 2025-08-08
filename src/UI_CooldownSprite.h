@@ -4,45 +4,6 @@
 #include "MEvent.h"
 #include "UI_AbilityDescription.h"
 
-
-/*
-Example on how to make one.
-
-
-void CreateTestButton(GameObjectManager& manager, std::shared_ptr<GameObject> obj) {
-	sf::IntRect rect = sf::IntRect{ {0,0},{128,128} }; // make rect a varible or param, as the base and component want the same rect size
-	obj = GameObject::Create(
-		"../assets/sprites/cardboard.png",
-		rect
-	);
-	obj->setPosition(512, 512);  set position and transforms of base
-	obj->setOrigin(rect.size.x/2.0, rect.size.y/2.0);  set origin to the center of the texture.
-
-	manager.setRenderLayer(obj, 100);  set render layer (100 is arbitrary)
-										the component will go to the very next layer compared to the base
-
-	std::shared_ptr<UI_CooldownSprite> sprite = // create component.
-		obj->addComponent<UI_CooldownSprite>(
-			window,
-			weapon,
-			rect,
-			"../assets/sprites/shapes/bl_square_128.png").lock();
-
-
-}
-
-
-*/
-
-
-
-
-
-
-
-
-
-
 class MSprite;
 
 class UI_CooldownSprite : public UI_Element, public std::enable_shared_from_this<UI_CooldownSprite> {
@@ -73,7 +34,7 @@ public:
 			UI_AbilityDescription::clear();
 		}
 	}
-	virtual void OnClick(const Button& mouseButton) {}
+	virtual void OnClick(const int Button) {}
 	virtual void Destroy() override {
 		
 	}

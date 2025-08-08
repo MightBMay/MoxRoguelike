@@ -28,7 +28,6 @@ public:
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
-    virtual void ProcessEvent(const std::optional<sf::Event>& event)override;
     virtual const std::string& getSpritePath() const {
         return spritePath;
     }

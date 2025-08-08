@@ -18,19 +18,12 @@ public:
 
 	}
 
-	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
-		if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-			switch (keyPressed->scancode)
-			{
-				case sf::Keyboard::Scancode::Q:
-					if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
-					break;
-				default:
-					break;
-			}
+	virtual void update(float deltaTime)override {
+		if (Input::GetActionDown("ability1")) {
+			if (attackTimer <= 0) Fire();
 		}
 
-
+		attackTimer -= deltaTime;
 	}
 
 	const std::string getDescription() const override {

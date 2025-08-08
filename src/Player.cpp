@@ -21,12 +21,36 @@ void Player::init() {
 
 void Player::update(float deltatime) {
 	hitFlickerTimer.update(deltatime);
+	direction = { 0,0 };
+	if (Input::GetAction("up"))  
+		direction.y = -1; 
+
+	if (Input::GetAction("down"))  
+		direction.y = 1; 
+
+	if (Input::GetAction("left"))  
+		direction.x = -1; 
+
+	if (Input::GetAction("right"))  
+		direction.x = 1; 
+	
+	// edge case for holding opposites.
+	if (Input::GetActionUp("up") && Input::GetAction("down"))
+		direction.y = 1;
+
+	if (Input::GetActionUp("down") && Input::GetAction("up"))
+		direction.y = -1;
+
+	if (Input::GetActionUp("left") && Input::GetAction("right"))
+		direction.x = 1;
+
+	if (Input::GetActionUp("right") && Input::GetAction("left"))
+		direction.x = -1;
 
 
 	
-
-
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
+	direction = direction.normalized();
 	parent->move( direction * speed * deltatime );
 	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
@@ -38,78 +62,6 @@ void Player::takeDamage(int _damage){
 	parent->getSprite()->setColor(hitColour);
 }
 
-
-void Player::ProcessEvent(const std::optional<sf::Event>& event) {
-	
-
-	if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-		
-		switch (keyPressed->scancode) {
-		case sf::Keyboard::Scancode::W:
-			direction.y = -1;
-			break;
-		case sf::Keyboard::Scancode::S:
-			direction.y = 1;
-			break;
-		case sf::Keyboard::Scancode::A:
-			direction.x = -1;
-			break;
-		case sf::Keyboard::Scancode::D:
-			direction.x = 1;
-			break;
-		default:
-			break;
-		}
-	}
-
-	else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-		switch (keyReleased->scancode) {
-		case sf::Keyboard::Scancode::Up:
-		case sf::Keyboard::Scancode::W:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::S)) {
-				direction.y = 1; // Switch to opposite if still pressed. prevents weird issues when pressing opposing directions at the same time. done for all 4.
-			}
-			else {
-				direction.y = 0;
-			}
-			break;
-		case sf::Keyboard::Scancode::Down:
-		case sf::Keyboard::Scancode::S:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::W)) {
-				direction.y = -1;
-			}
-			else {
-				direction.y = 0;
-			}
-			break;
-		case sf::Keyboard::Scancode::Left:
-		case sf::Keyboard::Scancode::A:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D)) {
-				direction.x = 1;
-			}
-			else {
-				direction.x = 0;
-			}
-			break;
-		case sf::Keyboard::Scancode::Right:
-		case sf::Keyboard::Scancode::D:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A)) {
-				direction.x = -1;
-			}
-			else {
-				direction.x = 0;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	
-	if (direction.lengthSquared() > 0)// only normalize if vector is non 0.
-		direction = direction.normalized(); 
-	UpdateFacingDirection();
-	
-}
 
 void Player::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
@@ -125,7 +77,7 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1),
+		std::make_shared<WeaponStats>(1, 1000, 0, 32, 2 , 1),//0.0666f
 		window);
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 

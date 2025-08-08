@@ -14,7 +14,6 @@ public:
 	virtual void init() override;
 	virtual void update(float deltaTime);
 	virtual void Destroy() {}
-	void ProcessEvent(const std::optional<sf::Event>& event) final;
 
 protected:
 	/// <summary>
@@ -25,33 +24,13 @@ protected:
 
 
 	// make these all pure virtuals
-	virtual void ProcessMouseClick(const sf::Event::MouseButtonPressed& click) {
-		if (wasHovering) {
-			switch (click.button)
-			{
-			case Button::Left:
-				OnClick(Button::Left);
-				break;
-
-			case Button::Right:
-				OnClick(Button::Right);
-				break;
-
-			case Button::Middle:
-				OnClick(Button::Middle);
-				break;
-
-
-			default:
-				break;
-			}
-		}
-	}
-	virtual void ProcessKeyboardDown(const sf::Event::KeyPressed& key) {}
-	virtual void ProcessKeyboardUp(const sf::Event::KeyReleased& key) {}
+	virtual void onMouseClick();
+	virtual void onKeyboardDown() {}
+	virtual void onKeyboardHold() {}
+	virtual void onKeyboardUp() {}
 	virtual void OnHover() = 0;
 	virtual void OnHoverExit() = 0;
-	virtual void OnClick(const Button& mouseButton) = 0;
+	virtual void OnClick(const int button) = 0;
 
 
 

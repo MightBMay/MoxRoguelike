@@ -61,7 +61,6 @@ public:
 	virtual void Fire() = 0;
 	virtual void init() = 0;
 	virtual void Destroy() = 0;
-	virtual void ProcessEvent(const std::optional<sf::Event>& event) = 0;
 
 	std::shared_ptr<WeaponStats> getStats() const { return stats; }
 	float getAttackSpeed() const { return stats->attackSpeed; }
@@ -99,20 +98,6 @@ public:
 	}
 	virtual void init() override {}
 	virtual void Destroy()override {}
-	virtual void ProcessEvent(const std::optional<sf::Event>& event)override {
-		if (const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>()) {
-			switch (mousePressed->button)
-			{
-			case sf::Mouse::Button::Left:
-				if (attackTimer <= 0) Fire(); // if fire rate's timer is done, shoot.
-				break;
-			case sf::Mouse::Button::Right:
-			case sf::Mouse::Button::Middle:
-			default:
-				break;
-			}
-		}
-	}
 	virtual const std::string getDescription() const override { return "weapon test class"; };
 	
 

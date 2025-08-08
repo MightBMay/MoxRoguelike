@@ -47,13 +47,9 @@ public:
 protected:
 
 	// overridden to do nothing when clicked.
-	void ProcessMouseClick(const sf::Event::MouseButtonPressed& click)override {}
-	void ProcessKeyboardDown(const sf::Event::KeyPressed& key)override {}
-	void ProcessKeyboardUp(const sf::Event::KeyReleased& key)override {}
-	void OnClick(const Button& mouseButton) {}
-
 	void OnHover() override;
 	void OnHoverExit()override;
+	void OnClick(const int button) override {}
 	
 private:
 	

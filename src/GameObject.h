@@ -177,12 +177,7 @@ public:
 
     void setShader(std::shared_ptr<sf::Shader> newShader) { renderable->shader = newShader; }
 
-    void handleEvent(const std::optional<sf::Event>& event) {
-        for (auto& component : components) {
-            component->ProcessEvent(event);
-        }
-    }
-
+ 
     // Drawing
     void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
@@ -236,10 +231,7 @@ public:
     // Update and render
     void updateAll(float deltaTime);
     void renderAll(sf::RenderTarget& target);
-   
-
-    void processEvent(const std::optional<sf::Event>& event);
-    
+     
 
     // Layer management
     void setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer);

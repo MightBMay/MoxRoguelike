@@ -5,33 +5,42 @@
 
 class Input {
 public:
+    static constexpr int MOUSE_LEFT = 0;
+    static constexpr int MOUSE_RIGHT = 1;
+    static constexpr int MOUSE_MIDDLE = 2;
+    static constexpr int MOUSE_4 = 3;
+    static constexpr int MOUSE_5 = 4;
+
     using Action = std::string; // or enum class
 
     // Set up default key bindings
     static void Initialize() {
-        s_actionToKeys.clear();
+        _actionToKeys.clear();
 
         // Example default bindings
         BindKey("up", sf::Keyboard::Scan::W);
         BindKey("down", sf::Keyboard::Scan::S);
         BindKey("left", sf::Keyboard::Scan::A);       
         BindKey("right", sf::Keyboard::Scan::D);
+        BindKey("ability1", sf::Keyboard::Scan::Q);
+        BindKey("ability2", sf::Keyboard::Scan::E);
     }
 
     // Bind a key to an action (replaces any existing bindings for this action)
     static void BindKey(const Action& action, sf::Keyboard::Scancode code) {
-        s_actionToKeys[action] = { code };
+        _actionToKeys[action] = { code };
     }
 
     // Bind multiple keys to an action
     static void BindKeys(const Action& action, const std::vector<sf::Keyboard::Scancode>& codes) {
-        s_actionToKeys[action] = codes;
+        _actionToKeys[action] = codes;
     }
+#pragma region actions
 
     // Check if any key bound to an action is pressed
     static bool GetAction(const Action& action) {
-        auto it = s_actionToKeys.find(action);
-        if (it != s_actionToKeys.end()) {
+        auto it = _actionToKeys.find(action);
+        if (it != _actionToKeys.end()) {
             for (auto key : it->second) {
                 if (GetKey(key)) return true;
             }
@@ -41,8 +50,8 @@ public:
 
     // Check if any key bound to an action was just pressed
     static bool GetActionDown(const Action& action) {
-        auto it = s_actionToKeys.find(action);
-        if (it != s_actionToKeys.end()) {
+        auto it = _actionToKeys.find(action);
+        if (it != _actionToKeys.end()) {
             for (auto key : it->second) {
                 if (GetKeyDown(key)) return true;
             }
@@ -52,18 +61,64 @@ public:
 
     // Check if any key bound to an action was just released
     static bool GetActionUp(const Action& action) {
-        auto it = s_actionToKeys.find(action);
-        if (it != s_actionToKeys.end()) {
+        auto it = _actionToKeys.find(action);
+        if (it != _actionToKeys.end()) {
             for (auto key : it->second) {
                 if (GetKeyUp(key)) return true;
             }
         }
         return false;
     }
+#pragma endregion
+
+#pragma region key
+
+
+
+    static bool GetKey(sf::Keyboard::Scancode code) {
+        auto it = _keyStates.find(code);
+        return it != _keyStates.end() &&
+            (it->second == KeyState::Pressed || it->second == KeyState::JustPressed);
+    }
+
+    static bool GetKeyDown(sf::Keyboard::Scancode code) {
+        auto it = _keyStates.find(code);
+        return it != _keyStates.end() && it->second == KeyState::JustPressed;
+    }
+
+    static bool GetKeyUp(sf::Keyboard::Scancode code) {
+        auto it = _keyStates.find(code);
+        return it != _keyStates.end() && it->second == KeyState::JustReleased;
+    }
+#pragma endregion
+
+#pragma region Mouse
+        // Mouse button support with integer codes
+    static bool GetMouse(int button) {
+        auto it = _mouseStates.find(button);
+        return it != _mouseStates.end() &&
+            (it->second == KeyState::Pressed || it->second == KeyState::JustPressed);
+    }
+
+    static bool GetMouseDown(int button) {
+        auto it = _mouseStates.find(button);
+        return it != _mouseStates.end() && it->second == KeyState::JustPressed;
+    }
+
+    static bool GetMouseUp(int button) {
+        auto it = _mouseStates.find(button);
+        return it != _mouseStates.end() && it->second == KeyState::JustReleased;
+    }
+#pragma endregion
 
     // Original key-based methods
     static void Update() {
-        for (auto& [key, state] : s_keyStates) {
+        for (auto& [key, state] : _keyStates) {
+            if (state == KeyState::JustPressed) state = KeyState::Pressed;
+            else if (state == KeyState::JustReleased) state = KeyState::Released;
+        }
+
+        for (auto& [button, state] : _mouseStates) {
             if (state == KeyState::JustPressed) state = KeyState::Pressed;
             else if (state == KeyState::JustReleased) state = KeyState::Released;
         }
@@ -71,32 +126,52 @@ public:
 
     static void HandleEvent(const std::optional<sf::Event>& event) {
         if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
-            bool isRepeat = (s_keyStates[keyEvent->scancode] == KeyState::Pressed ||
-                s_keyStates[keyEvent->scancode] == KeyState::JustPressed);
+            bool isRepeat = (_keyStates[keyEvent->scancode] == KeyState::Pressed ||
+                _keyStates[keyEvent->scancode] == KeyState::JustPressed);
 
             if (!isRepeat) {
-                s_keyStates[keyEvent->scancode] = KeyState::JustPressed;
+                _keyStates[keyEvent->scancode] = KeyState::JustPressed;
             }
         }
         else if (const auto* keyEvent = event->getIf<sf::Event::KeyReleased>()) {
-            s_keyStates[keyEvent->scancode] = KeyState::JustReleased;
+            _keyStates[keyEvent->scancode] = KeyState::JustReleased;
         }
-    }
 
-    static bool GetKey(sf::Keyboard::Scancode code) {
-        auto it = s_keyStates.find(code);
-        return it != s_keyStates.end() &&
-            (it->second == KeyState::Pressed || it->second == KeyState::JustPressed);
-    }
+        if (const auto* mouseEvent = event->getIf<sf::Event::MouseButtonPressed>()) {
+            int button = -1;
+            switch (mouseEvent->button) {
+                case sf::Mouse::Button::Left:   button = MOUSE_LEFT; break;
+                case sf::Mouse::Button::Right:  button = MOUSE_RIGHT; break;
+                case sf::Mouse::Button::Middle: button = MOUSE_MIDDLE; break;
+                case sf::Mouse::Button::Extra1: button = MOUSE_4; break;
+                case sf::Mouse::Button::Extra2: button = MOUSE_5; break;
+                default: break;
+            }
 
-    static bool GetKeyDown(sf::Keyboard::Scancode code) {
-        auto it = s_keyStates.find(code);
-        return it != s_keyStates.end() && it->second == KeyState::JustPressed;
-    }
+            if (button != -1) {
+                bool isRepeat = (_mouseStates[button] == KeyState::Pressed ||
+                    _mouseStates[button] == KeyState::JustPressed);
+                if (!isRepeat) {
+                    _mouseStates[button] = KeyState::JustPressed;
+                }
+            }
+        }
+        else if (const auto* mouseEvent = event->getIf<sf::Event::MouseButtonReleased>()) {
+            int button = -1;
+            switch (mouseEvent->button) {
+                case sf::Mouse::Button::Left:   button = MOUSE_LEFT; break;
+                case sf::Mouse::Button::Right:  button = MOUSE_RIGHT; break;
+                case sf::Mouse::Button::Middle: button = MOUSE_MIDDLE; break;
+                case sf::Mouse::Button::Extra1: button = MOUSE_4; break;
+                case sf::Mouse::Button::Extra2: button = MOUSE_5; break;
+                default: break;
+            }
 
-    static bool GetKeyUp(sf::Keyboard::Scancode code) {
-        auto it = s_keyStates.find(code);
-        return it != s_keyStates.end() && it->second == KeyState::JustReleased;
+            if (button != -1) {
+                _mouseStates[button] = KeyState::JustReleased;
+            }
+        }
+
     }
 
 private:
@@ -107,7 +182,8 @@ private:
         JustReleased
     };
 
-    static inline std::unordered_map<sf::Keyboard::Scancode, KeyState> s_keyStates;
-    static inline std::unordered_map<Action, std::vector<sf::Keyboard::Scancode>> s_actionToKeys;
+    static inline std::unordered_map<sf::Keyboard::Scancode, KeyState> _keyStates;
+    static inline std::unordered_map<int, KeyState> _mouseStates;
+    static inline std::unordered_map<Action, std::vector<sf::Keyboard::Scancode>> _actionToKeys;
 };
 

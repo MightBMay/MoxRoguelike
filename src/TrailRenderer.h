@@ -32,7 +32,7 @@ public :
 	virtual void update(float deltaTime) override;
 	
 	virtual void Destroy()override;
-	virtual void ProcessEvent(const std::optional<sf::Event>& event) {}
+
 
 	
 	void clear() {

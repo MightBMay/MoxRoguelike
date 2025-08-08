@@ -51,6 +51,6 @@ void Projectile::update(float deltaTime) {
 }
 
 void Projectile::Destroy() {}
-void Projectile::ProcessEvent(const std::optional<sf::Event>& event) {}
+
 
 

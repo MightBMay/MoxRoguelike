@@ -15,7 +15,7 @@ public:
 
 
 
-	virtual void OnClick(const Button& mouseButton) override{
+	virtual void OnClick(const int button) override{
 		onClickEvent.invoke();
 	}
 

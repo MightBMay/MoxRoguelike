@@ -136,58 +136,20 @@ int main() {
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
 		float deltaTime = Delta_Timer.asSeconds();
-		// Event handling (unchanged)
+		// handle sfml events and update input.
 		while (const std::optional event = window->pollEvent()) {
 
 			Input::HandleEvent(event);
-			if (event->is<sf::Event::Closed>()) {
+			
+			if (event->is<sf::Event::Closed>()) 
 				window->close();
-			}
-
-
-			else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
-
-				switch (keyPressed->scancode)
-				{
-					case sf::Keyboard::Scancode::NumLock:
-						EnemyManager::SpawnEnemy(0, EnemyManager::GetLevelFromTime(), 1);
-						break;
-
-
-					case sf::Keyboard::Scancode::Space:
-						//std::cout<< "\nEnemies: "<<enemyManager.count();
-						std::cout << "\nlevel: "<<EnemyManager::GetLevelFromTime();
-						break;
-
-
-					case sf::Keyboard::Scancode::PageUp:
-						elapsed_seconds += 60;
-						break;
-					
-				}
-
-
-				/* unused atm, moved the input stuff to their own component.
-
-
-				}
-				else if (const auto* keyReleased = event->getIf<sf::Event::KeyReleased>()) {
-
-				}
-				*/
-
-
-
-
-
-			}
-			manager.processEvent(event); //Sends event to ALL gameobjects. easy but kinda inefficient, improve later.
-
+			
 		}
-
+		
 		// Update and render
-		Input::Update();
+		
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
+		Input::Update();
 		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 		window->clear();

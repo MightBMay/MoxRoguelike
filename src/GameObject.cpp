@@ -289,20 +289,6 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
 }
 
 
-void GameObjectManager::processEvent(const std::optional<sf::Event>& event) {
-    for (auto& objWeak : gameObjects_) {
-        try {
-            auto& obj = objWeak.lock();
-            if (obj && obj->isActive() && obj->hasComponents()) {
-                obj->handleEvent(event);
-            }
-        }catch (...) {
-            objWeak.reset();
-            std::cerr << "Tried to process event on a null gameobject pointer\n";
-        }
-    }
-}
-
 void GameObjectManager::setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer) {
     if (!obj) return;
 

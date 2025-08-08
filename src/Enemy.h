@@ -62,7 +62,7 @@ public:
 
 	virtual void init() override;
 	virtual void update(float deltatime) override;
-	virtual void ProcessEvent(const std::optional<sf::Event>& event) {};
+
 
 protected:
 
