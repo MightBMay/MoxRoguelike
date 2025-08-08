@@ -30,6 +30,8 @@ public:
 		if (Input::GetActionDown("ability2")) {
 			if (attackTimer <= 0) Fire();
 		}
+		attackTimer -= deltaTime;
+		cooldownTickEvent.invoke(attackTimer);
 	}
 
 

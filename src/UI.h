@@ -7,7 +7,7 @@ using sf::Mouse::Button;
 class GameObject;
 
 
-class UI_Element : public Component {
+class UI_Element : public virtual Component {
 public:
 
 	UI_Element(const std::shared_ptr<sf::RenderWindow>& window) : window(window) {}

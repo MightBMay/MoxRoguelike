@@ -8,18 +8,19 @@ class Timer;
 class GameObject;
 class AbilityBar;
 class UI_AbilityDescription;
+class ProgressBar;
 
 class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
-	
-	int health = 0;
+	int maxHealth;
+	int curHealth;
 	float speed = 300.0f;
 	float size = 32;
 	sf::Vector2f direction{ 0,0 };
 	// 0 == right, 1 = left
 	bool facingDirection = false;
 
-	Player(int health);
+	Player(int maxhealth);
 
 	static bool isVulnrable() { return _isVulnrable; }
 
@@ -33,6 +34,9 @@ public:
 protected:
 	std::shared_ptr < GameObject> abilityDescription;
 	std::shared_ptr<AbilityBar> abilityBarUI;
+
+	std::shared_ptr<GameObject> healtBarObj;
+	std::weak_ptr<ProgressBar> healthBar;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
 
 	void ResetHitFlicker() {

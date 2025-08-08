@@ -17,7 +17,7 @@
 #include "Background.h"
 #include "Vignette.h"
 #include "Global.h"
-
+#include "ProgressBar.h"
 #include "TrailRenderer.h"
 
 //#include "CameraController.h"  can be used as an alternative camera controller. 
@@ -34,7 +34,7 @@ std::shared_ptr<sf::View> playerView;
 std::shared_ptr<GameObject> player;
 std::shared_ptr<GameObject> abilDesc;
 
-void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>& player, GameObjectManager& manager) {
+void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
 		"../assets/sprites/gun.png",
 		sf::IntRect{ {0, 0}, {128, 128} },
@@ -42,11 +42,8 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 	);
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
-	player = playerObj->addComponent<Player>(3);
-	auto playerShared = player.lock();
-	playerShared->init();
+	playerObj->addComponent<Player>(100);
 
-	player.lock()->CreateWeapons(window);
 
 
 	Projectile::player = playerObj;
@@ -58,15 +55,13 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, std::weak_ptr<Player>&
 
 
 int main() {
-#pragma region create window
+#pragma region create window and initialize global.h variables
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
 	window->setFramerateLimit(144); // cap fps
-
-
-
+	font.openFromFile("../assets/fonts/amazon ember.ttf");
 #pragma endregion
-
+	
 #pragma region create delta time dt_clock
 	sf::Clock dt_clock;
 	sf::Time Delta_Timer;
@@ -81,38 +76,23 @@ int main() {
 #pragma endregion
 
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
-
-	auto& enemyManager = EnemyManager::getInstance();
+	Projectile::projPool.init(512, 10);
 	Input::Initialize();
 
-
-	Projectile::projPool.init(512, 10);
+	
 #pragma region fps text stuff
 
-
-	std::ostringstream oss;
-	font.openFromFile("../assets/fonts/amazon ember.ttf");
 	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
 	fpsText->setOutlineThickness(2);
 	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
 	manager.addExternalRenderable(fpsTextRenderable, 1000);
+
 #pragma endregion
 
-
-#pragma region make playerObj
-	//std::shared_ptr<GameObject> playerObj; // declare playerObj
-	std::weak_ptr<Player> p_move; // get pointer to playerObj's movement component.
-	CreatePlayer(player, p_move, manager); // seperate method cuz it took a lot of space.
-
-	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
-	vignetteObj->addComponent<Vignette>();
-#pragma endregion
+	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
 
 
 #pragma region make background
-
-
-
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
@@ -123,14 +103,15 @@ int main() {
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
 
+	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObj->addComponent<Vignette>();
 
 #pragma endregion
 
-	//EnemyManager::SpawnEnemy(0, 1, 1028);
 
 	second_Timer.start();
 	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
-		
+	std::ostringstream timer_stringStream;
 
 
 	while (window->isOpen()) {
@@ -162,8 +143,8 @@ int main() {
 
 		if (timeSinceLastUpdate >= updateInterval) {
 			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			oss.str("");// clear actual string
-			oss << "FPS: " << std::fixed << std::setprecision(1) << fps<< "\n";
+			timer_stringStream.str("");// clear actual string
+			timer_stringStream << "FPS: " << std::fixed << std::setprecision(1) << fps<< "\n";
 
 
 			int hours = elapsed_seconds / 3600;
@@ -171,14 +152,14 @@ int main() {
 			int seconds = elapsed_seconds % 60;
 
 			if (hours > 0)
-				oss << hours << ":";
+				timer_stringStream << hours << ":";
 
-			oss << std::setfill('0') << std::setw(2) << minutes << ":"
+			timer_stringStream << std::setfill('0') << std::setw(2) << minutes << ":"
 				<< std::setfill('0') << std::setw(2) << seconds;
 
 
 
-			fpsText->setString(oss.str());
+			fpsText->setString(timer_stringStream.str());
 			frameCount = 0;
 			timeSinceLastUpdate = sf::Time::Zero;
 		}

@@ -10,13 +10,28 @@
 #include "Papyrmancer_Sow.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
+#include "ProgressBar.h"
 #include "Input.h"
 
-Player::Player(int health) : health(health), hitFlickerTimer(hitFlickerDuration){
+Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
 	abilityBarUI = std::make_shared<AbilityBar>();
 }
 void Player::init() {
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
+	CreateWeapons(window);
+	sf::IntRect& rect = sf::IntRect{ {0,0},{256,32} };
+	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", rect, 130);
+	healtBarObj->getSprite()->SetRepeated(true);
+	healtBarObj->setPosition(0, 1048);
+	healthBar = healtBarObj->addComponent<ProgressBar>(
+		rect,
+		"../assets/sprites/shapes/bl_square_128.png",
+		true,
+		0,
+		maxHealth);
+	healthBar.lock()->update(maxHealth);
+
+
 }
 
 void Player::update(float deltatime) {
@@ -56,10 +71,11 @@ void Player::update(float deltatime) {
 }
 
 void Player::takeDamage(int _damage){
-	health -= _damage;
+	curHealth -= _damage;
 	_isVulnrable = false;
 	hitFlickerTimer.start();
 	parent->getSprite()->setColor(hitColour);
+	healthBar.lock()->updateBar(curHealth);
 }
 
 
@@ -77,7 +93,7 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 1000, 0, 32, 2 , 1),//0.0666f
+		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1),
 		window);
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 

@@ -24,6 +24,7 @@ public:
 		}
 
 		attackTimer -= deltaTime;
+		cooldownTickEvent.invoke(attackTimer);
 	}
 
 	const std::string getDescription() const override {

@@ -9,6 +9,6 @@ struct Renderable {
 		return drawable.lock() == other.drawable.lock();
 	}
 	Renderable() :shader(nullptr) {}
-	Renderable(std::weak_ptr<sf::Drawable> drawable, std::shared_ptr<sf::Shader> shader):
+	Renderable(std::weak_ptr<sf::Drawable> drawable, std::shared_ptr<sf::Shader> shader = nullptr):
 	drawable(drawable), shader(shader){}
 };
