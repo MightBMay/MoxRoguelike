@@ -80,11 +80,10 @@ protected:
 
 
 // need to store projectiletype somehow.
-template<typename ProjectileType>
+template<typename projectileType>
 class  Weapon :public WeaponBase
 {
 public:
-	using projectileType = ProjectileType;
 	Weapon(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
 		WeaponBase(stats), window(window) {}
 

@@ -18,8 +18,8 @@ public:
 
 private:
     static constexpr float orbitRadius = 150.0f; // Your desired orbit distance
-    static constexpr sf::Angle orbitSpeed = sf::radians(2.0f); // Degrees per second
-    static constexpr float duration = 5;
+    static constexpr sf::Angle orbitSpeed = sf::radians(2.0f * PI); // radians per second
+    static constexpr float duration = 2;
     float remainingDuration = duration;
 
     static inline std::shared_ptr<GameObject> player_s = nullptr;

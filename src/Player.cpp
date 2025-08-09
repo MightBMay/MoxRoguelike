@@ -14,7 +14,7 @@
 #include "Papyrmancer_Reap.h"
 #include "Papyrmancer_Sow.h"
 #include "AutoWeapon.h"
-#include "OrbitProjectile.h"
+#include "AoeProjectile.h"
 
 
 Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
@@ -108,8 +108,8 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
-	auto weaponR = parent->addComponent<AutoWeapon<OrbitProjectile>>(
-		std::make_shared<WeaponStats>(3, 900, 600, 32, 3/5.0f, 35)
+	auto weaponR = parent->addComponent<AutoWeapon<AOE_Projectile>>(
+		std::make_shared<WeaponStats>(3, 900, 600, 32, 0.5f, 35)
 		);
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
