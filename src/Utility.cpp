@@ -38,9 +38,6 @@ sf::Vector2f getMouseWorldPos(
     return getMouseWorldPos(*window, *playerView);
 }
 
-
-
-
 std::mt19937& rng::getEngine() {
     static std::mt19937 engine(std::random_device{}());
     return engine;

@@ -7,8 +7,11 @@ TrailRenderer::TrailRenderer(float duration, float thickness, sf::Color startCol
 
 void TrailRenderer::update(float deltaTime) {
 
+    timeSinceLastUpdate += deltaTime;// increment timer
+    if (timeSinceLastUpdate < updateInterval) return; // do not continue until timer has passed an interval
+    timeSinceLastUpdate = 0; // reset timer and continue adding points.
+
 	auto now = std::chrono::steady_clock::now();
-	
 	// Add new point
 	points.push_back({ parent->getPosition(), now });
 

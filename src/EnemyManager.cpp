@@ -117,12 +117,6 @@ std::vector<std::shared_ptr<GameObject>> EnemyManager::getInRange(sf::Vector2f& 
 }
 
 
-std::vector<std::shared_ptr<GameObject>> 
-EnemyManager::getInRange(sf::FloatRect& rect) {
-    std::vector<std::shared_ptr<GameObject>> inRange;
-    return inRange;
-}
-
 
 std::shared_ptr<GameObject> EnemyManager::getFirstInRange(sf::Vector2f& position, float radius) {
     for (auto& enemy : enemyObjects_) {
@@ -138,7 +132,10 @@ std::shared_ptr<GameObject> EnemyManager::getFirstInRange(sf::Vector2f& position
 /// <param name="position"> position to check distances from.</param>
 /// <param name="cutoffRadius"> maximum distance from position to check for. Keep in mind distance check uses square magnitude.</param>
 /// <returns> Closest enemy GameObject to given position. Keep in mind if you set a cutoff radius this CAN return nullptr.</returns>
-std::shared_ptr<GameObject> EnemyManager::getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr = std::numeric_limits<float>::infinity()) {
+std::shared_ptr<GameObject> EnemyManager::getClosest(
+    const sf::Vector2f& position, 
+    const float cutoffRadius = std::numeric_limits<float>::infinity()) {
+    const float cutoffRadiusSqr = cutoffRadius * cutoffRadius;
     float closestDist = std::numeric_limits<float>::infinity();
     std::shared_ptr<GameObject> closestObj = nullptr;
     for (const auto& enemy : enemyObjects_) {

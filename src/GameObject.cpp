@@ -87,7 +87,10 @@ void GameObject::setOrigin(const sf::Vector2f& origin) {
 
 
 void GameObject::removeSprite() {
-    sprite->Destroy();
+    if (sprite) {
+        sprite->Destroy();
+        renderable->drawable.reset();
+    }
     sprite.reset();
 }
 

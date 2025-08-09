@@ -23,6 +23,8 @@ private:
 	std::shared_ptr<Renderable> renderable = nullptr;
 
 	bool emitting = true;
+	static constexpr float updateInterval = 1.0f / 60.0f;
+	float timeSinceLastUpdate = 0;
 
 protected:
 	void draw(sf::RenderTarget& window, sf::RenderStates states)const override;

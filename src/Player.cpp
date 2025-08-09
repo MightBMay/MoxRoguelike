@@ -4,14 +4,18 @@
 #include <math.h>
 #include "Timer.h"
 #include "Projectile.h"
-#include "Sow_Projectile.h"
-#include "Reap_Projectile.h"
-#include "Papyrmancer_Reap.h"
-#include "Papyrmancer_Sow.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
 #include "ProgressBar.h"
 #include "Input.h"
+
+#include "Sow_Projectile.h"
+#include "Reap_Projectile.h"
+#include "Papyrmancer_Reap.h"
+#include "Papyrmancer_Sow.h"
+#include "AutoWeapon.h"
+#include "OrbitProjectile.h"
+
 
 Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
 	abilityBarUI = std::make_shared<AbilityBar>();
@@ -104,9 +108,9 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
-	auto weaponR = parent->addComponent<Weapon<Projectile>>(
-		std::make_shared<WeaponStats>(1, 500, 500, 32, 5, 1),
-		window);
+	auto weaponR = parent->addComponent<AutoWeapon<OrbitProjectile>>(
+		std::make_shared<WeaponStats>(3, 900, 600, 32, 3/5.0f, 35)
+		);
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
 

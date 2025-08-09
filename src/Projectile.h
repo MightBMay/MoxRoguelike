@@ -28,6 +28,7 @@ public:
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
+    virtual void CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP);
     virtual const std::string& getSpritePath() const {
         return spritePath;
     }

@@ -15,7 +15,6 @@ void Projectile::init() {
 	parent->setOrigin(16, 16);
 	parent->setRotation(vectorToAngle(direction));
 	parent->setPosition(startPos); // actually move projectile to the player position as well.
-	parent->addComponent<TrailRenderer>(0.125f, 20);
 }
 
 
@@ -32,8 +31,15 @@ void Projectile::update(float deltaTime) {
 
 	}
 
-	auto inRangeEnemies = EnemyManager::getInstance().getInRange(curPos, statsP->projRadius);
-	// iterate over all enemies within range of projectile.
+	CheckEnemies(curPos, statsP);
+
+	
+
+}
+
+void Projectile::CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP) {
+	auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
+// iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
 		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
@@ -47,7 +53,6 @@ void Projectile::update(float deltaTime) {
 		}
 
 	}
-
 }
 
 void Projectile::Destroy() {}

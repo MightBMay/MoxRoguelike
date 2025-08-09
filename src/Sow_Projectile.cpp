@@ -40,7 +40,7 @@ void Sow_Projectile::update(float deltaTime) {
 		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 												// it looping the last trail until new proj made.
 	}
-	auto inRangeEnemies = EnemyManager::getInstance().getInRange(curPos, statsP->projRadius);
+	auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
 			sowedEnemies.insert(enemy);

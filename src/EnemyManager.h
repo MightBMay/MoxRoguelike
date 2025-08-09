@@ -16,6 +16,11 @@ using std::function, std::shared_ptr, std::map;
 
 
 class EnemyManager {
+
+	static constexpr int minSpawnInterval = 6;
+	static constexpr int maxSpawnInterval = 12;
+
+
 public:
 	static EnemyManager& getInstance();
 	
@@ -33,7 +38,7 @@ public:
 
 		if (delay <= 0) {
 			SpawnEnemy(0, GetLevelFromTime(), rng::getInt(4,10));
-			delay = rng::getInt(8, 16);
+			delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
 		}
 		else {
 			delay -= deltaTime;
@@ -59,14 +64,14 @@ public:
 		return enemyObjects_.size();
 	}
 
-	std::vector<std::shared_ptr<GameObject>> getInRange(sf::Vector2f& position, float radius);
-	std::vector<std::shared_ptr<GameObject>> getInRange(sf::FloatRect& rect);
-
-	std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
-	std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
+	static std::vector<std::shared_ptr<GameObject>> getInRange(sf::Vector2f& position, float radius);
+	static std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
+	static std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 
 
 private:
+	
+
 	EnemyManager() { hitboxVisuals.init(512, 0); };
 	~EnemyManager() = default;
 
