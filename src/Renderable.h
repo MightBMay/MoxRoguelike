@@ -1,5 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <memory>
 struct Renderable {
 	std::weak_ptr<sf::Drawable> drawable;

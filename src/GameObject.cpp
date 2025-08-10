@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Component.h"
+#include "Renderable.h"
 #include "Global.h"
 #include "UI.h"
 
@@ -137,6 +138,8 @@ void GameObject::Log() const {
         
 
 }
+
+void GameObject::setShader(std::shared_ptr<sf::Shader> newShader) { renderable->shader = newShader; }
 
 
 // manager
@@ -330,4 +333,12 @@ int GameObjectManager::getRenderLayer(const std::shared_ptr<GameObject>& obj) co
         }
     }
     return 0;
+}
+
+void GameObjectManager::log() {
+    std::cout << "\n#Gameobjects: " << gameObjects_.size() <<
+        "\nrender layers: " << renderLayers_.size() << "\n";
+    for (auto& [layer, renderables] : renderLayers_) {
+        std::cout << layer << ": " << renderables.size() << "\n";
+    }
 }

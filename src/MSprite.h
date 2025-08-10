@@ -1,6 +1,7 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include "Drawing.h"
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <memory>
 #include <string>
 #include "TextureManager.h"

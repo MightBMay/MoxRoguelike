@@ -1,4 +1,7 @@
-#include <SFML/Window.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
+
 #include <unordered_map>
 #include <string>
 #include <vector>

@@ -14,7 +14,8 @@
 #include "Papyrmancer_Reap.h"
 #include "Papyrmancer_Sow.h"
 #include "AutoWeapon.h"
-#include "AoeProjectile.h"
+#include "BoomerangProjectile.h"
+#include "OrbitProjectile.h"
 
 
 Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
@@ -102,14 +103,14 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
 
-	auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
-		std::make_shared<WeaponStats>(1, 1500, 0, 32, .4, 1),
-		window);
+	 auto weaponE = parent->addComponent<AutoWeapon<OrbitProjectile>>( //parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
+		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 30));
+		//window);
 	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
-	auto weaponR = parent->addComponent<AutoWeapon<AOE_Projectile>>(
-		std::make_shared<WeaponStats>(3, 900, 600, 32, 0.5f, 35)
+	auto weaponR = parent->addComponent<AutoWeapon<BoomerangProjectile>>(
+		std::make_shared<WeaponStats>(3, 900, 500, 32, 0.5f, 1)
 		);
 
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));

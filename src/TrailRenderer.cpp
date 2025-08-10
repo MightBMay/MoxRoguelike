@@ -1,6 +1,7 @@
 #include "TrailRenderer.h"
 #include "GameObject.h"
-
+#include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 TrailRenderer::TrailRenderer(float duration, float thickness, sf::Color startColour, sf::Color endColour)
     : duration(duration), startColour(startColour),endColour(endColour), thickness(thickness) {
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include "Timer.h"
 extern std::shared_ptr<sf::RenderWindow> window;
 extern std::shared_ptr<sf::View> playerView;

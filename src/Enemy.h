@@ -3,6 +3,8 @@
 #include "Component.h"
 #include "Timer.h"
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 class GameObject;
 
 class Enemy : public Component, public std::enable_shared_from_this<Enemy> {

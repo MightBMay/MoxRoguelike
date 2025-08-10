@@ -1,7 +1,9 @@
 #pragma once
 #include <random>
 #include <cmath> 
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/View.hpp>
 
 
 

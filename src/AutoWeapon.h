@@ -9,7 +9,7 @@ public:
 	AutoWeapon(std::shared_ptr<WeaponStats>& stats):WeaponBase(stats){}
 
 	virtual void Fire() override {
-		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), 600);
+		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), stats->range);
 		if (!closestEnemy) return;
 		sf::Vector2f direction =  closestEnemy->getPosition() - parent->getPosition();
 		auto projectile = projPool.make<projectileType>(5, direction.normalized(), stats);

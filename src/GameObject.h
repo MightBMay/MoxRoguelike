@@ -1,12 +1,18 @@
 #pragma once
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Transform.hpp>
+#include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+
 #include <memory>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <iostream>
-#include <SFML/Graphics.hpp>
-
-
+#include <map>
 #include "Renderable.h"
 #include "Component.h"
 #include "MSprite.h"
@@ -17,6 +23,7 @@
 
 class Component;
 class GameObjectManager;
+class Renderable;
 
 class GameObject : public std::enable_shared_from_this<GameObject>{
 public:
@@ -175,7 +182,7 @@ public:
     bool hasComponents() const { return !components.empty(); }
     void Log() const;
 
-    void setShader(std::shared_ptr<sf::Shader> newShader) { renderable->shader = newShader; }
+    void setShader(std::shared_ptr<sf::Shader> newShader);
 
  
     // Drawing
@@ -237,13 +244,7 @@ public:
     void setRenderLayer(const std::shared_ptr<GameObject>& obj, int newLayer);
     int getRenderLayer(const std::shared_ptr<GameObject>& obj) const;
 
-    void log() {
-        std::cout << "\n#Gameobjects: " << gameObjects_.size() <<
-            "\nrender layers: " << renderLayers_.size()<<"\n";
-        for (auto& [layer, renderables] : renderLayers_) {
-            std::cout << layer << ": " << renderables.size()<<"\n";
-        }
-    }
+    void log();
 
 private:
     GameObjectManager() = default;
