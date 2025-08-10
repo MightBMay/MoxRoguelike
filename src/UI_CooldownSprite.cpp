@@ -34,14 +34,14 @@ void UI_CooldownSprite::init(){
 	cdSprite->setColor(sf::Color(192, 192, 192, 96)); // set translucent white, and repeating (in case base texture not big enough)
 	cdSprite->SetRepeated(true);
 	auto textureRect = cdSprite->getTextureRect().size; // get size
-	cdSprite->SetRepeated(true);
+
 	
 	cooldownObject->setOrigin( textureRect.x/2.0, +textureRect.y ); // set origin to center horizontally, and bottom vertically
 																	// this covers the sprite, and scales the top edge downwards.
 
 	// set position to the base sprite's position, plus offset to keep it covering the base sprite.
 	cooldownObject->setPosition(parent->getPosition() + sf::Vector2f{ 0.0f,static_cast<float>(textureRect.y/2)});
-	cooldownObject->setScale(originalScale); // copy base scale, in case it was scaled before adding component.
+	//cooldownObject->setScale(originalScale.x, 0); // copy base scale, in case it was scaled before adding component.
 
 	auto& manager = GameObjectManager::getInstance();
 	manager.setRenderLayer(cooldownObject, manager.getRenderLayer(parent)+1 ); // set to layer above the parent object

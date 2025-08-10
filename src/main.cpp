@@ -11,7 +11,6 @@
 #include "GameObject.h"
 #include "MSprite.h"
 #include "Utility.h"
-
 #include "TextureManager.h"
 #include "EnemyManager.h"
 #include "Projectile.h"
@@ -24,10 +23,6 @@
 #include "Global.h"
 #include "ProgressBar.h"
 #include "TrailRenderer.h"
-
-//#include "CameraController.h"  can be used as an alternative camera controller. 
-							  // currently just manually tracking in player.cpp/h;
-
 #include "Player.h"
 #include "Enemy.h"
 #include "Input.h"
@@ -137,7 +132,7 @@ int main() {
 		
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
 		Input::Update();
-		EnemyManager::HandleSpawning(deltaTime);
+		//EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 		window->clear();
 

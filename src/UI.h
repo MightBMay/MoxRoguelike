@@ -7,13 +7,16 @@ using sf::Mouse::Button;
 class GameObject;
 
 
-class UI_Element : public virtual Component {
+class UI_Element : public Component {
 public:
 
 	UI_Element(const std::shared_ptr<sf::RenderWindow>& window) : window(window) {}
 	virtual void init() override;
 	virtual void update(float deltaTime);
 	virtual void Destroy() {}
+	virtual void SetEnabled(bool value) {
+		 enabled = value;
+	}
 
 protected:
 	/// <summary>
@@ -32,6 +35,7 @@ protected:
 	virtual void OnHoverExit() = 0;
 	virtual void OnClick(const int button) = 0;
 
+	bool enabled = true;
 
 
 private:

@@ -5,6 +5,7 @@
 struct Renderable {
 	std::weak_ptr<sf::Drawable> drawable;
 	std::shared_ptr<sf::Shader> shader;
+	bool enabled = true;
 
 	bool operator==(const Renderable& other) const {
 		return drawable.lock() == other.drawable.lock();

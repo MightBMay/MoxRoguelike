@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "GameObject.h"
 #include "Global.h"
-#include <math.h>
 #include "Timer.h"
 #include "Projectile.h"
 #include "UI_CooldownSprite.h"
@@ -20,10 +19,11 @@
 
 Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
 	abilityBarUI = std::make_shared<AbilityBar>();
+	weaponBarUI = std::make_shared<WeaponBar>();
 }
 void Player::init() {
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
-	CreateWeapons(window);
+	CreateAbilities(window);
 	sf::IntRect& rect = sf::IntRect{ {0,0},{256,32} };
 	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", rect, 130);
 	healtBarObj->getSprite()->SetRepeated(true);
@@ -36,6 +36,15 @@ void Player::init() {
 		maxHealth);
 	healthBar.lock()->update(maxHealth);
 
+
+	AddWeapon(0, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(1, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(2, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(3, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(4, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(5, WeaponBase::CreateWeapon(0, parent));
+
+	weaponBarUI->Hide();
 
 }
 
@@ -93,7 +102,15 @@ void Player::UpdateFacingDirection() {
 	}
 }
 
-void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
+void Player::AddWeapon(int index, std::weak_ptr<WeaponBase> weapon) {
+	if (index > 6 || index < 0) return;// check index bounds
+	std::shared_ptr<WeaponBase> weaponS = weapon.lock();
+	if (weapon.expired() || !weaponS) return;// check weapon status.
+	weaponHolder[index] = weapon;
+	weaponBarUI->LinkWeapon(index, weaponS);
+}
+
+void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
 
@@ -103,21 +120,25 @@ void Player::CreateWeapons(std::shared_ptr<sf::RenderWindow> window) {
 	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
 
-	 auto weaponE = parent->addComponent<AutoWeapon<OrbitProjectile>>( //parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
-		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 30));
-		//window);
+	 auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
+		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1),
+		 window
+		 );
 	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
-	auto weaponR = parent->addComponent<AutoWeapon<BoomerangProjectile>>(
-		std::make_shared<WeaponStats>(3, 900, 500, 32, 0.5f, 1)
-		);
-
+	auto weaponR = WeaponBase::CreateWeapon(1, parent);
 	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
+
+	abilityHolder[0] = weaponQ;
+	abilityHolder[1] = weaponE;
+	abilityHolder[2] = weaponR;
+
 
 	abilityDescription = GameObject::Create(120);
 	abilityDescription->setPosition(1528, 652);
 	abilityDescription->setAsUI(true);
+
 	abilityDescription->addComponent<UI_AbilityDescription>(window);
 
 }

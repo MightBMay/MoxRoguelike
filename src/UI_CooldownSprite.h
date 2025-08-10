@@ -40,7 +40,10 @@ public:
 	}
 	void CalculateScaleFromCooldown(float curTimer);
 
-
+	virtual void SetEnabled(bool value) override{
+		enabled = value;
+		cooldownObject->getRenderable()->enabled = value;
+	}
 
 
 private:
@@ -51,5 +54,6 @@ private:
 	std::weak_ptr<WeaponBase> weapon;
 	float weaponMaxCooldown = 0;
 	sf::Vector2f originalScale;
+
 
 };

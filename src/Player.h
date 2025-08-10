@@ -7,8 +7,10 @@
 class Timer;
 class GameObject;
 class AbilityBar;
+class WeaponBar;
 class UI_AbilityDescription;
 class ProgressBar;
+
 
 class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
@@ -24,20 +26,32 @@ public:
 
 	static bool isVulnrable() { return _isVulnrable; }
 
-	virtual void CreateWeapons(std::shared_ptr<sf::RenderWindow> window);
+	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
 	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
+	std::shared_ptr<WeaponBar>& getWeaponBar() { return weaponBarUI; }
+
+	virtual void AddWeapon(int index, std::weak_ptr<WeaponBase> weapon);
 	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
 	virtual void Destroy() override {}
 
 protected:
-	std::shared_ptr < GameObject> abilityDescription;
+	// ability stuff.
+	std::shared_ptr <GameObject> abilityDescription;
 	std::shared_ptr<AbilityBar> abilityBarUI;
+	std::array<std::weak_ptr<WeaponBase>, 3> abilityHolder;
 
+	//health and healthbar
 	std::shared_ptr<GameObject> healtBarObj;
 	std::weak_ptr<ProgressBar> healthBar;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
+
+
+	//picked up weapons
+	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder;
+	std::shared_ptr<WeaponBar> weaponBarUI;
+
 
 	void ResetHitFlicker() {
 		parent->getSprite()->setColor(sf::Color::White);

@@ -45,6 +45,7 @@ void UI_Element::update(float deltaTime) {
 
 
 bool UI_Element::isHovering() {
+	if (!enabled) return false;
 
 	// get sprite from parent
 	auto sprite = parent->getSprite();

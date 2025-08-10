@@ -44,12 +44,30 @@ class WeaponBase : public Component {
 private:
 	// Despite class abilities being programmed as weapons, 
 	// they should always be added manually in player::createweapons()
-	static const std::map<int, std::function<void(std::shared_ptr<GameObject>)>> weaponList;
+
+	/// <summary>
+	/// List containing construction methods for weapons *NOT ABILITIES*
+	/// The methods also return a pointer to the WeaponBase of the created weapon.
+	/// 
+	/// weapon stats are also set in the definition of the map.
+	/// </summary>
+	static const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> weaponList;
 
 
 
 public:
 	WeaponBase(std::shared_ptr<WeaponStats>& stats):stats(stats){}
+
+	static std::weak_ptr<WeaponBase> CreateWeapon(int index, std::shared_ptr<GameObject>& playerObj) {
+		auto it = weaponList.find(index); // search map for index
+		//if index not found, return and error log.
+		if (it == weaponList.end()) { 
+			std::cerr << "weapon index out of bounds / not found."; 
+			return std::weak_ptr<WeaponBase>();
+		}
+		
+		return it->second(playerObj); // calls function stored in enemylist which 
+	}
 
 	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
 

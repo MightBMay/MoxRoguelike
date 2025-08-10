@@ -267,23 +267,23 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
         }
 
         // Draw all renderables in this layer
-        for (auto& obj : renderables) {
-            if (obj) {
+        for (auto& renderable : renderables) {
+            if (renderable && renderable->enabled) {
               
-                if (!obj->drawable.lock()) continue;
+                if (!renderable->drawable.lock()) continue;
                     
 
                 
 
-                if (obj->shader) {// only make state if shader exists.
+                if (renderable->shader) {// only make state if shader exists.
                     sf::RenderStates state = sf::RenderStates::Default; 
-                    state.shader = obj->shader.get(); // get shader if it exists.
+                    state.shader = renderable->shader.get(); // get shader if it exists.
 
-                    target.draw(*obj->drawable.lock(), state);
+                    target.draw(*renderable->drawable.lock(), state);
                 }
 
                 // otherwise draw normally
-                else target.draw(*obj->drawable.lock());
+                else target.draw(*renderable->drawable.lock());
                     
                 
             }
