@@ -73,14 +73,51 @@ public:
 			// calculate offset based off how many abilities
 			const sf::Vector2f offsetPerAbility = sf::Vector2f(32 + (66 * index), 32);
 			// make gameobject with desired sprite and rect.
-			auto& abilitySprite = GameObject::Create(spritePath, rect, 110);
-			abilitySprite->setPosition(weaponBarPosition + offsetPerAbility); // set position accordingly
-			abilitySprite->setOrigin(32, 32); // center icon.
-			abilitySprite->setAsUI(true);
-			abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+			auto& weaponSprite = GameObject::Create(spritePath, rect, 110);
+			weaponSprite->setPosition(weaponBarPosition + offsetPerAbility); // set position accordingly
+			weaponSprite->setOrigin(32, 32); // center icon.
+			weaponSprite->setAsUI(true);
+			weaponSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
-			weaponCDSprites[index] = abilitySprite; // store sprite
+			weaponCDSprites[index] = weaponSprite; // store sprite
 
 
 	}
+};
+
+class StatUpgradeBar {
+	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1528, 952);
+	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
+public:
+	void Show() {
+		for (auto& cdSprite : statCDSprites)
+			if (cdSprite) {
+				cdSprite->getRenderable()->enabled = true;
+			}
+	}
+	void Hide() {
+		for (auto& cdSprite : statCDSprites)
+			if (cdSprite) {
+				cdSprite->getRenderable()->enabled = false;
+			}
+	}
+
+	void LinkStat(int index, std::shared_ptr<WeaponBase> wepBase, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
+		std::string spritePath = "../assets/sprites/cardboard.png") {
+
+		if (index > 5 || index < 0) return; // keep in bounds of array.
+		// calculate offset based off how many abilities
+		const sf::Vector2f offsetPerAbility = sf::Vector2f(32 + (66 * index), 32);
+		// make gameobject with desired sprite and rect.
+		auto& statSprite = GameObject::Create(spritePath, rect, 110);
+		statSprite->setPosition(weaponBarPosition + offsetPerAbility); // set position accordingly
+		statSprite->setOrigin(32, 32); // center icon.
+		statSprite->setAsUI(true);
+		statSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+
+		statCDSprites[index] = statSprite; // store sprite
+
+
+	}
+
 };

@@ -42,7 +42,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& man
 	);
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
-	playerObj->addComponent<Player>(100);
+	playerObj->addComponent<Player>();
 
 
 

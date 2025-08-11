@@ -17,9 +17,11 @@
 #include "OrbitProjectile.h"
 
 
-Player::Player(int maxHealth) : maxHealth(maxHealth),curHealth(maxHealth), hitFlickerTimer(hitFlickerDuration) {
+Player::Player() : hitFlickerTimer(hitFlickerDuration) {
+	stats = std::make_shared<PlayerStats>(100, 300);
 	abilityBarUI = std::make_shared<AbilityBar>();
 	weaponBarUI = std::make_shared<WeaponBar>();
+	statUpgradeUI= std::make_shared<StatUpgradeBar>();
 }
 void Player::init() {
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
@@ -28,21 +30,23 @@ void Player::init() {
 	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", rect, 130);
 	healtBarObj->getSprite()->SetRepeated(true);
 	healtBarObj->setPosition(0, 1048);
+	int maxHp = stats->getMaxHp();
 	healthBar = healtBarObj->addComponent<ProgressBar>(
 		rect,
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
 		0,
-		maxHealth);
-	healthBar.lock()->update(maxHealth);
+		maxHp);
+	auto healthBarS = healthBar.lock();
+	healthBarS->updateBar(maxHp);
+	healthBarS->setFillColor(sf::Color(192, 64, 64, 128));
 
-
-	AddWeapon(0, WeaponBase::CreateWeapon(0, parent));
-	AddWeapon(1, WeaponBase::CreateWeapon(0, parent));
-	AddWeapon(2, WeaponBase::CreateWeapon(0, parent));
-	AddWeapon(3, WeaponBase::CreateWeapon(0, parent));
-	AddWeapon(4, WeaponBase::CreateWeapon(0, parent));
-	AddWeapon(5, WeaponBase::CreateWeapon(0, parent));
+	AddWeapon(0, 0);
+	AddWeapon(1, 0);
+	AddWeapon(2, 1);
+	AddWeapon(3, 1);
+	AddWeapon(4, 2);
+	AddWeapon(5, 2);
 
 	weaponBarUI->Hide();
 
@@ -80,16 +84,17 @@ void Player::update(float deltatime) {
 	
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	direction = direction.normalized();
-	parent->move( direction * speed * deltatime );
+	parent->move( direction * stats->Speed() * deltatime );
 	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
 }
 
 void Player::takeDamage(int _damage){
-	curHealth -= _damage;
+	int& curHp = stats->getCurHp();
+	curHp -= _damage;
 	_isVulnrable = false;
 	hitFlickerTimer.start();
 	parent->getSprite()->setColor(hitColour);
-	healthBar.lock()->updateBar(curHealth);
+	healthBar.lock()->updateBar(curHp);
 }
 
 
@@ -102,12 +107,12 @@ void Player::UpdateFacingDirection() {
 	}
 }
 
-void Player::AddWeapon(int index, std::weak_ptr<WeaponBase> weapon) {
-	if (index > 6 || index < 0) return;// check index bounds
-	std::shared_ptr<WeaponBase> weaponS = weapon.lock();
-	if (weapon.expired() || !weaponS) return;// check weapon status.
-	weaponHolder[index] = weapon;
-	weaponBarUI->LinkWeapon(index, weaponS);
+void Player::AddWeapon(int slotIndex, int weaponIndex) {
+	if (slotIndex > 6 || slotIndex < 0) return;// check slotIndex bounds
+	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(0, parent).lock();
+	weaponHolder[slotIndex] = weapon;
+	weaponIndices[slotIndex] = weaponIndex;
+	weaponBarUI->LinkWeapon(slotIndex, weapon);
 }
 
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {

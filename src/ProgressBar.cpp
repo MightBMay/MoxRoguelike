@@ -11,7 +11,7 @@ ProgressBar::ProgressBar(
 	fillSprite = std::make_shared<MSprite>(fillSpritePath, rect);
 
 	renderable = std::make_shared<Renderable>(fillSprite);
-	setFillColor(sf::Color(192, 64, 64, 128));
+	
 }
 
 
