@@ -31,10 +31,10 @@ public:
 		std::string path = "../assets/sprites/cardboard.png") {
 		if (index > 3 || index < 0) return; // keep in bounds of array.
 		// calculate offset based off how many abilities
-		const sf::Vector2f offsetPerAbility = sf::Vector2f( 64 + (132 * index), 64 ); 
+		const sf::Vector2f offsetPerSprite= sf::Vector2f( 64 + (132 * index), 64 ); 
 		// make gameobject with desired sprite and rect.
 		auto& abilitySprite = GameObject::Create(path, rect, 110); 
-		abilitySprite->setPosition(abilityBarPosition + offsetPerAbility); // set position accordingly
+		abilitySprite->setPosition(abilityBarPosition + offsetPerSprite); // set position accordingly
 		abilitySprite->setOrigin(64, 64); // center icon.
 		abilitySprite->setAsUI(true);
 		abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
@@ -71,10 +71,10 @@ public:
 
 			if (index > 5 || index < 0) return; // keep in bounds of array.
 			// calculate offset based off how many abilities
-			const sf::Vector2f offsetPerAbility = sf::Vector2f(32 + (66 * index), 32);
+			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
 			// make gameobject with desired sprite and rect.
 			auto& weaponSprite = GameObject::Create(spritePath, rect, 110);
-			weaponSprite->setPosition(weaponBarPosition + offsetPerAbility); // set position accordingly
+			weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
 			weaponSprite->setOrigin(32, 32); // center icon.
 			weaponSprite->setAsUI(true);
 			weaponSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
@@ -86,7 +86,7 @@ public:
 };
 
 class StatUpgradeBar {
-	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1528, 952);
+	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1528, 952);
 	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
 public:
 	void Show() {
@@ -102,18 +102,18 @@ public:
 			}
 	}
 
-	void LinkStat(int index, std::shared_ptr<WeaponBase> wepBase, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
+	void LinkStat(int index, std::shared_ptr<StatUpgrade> stat, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
 		std::string spritePath = "../assets/sprites/cardboard.png") {
 
 		if (index > 5 || index < 0) return; // keep in bounds of array.
 		// calculate offset based off how many abilities
-		const sf::Vector2f offsetPerAbility = sf::Vector2f(32 + (66 * index), 32);
+		const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
 		// make gameobject with desired sprite and rect.
 		auto& statSprite = GameObject::Create(spritePath, rect, 110);
-		statSprite->setPosition(weaponBarPosition + offsetPerAbility); // set position accordingly
+		statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly
 		statSprite->setOrigin(32, 32); // center icon.
 		statSprite->setAsUI(true);
-		statSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+		//statSprite->addComponent<UI_CooldownSprite>(window, , rect); // create cd sprite (layer will be set to base object's layer +1)
 
 		statCDSprites[index] = statSprite; // store sprite
 

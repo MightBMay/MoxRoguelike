@@ -10,35 +10,68 @@ class AbilityBar;
 class WeaponBar;
 class StatUpgradeBar;
 class StatUpgrade;
+enum StatType;
 class UI_AbilityDescription;
 class ProgressBar;
+
+struct StatGroup {
+
+private:
+	int base = 0;
+	int flat = 0;
+	float mult = 1.0f;
+	
+public:
+	StatGroup() {}
+	StatGroup(int base) :base(base) {}
+
+	int& getBase() { return base; }
+	int& getFlat() { return flat; }
+	float& getMult() { return mult; }
+
+	int evaluate() const {
+		return static_cast<int>((base + flat) * mult);
+	}
+	int evaluate(int base) const{
+		return static_cast<int>((base + flat) * mult);
+	}
+
+
+
+};
 
 struct PlayerStats {
 public:
 
-	PlayerStats(int maxHp, int speed):maxHp(maxHp), curHp(maxHp), speed(speed){}
+	PlayerStats( std::array<std::shared_ptr<StatUpgrade>,6>& upgradeArray, int maxHp,int defence, int healthRegen, int speed )
+		:statUpgrades(upgradeArray), maxHp(maxHp), curHp(maxHp/2),defence(defence), healthRegen(healthRegen), speed(speed) {}
 
-	int& getMaxHp() { return maxHp; }
+	int& getMaxHp() { return maxHp.getBase(); }
 	int& getCurHp() { return curHp; }
-	float& getSpeed(){ return speed; }
+	int& getHealthRegen(){ return healthRegen.getBase(); }
+	int& getSpeed(){ return speed.getBase(); }
 	const float getSize() { return size; }
 
-	const int& MaxHp() const { return maxHp; }
-	const int& CurHp() const { return curHp; }
-	const float& Speed() const { return speed; }
-	const float& Size() const { return size; }
+	// non modifiable stats
+	const int MaxHp() const;
+	const int HealthRegen()const;
+	const int Damage(int originalDamage)const;
+	const float Speed() const;
+	const float& Size() const;
 
-
+	void AddUpgrade(StatType type);
+	void RecalculateStats();
 
 
 private:
-	int maxHp;
+	std::array< std::shared_ptr<StatUpgrade>,6>& statUpgrades;
 	int curHp;
-
-	float speed = 300;
-
-	const float size  = 32;
-
+	const float size = 32;
+	StatGroup maxHp;
+	StatGroup defence;
+	StatGroup healthRegen;
+	StatGroup speed;
+	StatGroup damage;
 };
 
 
@@ -48,16 +81,21 @@ public:
 	sf::Vector2f direction{ 0,0 };
 	// 0 == right, 1 = left
 	bool facingDirection = false;
-
+	MEvent<int> onMaxHealthChange;
 	Player();
+
+
+	void HandleRegen(float deltatime);
 
 	static bool isVulnrable() { return _isVulnrable; }
 
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
 	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
 	std::shared_ptr<WeaponBar>& getWeaponBar() { return weaponBarUI; }
+	std::shared_ptr<StatUpgradeBar>& getStatBar() { return statUpgradeUI; }
 
 	virtual void AddWeapon(int slotIndex, int weaponIndex);
+	virtual void AddStat(StatType& type) { stats->AddUpgrade(type); }
 	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
@@ -84,6 +122,8 @@ protected:
 	std::shared_ptr<StatUpgradeBar> statUpgradeUI;
 	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
 
+
+	float healthRegenTimer = 1;
 
 	void ResetHitFlicker() {
 		parent->getSprite()->setColor(sf::Color::White);

@@ -25,24 +25,23 @@ public:
 
 	static void setDescription(std::shared_ptr<WeaponBase> weapon) {
 		if (!weapon) { std::cerr << "\nInvalid weapon pointer (UI_AbiityDescription setDescription)"; return; }
-
-
-		text->setString(weapon->getDescription());
+		setDescription(weapon->getDescription());
 		
-		
-		rt->clear(sf::Color::Transparent);	
-		
-		
+	}
+	static void setDescription(std::string str) {
+		if (str.empty())return;
+		text->setString(str);
+		rt->clear(sf::Color::Transparent);
 		rt->draw(*bgSprite);
 		rt->draw(*text);
 		rt->display();
-
-
-
 		sprite->setTexture(rt->getTexture());
 		sprite->setPosition(spritePosition);
 		renderable->drawable = sprite;
-		GameObjectManager::getInstance().addExternalRenderable(renderable, 121 ); // background for ability description is on 120.
+		GameObjectManager& manager = GameObjectManager::getInstance();
+		manager.removeExternalRenderable(renderable); // remove the renderable to garentee duplicate additions cant happen.
+		manager.addExternalRenderable(renderable, 121); // background for ability description is on 120.
+
 	}
 
 	static void clear() {

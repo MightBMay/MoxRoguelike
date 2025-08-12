@@ -7,7 +7,7 @@
 #include "UI_AbilityBar.h"
 #include "ProgressBar.h"
 #include "Input.h"
-
+#include "StatUpgrade.h"
 #include "Sow_Projectile.h"
 #include "Reap_Projectile.h"
 #include "Papyrmancer_Reap.h"
@@ -17,8 +17,68 @@
 #include "OrbitProjectile.h"
 
 
+
+
+
+
+
+
+
+
+
+const int PlayerStats::MaxHp() const { 
+	return maxHp.evaluate();
+}
+const int PlayerStats::HealthRegen()const {
+	return healthRegen.evaluate();
+}
+const float PlayerStats::Speed() const { 
+	return speed.evaluate();
+}
+const int PlayerStats::Damage(int originalDamage) const { 
+	return damage.evaluate(originalDamage);
+}
+const float& PlayerStats::Size() const { return size; }
+
+void PlayerStats::AddUpgrade(StatType type) {
+	for (auto& upgrade :statUpgrades) { // iterate upgrade array
+
+		if (!upgrade) { // if array element is null, fill with new upgrade, then exit.
+			upgrade = std::make_shared<StatUpgrade>(type);
+			break;
+		}
+		else if (upgrade->type == type) { // if upgrade is contained already, level the existing one.
+			upgrade->LevelUp();
+			break;
+		}
+
+	}
+
+	RecalculateStats();
+	
+}
+
+void PlayerStats::RecalculateStats() {
+	for (const auto& upgrade : statUpgrades) {
+		if (!upgrade) return; // return early, as array is filled 
+							  //from lowest to highest index
+
+		switch (upgrade->type) {
+			case StatType::Health:
+			case StatType::HealthRegen:
+			case StatType::Speed:
+				speed.getFlat();
+			case StatType::Damage:
+				damage.getFlat() = upgrade->GetValue();
+			default:
+				break;
+		}
+	}
+}
+
+
 Player::Player() : hitFlickerTimer(hitFlickerDuration) {
-	stats = std::make_shared<PlayerStats>(100, 300);
+	stats = std::make_shared<PlayerStats>(statUpgradeHolder,100, 5, 5, 300);
 	abilityBarUI = std::make_shared<AbilityBar>();
 	weaponBarUI = std::make_shared<WeaponBar>();
 	statUpgradeUI= std::make_shared<StatUpgradeBar>();
@@ -52,8 +112,28 @@ void Player::init() {
 
 }
 
+void Player::HandleRegen(float deltatime) {
+	healthRegenTimer -= deltatime;
+	if (healthRegenTimer <= 0) { // if timer is up,
+		healthRegenTimer = 1; // reset timer
+		int& curHp = stats->getCurHp(); // get cur and max hp
+		const int& maxHp = stats->MaxHp();
+		if (curHp < maxHp) { // if not at or above max hp,
+			curHp += stats->HealthRegen(); // heal player
+			if (curHp > maxHp) { // if heal went over max hp, set to max hp.
+				curHp = maxHp;
+			}
+			healthBar.lock()->updateBar(curHp);
+		}
+	}
+
+}
+
+
 void Player::update(float deltatime) {
 	hitFlickerTimer.update(deltatime);
+	HandleRegen(deltatime);
+
 	direction = { 0,0 };
 	if (Input::GetAction("up"))  
 		direction.y = -1; 
@@ -85,7 +165,7 @@ void Player::update(float deltatime) {
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	direction = direction.normalized();
 	parent->move( direction * stats->Speed() * deltatime );
-	playerView->setCenter(parent->getPosition()); // set playerView center to player, and re assign to actually move playerView.
+	playerView->setCenter(parent->getPosition()); // set playerView center to player
 }
 
 void Player::takeDamage(int _damage){
