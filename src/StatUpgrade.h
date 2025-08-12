@@ -3,7 +3,7 @@
 #include <sstream>
 enum StatType
 {
-	None,
+	Empty,
 	Health,
 	Defence,
 	Damage,
@@ -17,9 +17,9 @@ enum StatType
 struct StatUpgrade {
 public:
 	static inline const std::string StatTypeToString[] =
-	{ "None", "Health","HealthRegen","Defence", "Damage", "Speed", "Fire Rate", "Gold" };
-	const StatType type = StatType::None;
-	explicit StatUpgrade(StatType type = StatType::None):type(type), stats(initializeStats(type)){}
+	{ "Empty", "Health","HealthRegen","Defence", "Damage", "Speed", "Fire Rate", "Gold" };
+	const StatType type = StatType::Empty;
+	explicit StatUpgrade(StatType type = StatType::Empty):type(type), stats(initializeStats(type)){}
 	void LevelUp() {
 		if (level >= 9) return; // stop at level value 9 (level 10)
 		level++;
@@ -30,8 +30,8 @@ public:
 		static std::ostringstream oss; // static to avoid re creating.
 		oss.clear(); // clear and reset string to "".
 		oss.str("");
-		oss << "Grants +(" << GetValue() << StatTypeToString[type] << ")";
-
+		oss << "Grants + " << GetValue()<<" " << StatTypeToString[type];
+		return oss.str();
 
 	}
 

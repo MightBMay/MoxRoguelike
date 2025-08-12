@@ -59,7 +59,7 @@ public:
 	const float Speed() const;
 	const float& Size() const;
 
-	void AddUpgrade(StatType type);
+	std::shared_ptr<StatUpgrade> AddUpgrade(StatType type);
 	void RecalculateStats();
 
 
@@ -92,10 +92,11 @@ public:
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
 	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
 	std::shared_ptr<WeaponBar>& getWeaponBar() { return weaponBarUI; }
-	std::shared_ptr<StatUpgradeBar>& getStatBar() { return statUpgradeUI; }
+	std::shared_ptr<StatUpgradeBar>& getStatBar() { return statBarUI; }
+	void EnableBarUI(int value);
 
 	virtual void AddWeapon(int slotIndex, int weaponIndex);
-	virtual void AddStat(StatType& type) { stats->AddUpgrade(type); }
+	virtual void AddStat(StatType type);
 	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
@@ -119,7 +120,7 @@ protected:
 	std::shared_ptr<WeaponBar> weaponBarUI;
 
 	//stat upgrades
-	std::shared_ptr<StatUpgradeBar> statUpgradeUI;
+	std::shared_ptr<StatUpgradeBar> statBarUI;
 	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
 
 

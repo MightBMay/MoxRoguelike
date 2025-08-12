@@ -3,6 +3,7 @@
 #include <memory>
 class WeaponBase;
 class GameObject;
+class StatUpgrade;
 // used as the starting point of the ability bar.
 
 
@@ -16,7 +17,7 @@ public:
 		for (auto& cdSprite : abilityCDSprites)
 			if (cdSprite) {
 				cdSprite->getRenderable()->enabled = true;
-				cdSprite->getComponent<UI_CooldownSprite>()->SetEnabled(false);
+				cdSprite->getComponent<UI_CooldownSprite>()->SetEnabled(true);
 			}
 	}
 	void Hide() {
@@ -86,37 +87,44 @@ public:
 };
 
 class StatUpgradeBar {
-	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1528, 952);
+	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1528, 600);
 	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
 public:
 	void Show() {
-		for (auto& cdSprite : statCDSprites)
-			if (cdSprite) {
-				cdSprite->getRenderable()->enabled = true;
+		for (auto& statSprite : statCDSprites)
+			if (statSprite) {
+				statSprite->getRenderable()->enabled = true;
+				statSprite->getComponent<UI_StatUpgradeSprite>()->SetEnabled(true);
+				
 			}
 	}
 	void Hide() {
-		for (auto& cdSprite : statCDSprites)
-			if (cdSprite) {
-				cdSprite->getRenderable()->enabled = false;
+		for (auto& statSprite : statCDSprites)
+			if (statSprite) {
+				statSprite->getRenderable()->enabled = false;
+				statSprite->getComponent<UI_StatUpgradeSprite>()->SetEnabled(false);
 			}
 	}
 
-	void LinkStat(int index, std::shared_ptr<StatUpgrade> stat, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
+	void LinkStat(std::shared_ptr<StatUpgrade> stat, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
 		std::string spritePath = "../assets/sprites/cardboard.png") {
+		for (int index = 0; index < 6; ++index){
+			if (statCDSprites[index]) continue; // continue until you find a non null one.
+			// calculate offset based off how many abilities
+			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
+			// make gameobject with desired sprite and rect.
+			auto& statSprite = GameObject::Create(spritePath, rect, 110);
+			statSprite->getSprite()->setColor(sf::Color::Red);
+			statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly
+			statSprite->setOrigin(32, 32); // center icon.
+			statSprite->setAsUI(true);
+			statSprite->addComponent<UI_StatUpgradeSprite>(window, stat); // create cd sprite (layer will be set to base object's layer +1)
 
-		if (index > 5 || index < 0) return; // keep in bounds of array.
-		// calculate offset based off how many abilities
-		const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
-		// make gameobject with desired sprite and rect.
-		auto& statSprite = GameObject::Create(spritePath, rect, 110);
-		statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly
-		statSprite->setOrigin(32, 32); // center icon.
-		statSprite->setAsUI(true);
-		//statSprite->addComponent<UI_CooldownSprite>(window, , rect); // create cd sprite (layer will be set to base object's layer +1)
+			statCDSprites[index] = statSprite; // store sprite
+			return;
+		}
 
-		statCDSprites[index] = statSprite; // store sprite
-
+		std::cerr << "\nNo space found in statCDSprites[].";
 
 	}
 

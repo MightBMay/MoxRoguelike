@@ -40,11 +40,11 @@ const int PlayerStats::Damage(int originalDamage) const {
 }
 const float& PlayerStats::Size() const { return size; }
 
-void PlayerStats::AddUpgrade(StatType type) {
+std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 	for (auto& upgrade :statUpgrades) { // iterate upgrade array
 
 		if (!upgrade) { // if array element is null, fill with new upgrade, then exit.
-			upgrade = std::make_shared<StatUpgrade>(type);
+			return upgrade = std::make_shared<StatUpgrade>(type);
 			break;
 		}
 		else if (upgrade->type == type) { // if upgrade is contained already, level the existing one.
@@ -55,6 +55,7 @@ void PlayerStats::AddUpgrade(StatType type) {
 	}
 
 	RecalculateStats();
+	return nullptr;
 	
 }
 
@@ -67,9 +68,7 @@ void PlayerStats::RecalculateStats() {
 			case StatType::Health:
 			case StatType::HealthRegen:
 			case StatType::Speed:
-				speed.getFlat();
 			case StatType::Damage:
-				damage.getFlat() = upgrade->GetValue();
 			default:
 				break;
 		}
@@ -81,7 +80,7 @@ Player::Player() : hitFlickerTimer(hitFlickerDuration) {
 	stats = std::make_shared<PlayerStats>(statUpgradeHolder,100, 5, 5, 300);
 	abilityBarUI = std::make_shared<AbilityBar>();
 	weaponBarUI = std::make_shared<WeaponBar>();
-	statUpgradeUI= std::make_shared<StatUpgradeBar>();
+	statBarUI= std::make_shared<StatUpgradeBar>();
 }
 void Player::init() {
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
@@ -108,7 +107,15 @@ void Player::init() {
 	AddWeapon(4, 2);
 	AddWeapon(5, 2);
 
+	AddStat(Health);
+	AddStat(HealthRegen);
+	AddStat(Damage);
+	AddStat(Speed);
+	AddStat(FireRate);
+
+
 	weaponBarUI->Hide();
+	statBarUI->Hide();
 
 }
 
@@ -131,6 +138,19 @@ void Player::HandleRegen(float deltatime) {
 
 
 void Player::update(float deltatime) {
+
+	
+	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num1)) 
+		EnableBarUI(0);
+	
+	else if (Input::GetKeyDown(sf::Keyboard::Scancode::Num2)) 
+		EnableBarUI(1);
+	
+	else if (Input::GetKeyDown(sf::Keyboard::Scancode::Num3)) 
+		EnableBarUI(2);
+	
+
+
 	hitFlickerTimer.update(deltatime);
 	HandleRegen(deltatime);
 
@@ -138,26 +158,26 @@ void Player::update(float deltatime) {
 	if (Input::GetAction("up"))  
 		direction.y = -1; 
 
-	if (Input::GetAction("down"))  
+	else if (Input::GetAction("down"))  
 		direction.y = 1; 
 
 	if (Input::GetAction("left"))  
 		direction.x = -1; 
 
-	if (Input::GetAction("right"))  
+	else if (Input::GetAction("right"))  
 		direction.x = 1; 
 	
 	// edge case for holding opposites.
 	if (Input::GetActionUp("up") && Input::GetAction("down"))
 		direction.y = 1;
 
-	if (Input::GetActionUp("down") && Input::GetAction("up"))
+	else if (Input::GetActionUp("down") && Input::GetAction("up"))
 		direction.y = -1;
 
 	if (Input::GetActionUp("left") && Input::GetAction("right"))
 		direction.x = 1;
 
-	if (Input::GetActionUp("right") && Input::GetAction("left"))
+	else if (Input::GetActionUp("right") && Input::GetAction("left"))
 		direction.x = -1;
 
 
@@ -177,6 +197,28 @@ void Player::takeDamage(int _damage){
 	healthBar.lock()->updateBar(curHp);
 }
 
+void Player::EnableBarUI(int value) {
+	switch (value)
+	{
+		case 0:
+			abilityBarUI->Show();
+			weaponBarUI->Hide();
+			statBarUI->Hide();
+			break;
+		case 1:
+			abilityBarUI->Hide();
+			weaponBarUI->Show();
+			statBarUI->Hide();
+			break;
+		case 2:
+			abilityBarUI->Hide();
+			weaponBarUI->Hide();
+			statBarUI->Show();
+			break;
+		default:
+			break;
+	}
+}
 
 void Player::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
@@ -193,6 +235,13 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
 	weaponBarUI->LinkWeapon(slotIndex, weapon);
+}
+
+void Player::AddStat(StatType type)
+{
+	std::shared_ptr<StatUpgrade> ptr = stats->AddUpgrade(type);
+	if (ptr)
+		statBarUI->LinkStat(ptr);
 }
 
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {

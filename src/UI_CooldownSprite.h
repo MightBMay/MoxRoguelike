@@ -4,7 +4,9 @@
 #include "MEvent.h"
 #include "UI_AbilityDescription.h"
 
+class StatUpgrade;
 class MSprite;
+
 
 class UI_CooldownSprite : public UI_Element, public std::enable_shared_from_this<UI_CooldownSprite> {
 
@@ -53,6 +55,32 @@ private:
 	int eventSubscriptionID=-1; // used to track and unsubscribe to events.
 	std::weak_ptr<WeaponBase> weapon;
 	float weaponMaxCooldown = 0;
+	sf::Vector2f originalScale;
+
+
+};
+
+
+class UI_StatUpgradeSprite :public UI_Element, public std::enable_shared_from_this<UI_StatUpgradeSprite> {
+
+public:
+	UI_StatUpgradeSprite(std::shared_ptr<sf::RenderWindow> window, std::weak_ptr<StatUpgrade> stat);
+	virtual void init() override;
+	virtual void OnHover() override;
+
+	virtual void OnHoverExit() override {
+		if (currentlyHovered == this) {
+			currentlyHovered = nullptr;
+			UI_AbilityDescription::clear();
+		}
+	}
+	virtual void OnClick(const int Button) {}
+	virtual void Destroy() override {}
+
+private:
+	static inline UI_StatUpgradeSprite* currentlyHovered = nullptr;
+	int spriteIndex;
+	std::weak_ptr<StatUpgrade> stat;
 	sf::Vector2f originalScale;
 
 

@@ -127,7 +127,7 @@ int main() {
 				window->close();
 			
 		}
-		
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(0,1);
 		// Update and render
 		
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects

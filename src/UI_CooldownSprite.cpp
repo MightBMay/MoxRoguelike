@@ -1,7 +1,7 @@
 #include "UI_CooldownSprite.h"
 #include "GameObject.h"
 #include "MSprite.h"
-
+#include "StatUpgrade.h"
 
 
 
@@ -59,4 +59,32 @@ void UI_CooldownSprite::init(){
 void UI_CooldownSprite::CalculateScaleFromCooldown(float curTimer) {
 	if (curTimer <= 0) return;
 	cooldownObject->setScale({ originalScale.x, originalScale.y * curTimer / weaponMaxCooldown});
+}
+
+
+
+
+
+
+
+ void UI_StatUpgradeSprite::OnHover() {
+	if (currentlyHovered && currentlyHovered != this) {
+		currentlyHovered->OnHoverExit();
+	}
+	currentlyHovered = this;
+	UI_AbilityDescription::setDescription(stat.lock()->GetStatString());
+}
+
+
+UI_StatUpgradeSprite::UI_StatUpgradeSprite(
+	std::shared_ptr<sf::RenderWindow> window, std::weak_ptr<StatUpgrade> stat) :
+	UI_Element(window), stat(stat) {
+
+
+}
+//initialize the UI_CooldownSprite.
+void UI_StatUpgradeSprite::init() {
+
+	UI_Element::init();
+
 }
