@@ -23,7 +23,10 @@
 
 
 
-
+void StatGroup::UpdateValues(std::shared_ptr<StatUpgrade> upgrade) {
+	flat = upgrade->getFlat();
+	mult = upgrade->getMult();
+}
 
 
 const int PlayerStats::MaxHp() const { 
@@ -31,6 +34,9 @@ const int PlayerStats::MaxHp() const {
 }
 const int PlayerStats::HealthRegen()const {
 	return healthRegen.evaluate();
+}
+const int PlayerStats::Defence()const {
+	return defence.evaluate();
 }
 const float PlayerStats::Speed() const { 
 	return speed.evaluate();
@@ -44,8 +50,9 @@ std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 	for (auto& upgrade :statUpgrades) { // iterate upgrade array
 
 		if (!upgrade) { // if array element is null, fill with new upgrade, then exit.
-			return upgrade = std::make_shared<StatUpgrade>(type);
-			break;
+			upgrade = std::make_shared<StatUpgrade>(type);
+			RecalculateStats();
+			return upgrade;
 		}
 		else if (upgrade->type == type) { // if upgrade is contained already, level the existing one.
 			upgrade->LevelUp();
@@ -64,11 +71,28 @@ void PlayerStats::RecalculateStats() {
 		if (!upgrade) return; // return early, as array is filled 
 							  //from lowest to highest index
 
-		switch (upgrade->type) {
+		switch (upgrade->type) { 
 			case StatType::Health:
+				maxHp.UpdateValues(upgrade);
+				onMaxHealthChange.invoke(maxHp.evaluate());
+				break;
+
 			case StatType::HealthRegen:
+				healthRegen.UpdateValues(upgrade);
+				break;
+
 			case StatType::Speed:
+				speed.UpdateValues(upgrade);
+				break;
+
 			case StatType::Damage:
+				damage.UpdateValues(upgrade);
+				break;
+
+			case StatType::Defence:
+				defence.UpdateValues(upgrade);
+				break;
+
 			default:
 				break;
 		}
@@ -89,7 +113,8 @@ void Player::init() {
 	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", rect, 130);
 	healtBarObj->getSprite()->SetRepeated(true);
 	healtBarObj->setPosition(0, 1048);
-	int maxHp = stats->getMaxHp();
+	stats->RecalculateStats();// unlikely, but in case something changes before init call.
+	int maxHp = stats->MaxHp();
 	healthBar = healtBarObj->addComponent<ProgressBar>(
 		rect,
 		"../assets/sprites/shapes/bl_square_128.png",
@@ -97,9 +122,10 @@ void Player::init() {
 		0,
 		maxHp);
 	auto healthBarS = healthBar.lock();
+	
 	healthBarS->updateBar(maxHp);
 	healthBarS->setFillColor(sf::Color(192, 64, 64, 128));
-
+	stats->getMaxHpChangeEvent().subscribe(healthBar, &ProgressBar::setRange);
 	AddWeapon(0, 0);
 	AddWeapon(1, 0);
 	AddWeapon(2, 1);
@@ -107,15 +133,10 @@ void Player::init() {
 	AddWeapon(4, 2);
 	AddWeapon(5, 2);
 
-	AddStat(Health);
-	AddStat(HealthRegen);
-	AddStat(Damage);
-	AddStat(Speed);
-	AddStat(FireRate);
-
-
 	weaponBarUI->Hide();
 	statBarUI->Hide();
+
+	
 
 }
 
@@ -139,7 +160,7 @@ void Player::HandleRegen(float deltatime) {
 
 void Player::update(float deltatime) {
 
-	
+	// DEBUG AND TESTING STUFF
 	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num1)) 
 		EnableBarUI(0);
 	
@@ -149,6 +170,9 @@ void Player::update(float deltatime) {
 	else if (Input::GetKeyDown(sf::Keyboard::Scancode::Num3)) 
 		EnableBarUI(2);
 	
+
+	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num6)) std::cout << "\n"<<stats->MaxHp();
+	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num5)) AddStat(StatType::Health);
 
 
 	hitFlickerTimer.update(deltatime);

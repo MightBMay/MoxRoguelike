@@ -34,6 +34,16 @@ void ProgressBar::init() {
 	manager.addExternalRenderable(renderable, manager.getRenderLayer(parent)+1);
 }
 
+void ProgressBar::updateBar(int value) {
+	curValue = normalizeFromRange(value, minValue, maxValue);
+
+	if (isHorizontal)
+		fillSprite->setScale({ startScale.x * curValue, startScale.y });
+	//Technically functional, but would require shifting the origin based on texture rect, as it scales top down.
+	//else
+		//fillSprite->setScale({ startScale.x, startScale.y * curValue });
+
+}
 void ProgressBar::updateBar(float value) {
 	curValue = normalizeFromRange(value, minValue, maxValue);
 

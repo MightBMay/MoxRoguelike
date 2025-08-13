@@ -9,7 +9,7 @@ template <typename... Args>
 class MEvent {
 public:
     using Callback = std::function<void(Args...)>;
-
+    MEvent() = default;
     // Subscribe with any callable (free function, lambda)
     size_t subscribe(Callback callback) {
         size_t id = nextId++;
@@ -28,6 +28,20 @@ public:
             id,
             [wptr = std::weak_ptr<T>(instance), method](Args... args) {
                 if (auto sptr = wptr.lock()) {
+                    (sptr.get()->*method)(args...);
+                }
+            }
+            });
+        return id;
+    }
+
+    template <typename T>
+    size_t subscribe(std::weak_ptr<T> instance, void (T::* method)(Args...)) {
+        size_t id = nextId++;
+        callbacks.push_back({
+            id,
+            [instance, method](Args... args) {
+                if (auto sptr = instance.lock()) {
                     (sptr.get()->*method)(args...);
                 }
             }
@@ -66,7 +80,7 @@ template <>
 class MEvent<> {
 public:
     using Callback = std::function<void()>;
-
+    MEvent() = default;
     size_t subscribe(Callback callback) {
         size_t id = nextId++;
         callbacks.push_back({ id, callback });

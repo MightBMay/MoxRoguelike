@@ -18,11 +18,20 @@ public:
 		float min = 0, 
 		float max = 1
 	);
-
+	virtual void updateBar(int value);
 	virtual void updateBar(float value);
 	inline void setFillColor(sf::Color& colour) { if (fillSprite) fillSprite->setColor(colour); }
 	inline void setRange(float min, float max) {
 		minValue = min; 
+		maxValue = max;
+	}
+
+	inline void setRange(int min, int max) {
+		minValue = min;
+		maxValue = max;
+	}
+
+	inline void setRange(int max) {
 		maxValue = max;
 	}
 	virtual void init() override;

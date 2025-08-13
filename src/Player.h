@@ -29,6 +29,8 @@ public:
 	int& getFlat() { return flat; }
 	float& getMult() { return mult; }
 
+	void UpdateValues(std::shared_ptr<StatUpgrade> upgrade);
+
 	int evaluate() const {
 		return static_cast<int>((base + flat) * mult);
 	}
@@ -50,21 +52,49 @@ public:
 	int& getCurHp() { return curHp; }
 	int& getHealthRegen(){ return healthRegen.getBase(); }
 	int& getSpeed(){ return speed.getBase(); }
+
+	MEvent<int>& getMaxHpChangeEvent() { return onMaxHealthChange; }
+
 	const float getSize() { return size; }
 
-	// non modifiable stats
+	/// <summary>
+	/// Gets the non modifiable, fully evaluated (includes flat/mult bonuses) stat value.
+	/// </summary>
 	const int MaxHp() const;
+	/// <summary>
+	/// Gets the non modifiable, fully evaluated (includes flat/mult bonuses) stat value.
+	/// </summary>
 	const int HealthRegen()const;
+	/// <summary>
+	/// Gets the non modifiable, fully evaluated (includes flat/mult bonuses) stat value.
+	/// </summary>
+	const int Defence()const;
+	/// <summary>
+	/// Gets the non modifiable, fully evaluated (includes flat/mult bonuses) stat value.
+	/// </summary>
 	const int Damage(int originalDamage)const;
+	/// <summary>
+	/// Gets the non modifiable, fully evaluated (includes flat/mult bonuses) stat value.
+	/// </summary>
 	const float Speed() const;
+
 	const float& Size() const;
 
+	/// <summary>
+	///  Add a StatUpgrade to the player.
+	/// </summary>
+	/// <param name="type"> StatType of the upgrade</param>
+	/// <returns>
+	///		returns shared_ptr to the newly created upgrade if one of the given StatType was not found, and space was available.
+	///		returns nullptr if upgrade already exists, or if no space for a new upgrade was found.
+	/// </returns>
 	std::shared_ptr<StatUpgrade> AddUpgrade(StatType type);
 	void RecalculateStats();
 
 
 private:
 	std::array< std::shared_ptr<StatUpgrade>,6>& statUpgrades;
+	MEvent<int> onMaxHealthChange{};
 	int curHp;
 	const float size = 32;
 	StatGroup maxHp;
@@ -81,7 +111,8 @@ public:
 	sf::Vector2f direction{ 0,0 };
 	// 0 == right, 1 = left
 	bool facingDirection = false;
-	MEvent<int> onMaxHealthChange;
+
+
 	Player();
 
 
