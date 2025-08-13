@@ -15,9 +15,6 @@
 #include "EnemyManager.h"
 #include "Projectile.h"
 #include "Weapon.h"
-#include "UI_Button.h"
-#include "UI_CooldownSprite.h"
-#include "UI_AbilityBar.h"
 #include "Background.h"
 #include "Vignette.h"
 #include "Global.h"
@@ -27,12 +24,18 @@
 #include "Enemy.h"
 #include "Input.h"
 
+#include "UI_Button.h"
+#include "UI_CooldownSprite.h"
+#include "UI_AbilityBar.h"
+#include "UI_LevelUpSelection.h"
+
 
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
 std::shared_ptr<GameObject> abilDesc;
+std::shared_ptr<UI_LevelUpSelection> levelUpUI;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& manager) {
 	playerObj = GameObject::Create(
@@ -92,6 +95,7 @@ int main() {
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
 
+	levelUpUI = std::make_shared<UI_LevelUpSelection>();
 
 #pragma region make background
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.

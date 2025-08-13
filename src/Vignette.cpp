@@ -8,7 +8,6 @@ void Vignette::init() {
 		std::cerr << "vignette shader not found\n";
 	}
 	parent->setShader(vignetteShader);
-	parent->setAsUI(true);
 	GameObjectManager::getInstance().setRenderLayer(parent, 100);
 
 

@@ -2,7 +2,6 @@
 #include "GameObject.h"
 void BackgroundImage::init() {
 	sprite = parent->getSprite();
-	parent->setAsUI(true);
 }
 void BackgroundImage::update(float deltaTime)  {
 	

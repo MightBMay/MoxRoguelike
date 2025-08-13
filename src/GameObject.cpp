@@ -275,7 +275,8 @@ void GameObjectManager::renderAll(sf::RenderTarget& target) {
 
                 
 
-                if (renderable->shader) {// only make state if shader exists.
+                if (renderable->shader) {
+                    // only make state if shader exists.
                     sf::RenderStates state = sf::RenderStates::Default; 
                     state.shader = renderable->shader.get(); // get shader if it exists.
 

@@ -17,7 +17,6 @@ UI_CooldownSprite::UI_CooldownSprite(
 	cooldownObject= GameObject::Create(
 		path,
 		rect);
-	cooldownObject->setAsUI(true);
 
 }
 //initialize the UI_CooldownSprite.

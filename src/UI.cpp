@@ -2,7 +2,7 @@
 #include "GameObject.h"
 #include "Input.h"
 
-void UI_Element::init() { parent->setAsUI(true); }
+void UI_Element::init() {  }
 
 void UI_Element::onMouseClick() {
 

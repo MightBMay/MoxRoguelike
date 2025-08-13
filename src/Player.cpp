@@ -265,7 +265,6 @@ void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	abilityDescription = GameObject::Create(120);
 	abilityDescription->setPosition(1528, 652);
-	abilityDescription->setAsUI(true);
 
 	abilityDescription->addComponent<UI_AbilityDescription>(window);
 

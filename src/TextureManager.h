@@ -10,13 +10,13 @@ private:
         std::shared_ptr<sf::Texture> texture;
         size_t referenceCount = 0;
     };
-    // Static storage for the texture map
+
     static std::unordered_map<std::string, TextureEntry> textures;
 public:
-    // Get a texture (loads if not already loaded)
+    // get a texture (loads if not already loaded)
     static std::shared_ptr<sf::Texture> getTexture(const std::string& path);
 
-    // Release a texture (decrements reference count, unloads if 0)
+
     static void releaseTexture(const std::string& path);
     static void clear() {
         textures.clear();

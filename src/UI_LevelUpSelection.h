@@ -4,24 +4,37 @@
 #include <memory>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 class WeaponBase;
 class StatUpgrade;
 class GameObject;
 class UI_Button;
+class Renderable;
+
 
 struct Selection {
 public:
+	static inline std::shared_ptr<sf::Texture> backgroundTexture;
+	static inline std::shared_ptr<sf::Font> font;
 	std::shared_ptr<GameObject> obj;
 	std::weak_ptr<UI_Button> button;
+	
 	std::shared_ptr<sf::RenderTexture>renderTexture;
+	std::shared_ptr<sf::Sprite> renderSprite;
+	std::shared_ptr<Renderable> renderable;
+
 	std::shared_ptr<sf::Text> text;
+
 	std::weak_ptr<WeaponBase> weaponPtr;
 	std::weak_ptr<StatUpgrade> statPtr;
 
 	std::string GetDescription();
+
+	void UpdateOption();
+
 	void OnClick();
-	Selection() = default;
+	Selection(std::shared_ptr<GameObject> object);
 };
 
 class UI_LevelUpSelection {

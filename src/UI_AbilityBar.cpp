@@ -32,7 +32,6 @@ void AbilityBar::LinkAbility(int index, sf::IntRect& rect, std::shared_ptr<Weapo
 	auto& abilitySprite = GameObject::Create(path, rect, 110);
 	abilitySprite->setPosition(abilityBarPosition + offsetPerSprite); // set position accordingly
 	abilitySprite->setOrigin(32, 32); // center icon.
-	abilitySprite->setAsUI(true);
 	abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 	abilityCDSprites[index] = abilitySprite; // store sprite
@@ -67,7 +66,6 @@ void WeaponBar::LinkWeapon(int index, std::shared_ptr<WeaponBase> wepBase, sf::I
 	auto& weaponSprite = GameObject::Create(spritePath, rect, 110);
 	weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
 	weaponSprite->setOrigin(32, 32); // center icon.
-	weaponSprite->setAsUI(true);
 	weaponSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 	if (!enabled) {
@@ -111,7 +109,6 @@ void StatUpgradeBar::LinkStat(std::shared_ptr<StatUpgrade> stat, sf::IntRect& re
 		statSprite->getSprite()->setColor(sf::Color::Red);
 		statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly
 		statSprite->setOrigin(32, 32); // center icon.
-		statSprite->setAsUI(true);
 		statSprite->addComponent<UI_StatUpgradeSprite>(window, stat); // create cd sprite (layer will be set to base object's layer +1)
 
 		if (!enabled) {
