@@ -12,6 +12,7 @@ class StatUpgradeBar;
 class StatUpgrade;
 enum StatType;
 class UI_AbilityDescription;
+class UI_SpriteBarHolder;
 class ProgressBar;
 
 struct StatGroup {
@@ -121,9 +122,7 @@ public:
 	static bool isVulnrable() { return _isVulnrable; }
 
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
-	std::shared_ptr<AbilityBar>& getAbilityBar() { return abilityBarUI; }
-	std::shared_ptr<WeaponBar>& getWeaponBar() { return weaponBarUI; }
-	std::shared_ptr<StatUpgradeBar>& getStatBar() { return statBarUI; }
+	std::shared_ptr<UI_SpriteBarHolder> getSpriteBarUI() { return spriteBar; }
 	void EnableBarUI(int value);
 
 	virtual void AddWeapon(int slotIndex, int weaponIndex);
@@ -134,10 +133,22 @@ public:
 	virtual void Destroy() override {}
 
 protected:
+	// ui bars.
+	std::shared_ptr<UI_SpriteBarHolder> spriteBar;
+
 	// ability stuff.
 	std::shared_ptr <GameObject> abilityDescription;
-	std::shared_ptr<AbilityBar> abilityBarUI;
 	std::array<std::weak_ptr<WeaponBase>, 3> abilityHolder;
+
+
+	//picked up weapons
+	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder;
+	std::array<int, 6> weaponIndices = { -1,-1,-1,-1,-1,-1 }; // used to track what weapon the player has
+
+
+	//stat upgrades
+
+	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
 
 	//health and healthbar
 	std::shared_ptr<GameObject> healtBarObj;
@@ -145,14 +156,6 @@ protected:
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
 
 
-	//picked up weapons
-	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder;
-	std::array<int, 6> weaponIndices = { -1,-1,-1,-1,-1,-1 };
-	std::shared_ptr<WeaponBar> weaponBarUI;
-
-	//stat upgrades
-	std::shared_ptr<StatUpgradeBar> statBarUI;
-	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
 
 
 	float healthRegenTimer = 1;

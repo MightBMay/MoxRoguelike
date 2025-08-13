@@ -26,7 +26,6 @@ protected:
 	virtual bool isHovering();
 
 
-	// make these all pure virtuals
 	virtual void onMouseClick();
 	virtual void onKeyboardDown() {}
 	virtual void onKeyboardHold() {}

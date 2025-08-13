@@ -20,9 +20,6 @@
 
 
 
-
-
-
 void StatGroup::UpdateValues(std::shared_ptr<StatUpgrade> upgrade) {
 	flat = upgrade->getFlat();
 	mult = upgrade->getMult();
@@ -102,21 +99,22 @@ void PlayerStats::RecalculateStats() {
 
 Player::Player() : hitFlickerTimer(hitFlickerDuration) {
 	stats = std::make_shared<PlayerStats>(statUpgradeHolder,100, 5, 5, 300);
-	abilityBarUI = std::make_shared<AbilityBar>();
-	weaponBarUI = std::make_shared<WeaponBar>();
-	statBarUI= std::make_shared<StatUpgradeBar>();
 }
+
 void Player::init() {
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
-	CreateAbilities(window);
-	sf::IntRect& rect = sf::IntRect{ {0,0},{256,32} };
-	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", rect, 130);
+	sf::IntRect& healthBarRect = sf::IntRect{ {0,0},{256,32} };
+
+	spriteBar = std::make_shared<UI_SpriteBarHolder>(shared_from_this());
+
+
+	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", healthBarRect, 130);
 	healtBarObj->getSprite()->SetRepeated(true);
 	healtBarObj->setPosition(0, 1048);
 	stats->RecalculateStats();// unlikely, but in case something changes before init call.
 	int maxHp = stats->MaxHp();
 	healthBar = healtBarObj->addComponent<ProgressBar>(
-		rect,
+		healthBarRect,
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
 		0,
@@ -130,11 +128,14 @@ void Player::init() {
 	AddWeapon(1, 0);
 	AddWeapon(2, 1);
 	AddWeapon(3, 1);
+	CreateAbilities(window);
+
 	//AddWeapon(4, 2);
 	//AddWeapon(5, 2);
 
-	weaponBarUI->Hide();
-	statBarUI->Hide();
+	
+	
+	
 
 	
 
@@ -159,20 +160,10 @@ void Player::HandleRegen(float deltatime) {
 
 
 void Player::update(float deltatime) {
-	// DEBUG AND TESTING STUFF
-	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num1)) 
-		EnableBarUI(0);
-	
-	else if (Input::GetKeyDown(sf::Keyboard::Scancode::Num2)) 
-		EnableBarUI(1);
-	
-	else if (Input::GetKeyDown(sf::Keyboard::Scancode::Num3)) 
-		EnableBarUI(2);
-	
 
-	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num6)) std::cout << "\n"<<stats->MaxHp();
+	//DEBUG STUFF
 	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num5)) AddStat(StatType::Health);
-
+	// END OF DEBUG
 
 	hitFlickerTimer.update(deltatime);
 	HandleRegen(deltatime);
@@ -220,28 +211,7 @@ void Player::takeDamage(int _damage){
 	healthBar.lock()->updateBar(curHp);
 }
 
-void Player::EnableBarUI(int value) {
-	switch (value)
-	{
-		case 0:
-			abilityBarUI->Show();
-			weaponBarUI->Hide();
-			statBarUI->Hide();
-			break;
-		case 1:
-			abilityBarUI->Hide();
-			weaponBarUI->Show();
-			statBarUI->Hide();
-			break;
-		case 2:
-			abilityBarUI->Hide();
-			weaponBarUI->Hide();
-			statBarUI->Show();
-			break;
-		default:
-			break;
-	}
-}
+void Player::EnableBarUI(int value) { spriteBar->EnableBarUI(value); }
 
 void Player::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
@@ -257,35 +227,35 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(0, parent).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
-	weaponBarUI->LinkWeapon(slotIndex, weapon);
+	spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
 }
 
 void Player::AddStat(StatType type)
 {
 	std::shared_ptr<StatUpgrade> ptr = stats->AddUpgrade(type);
 	if (ptr)
-		statBarUI->LinkStat(ptr);
+		spriteBar->statBar->LinkStat(ptr);
 }
 
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
-	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{128,128} };		
+	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };		
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
 		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1),
 		window);
-	 abilityBarUI->LinkWeapon(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
+	 spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
 
 	 auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
 		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1),
 		 window
 		 );
-	abilityBarUI->LinkWeapon(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
+	 spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
 	auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	abilityBarUI->LinkWeapon(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
+	spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
 
 	abilityHolder[0] = weaponQ;
 	abilityHolder[1] = weaponE;

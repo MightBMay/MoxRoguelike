@@ -59,7 +59,7 @@ protected:
 	
 private:
 	
-	static inline const sf::Vector2f spritePosition = sf::Vector2f(1528, 652);
+	static inline const sf::Vector2f spritePosition = sf::Vector2f(1496, 652);
 
 	static inline std::shared_ptr<Renderable> renderable;
 	

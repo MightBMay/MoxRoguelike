@@ -10,14 +10,14 @@ void UI_AbilityDescription::init() {
 	text = std::make_shared<sf::Text>(*font);
 	text->setOutlineColor(sf::Color::Black);
 	text->setOutlineThickness(2);
-	rt = std::make_shared<sf::RenderTexture>(sf::Vector2u{390,300});
+	rt = std::make_shared<sf::RenderTexture>(sf::Vector2u{422,300});
 	sprite = std::make_shared<sf::Sprite>(rt->getTexture());
 
 	bgTexture = *TextureManager::getTexture(panelBGPath);
 	bgTexture.setRepeated(true);
 
 	sf::Sprite tempSprite(bgTexture); // Construct with texture
-	tempSprite.setTextureRect({ {0, 0}, {390, 300} }); // Set sub-rectangle
+	tempSprite.setTextureRect({ {0, 0}, {422, 300} }); // Set sub-rectangle
 	bgSprite = std::make_shared<sf::Sprite>(tempSprite); // Copy into shared_ptr
 	bgSprite->setColor(sf::Color(192, 192, 192));
 
