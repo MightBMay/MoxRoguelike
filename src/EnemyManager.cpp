@@ -18,27 +18,58 @@ EnemyManager& EnemyManager::getInstance() {
 }
 
 
-void EnemyManager::SpawnEnemy(int index, int level, int quantity) {
-    for (int i = 0; i < quantity; ++i)
-        SpawnEnemy(index, level);
-}
-void EnemyManager::SpawnEnemy(int index, int level) {
-    static GameObject* player = Enemy::GetPlayer();
+void EnemyManager::SpawnEnemy(int index) {
+    GameObject* player = Enemy::GetPlayer();
     std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
 
     auto it = EnemyList.find(index); // search map for index
     //if index not found, return and error log.
     if (it == EnemyList.end()) { std::cerr << "Enemy index out of bounds"; return; }
-    it->second(enemyObj, level); // calls function stored in enemylist which 
+    it->second(enemyObj, GetLevelFromTime()); // calls function stored in enemylist which 
     // adds the enemy component.
 
     enemyObj->setPosition( // set position to be around the player, with random 2000x1600 variance. 
         player->getPosition() + sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
     );
+}
+void EnemyManager::SpawnEnemy(int index, int quantity) {
+    GameObject* player = Enemy::GetPlayer();
+    int level = GetLevelFromTime();
+    for (int i = 0; i < quantity; ++i) {
+        std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
+
+        auto it = EnemyList.find(index); // search map for index
+        //if index not found, return and error log.
+        if (it == EnemyList.end()) { std::cerr << "Enemy index out of bounds"; return; }
+        it->second(enemyObj, level); // calls function stored in enemylist which 
+        // adds the enemy component.
+
+        enemyObj->setPosition( // set position to be around the player, with random 2000x1600 variance. 
+            player->getPosition() + sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
+        );
+    }
 
 
 
 }
+void EnemyManager::SpawnEnemy(int index, int quantity, int level) {
+    GameObject* player = Enemy::GetPlayer();
+    for (int i = 0; i < quantity; ++i) {
+
+        std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
+
+        auto it = EnemyList.find(index); // search map for index
+        //if index not found, return and error log.
+        if (it == EnemyList.end()) { std::cerr << "Enemy index out of bounds"; return; }
+        it->second(enemyObj, level); // calls function stored in enemylist which 
+        // adds the enemy component.
+
+        enemyObj->setPosition( // set position to be around the player, with random 2000x1600 variance. 
+            player->getPosition() + sf::Vector2f{ rng::getFloat(-1000, 1000), rng::getFloat(-800, 800) }
+        );
+    }
+}
+
 
 void EnemyManager::add(std::shared_ptr<GameObject> obj) {
     if (!obj) return;

@@ -29,8 +29,10 @@ public:
 	EnemyManager& operator=(const EnemyManager&) = delete;
 	
 
-	static void SpawnEnemy(int index, int level, int quantity);
-	static void SpawnEnemy(int index, int level);
+	static void SpawnEnemy(int index, int quantity, int level );
+	static void SpawnEnemy(int index, int quantity);
+	static void SpawnEnemy(int index);
+	
 
 
 	static void HandleSpawning(float deltaTime) {
@@ -38,7 +40,7 @@ public:
 
 
 		if (delay <= 0) {
-			SpawnEnemy(0, GetLevelFromTime(), rng::getInt(4,10));
+			SpawnEnemy(0, rng::getInt(4,10));
 			delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
 		}
 		else {

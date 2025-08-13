@@ -10,14 +10,8 @@ public:
 	// done this way to allow access to Mevent with no reassignment.
 	MEvent<>& getOnClick() { return onClickEvent; }
 
-	virtual void OnHover() {
-		auto sprite = parent->getSprite();
-		sprite->setColor(sf::Color(192, 192, 192, 255));
-	}
-	virtual void OnHoverExit() {
-		auto sprite = parent->getSprite();
-		sprite->setColor(sf::Color(255, 255, 255, 255));
-	}
+	virtual void OnHover()override;
+	virtual void OnHoverExit()override;
 
 
 

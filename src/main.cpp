@@ -117,7 +117,7 @@ int main() {
 
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
-		float deltaTime = Delta_Timer.asSeconds();
+		float deltaTime = Delta_Timer.asSeconds() * timeScale;
 		// handle sfml events and update input.
 		while (const std::optional event = window->pollEvent()) {
 
@@ -127,7 +127,7 @@ int main() {
 				window->close();
 			
 		}
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(0,1);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(0);
 
 		
 

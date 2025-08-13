@@ -200,6 +200,7 @@ void Player::update(float deltatime) {
 	direction = direction.normalized();
 	parent->move( direction * stats->Speed() * deltatime );
 	playerView->setCenter(parent->getPosition()); // set playerView center to player
+	UpdateFacingDirection();
 }
 
 void Player::takeDamage(int _damage){
