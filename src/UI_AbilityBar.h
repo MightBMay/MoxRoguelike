@@ -11,9 +11,11 @@ class AbilityBar {
 private:
 	static constexpr sf::Vector2f abilityBarPosition = sf::Vector2f(1528, 952);
 	std::array<std::shared_ptr<GameObject>, 3> abilityCDSprites;
+	bool enabled = true;
 public:
 	
 	void Show() {
+		enabled = true;
 		for (auto& cdSprite : abilityCDSprites)
 			if (cdSprite) {
 				cdSprite->getRenderable()->enabled = true;
@@ -21,6 +23,7 @@ public:
 			}
 	}
 	void Hide() {
+		enabled = false;
 		for (auto& cdSprite : abilityCDSprites)
 			if (cdSprite) {
 				cdSprite->getRenderable()->enabled = false;
@@ -47,12 +50,13 @@ public:
 };
 
 class WeaponBar {
-	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1528, 952);
+	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1856, 952);
 	std::array<std::shared_ptr<GameObject>, 6> weaponCDSprites;
-
+	bool enabled = false;
 public:
 
 	void Show() {
+		enabled = true;
 		for (auto& cdSprite : weaponCDSprites)
 			if (cdSprite) {
 				cdSprite->getRenderable()->enabled = true;
@@ -60,6 +64,7 @@ public:
 			}
 	}
 	void Hide() {
+		enabled = false;
 		for (auto& cdSprite : weaponCDSprites)
 			if (cdSprite) {
 				cdSprite->getRenderable()->enabled = false;
@@ -72,13 +77,18 @@ public:
 
 			if (index > 5 || index < 0) return; // keep in bounds of array.
 			// calculate offset based off how many abilities
-			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
+			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 - (66 * index), 32);
 			// make gameobject with desired sprite and rect.
 			auto& weaponSprite = GameObject::Create(spritePath, rect, 110);
 			weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
 			weaponSprite->setOrigin(32, 32); // center icon.
 			weaponSprite->setAsUI(true);
 			weaponSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+
+			if (!enabled) {
+				weaponSprite->getRenderable()->enabled = false;
+				weaponSprite->getComponent<UI_CooldownSprite>()->SetEnabled(false);
+			}
 
 			weaponCDSprites[index] = weaponSprite; // store sprite
 
@@ -87,10 +97,12 @@ public:
 };
 
 class StatUpgradeBar {
-	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1528, 600);
+	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1856, 952);
 	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
+	bool enabled = false;
 public:
 	void Show() {
+		enabled = true;
 		for (auto& statSprite : statCDSprites)
 			if (statSprite) {
 				statSprite->getRenderable()->enabled = true;
@@ -99,6 +111,7 @@ public:
 			}
 	}
 	void Hide() {
+		enabled = false;
 		for (auto& statSprite : statCDSprites)
 			if (statSprite) {
 				statSprite->getRenderable()->enabled = false;
@@ -111,7 +124,7 @@ public:
 		for (int index = 0; index < 6; ++index){
 			if (statCDSprites[index]) continue; // continue until you find a non null one.
 			// calculate offset based off how many abilities
-			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 + (66 * index), 32);
+			const sf::Vector2f offsetPerSprite = sf::Vector2f(32 - (66 * index), 32);
 			// make gameobject with desired sprite and rect.
 			auto& statSprite = GameObject::Create(spritePath, rect, 110);
 			statSprite->getSprite()->setColor(sf::Color::Red);
@@ -119,6 +132,11 @@ public:
 			statSprite->setOrigin(32, 32); // center icon.
 			statSprite->setAsUI(true);
 			statSprite->addComponent<UI_StatUpgradeSprite>(window, stat); // create cd sprite (layer will be set to base object's layer +1)
+
+			if (!enabled) {
+				statSprite->getRenderable()->enabled = false;
+				statSprite->getComponent<UI_StatUpgradeSprite>()->SetEnabled(false);
+			}
 
 			statCDSprites[index] = statSprite; // store sprite
 			return;

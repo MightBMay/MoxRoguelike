@@ -130,8 +130,8 @@ void Player::init() {
 	AddWeapon(1, 0);
 	AddWeapon(2, 1);
 	AddWeapon(3, 1);
-	AddWeapon(4, 2);
-	AddWeapon(5, 2);
+	//AddWeapon(4, 2);
+	//AddWeapon(5, 2);
 
 	weaponBarUI->Hide();
 	statBarUI->Hide();
@@ -159,7 +159,6 @@ void Player::HandleRegen(float deltatime) {
 
 
 void Player::update(float deltatime) {
-
 	// DEBUG AND TESTING STUFF
 	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num1)) 
 		EnableBarUI(0);

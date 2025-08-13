@@ -52,6 +52,7 @@ int rng::getInt(int min, int max) {
     return dist(getEngine());
 }
 
+
 float rng::getFloat(float min, float max) {
     std::uniform_real_distribution<float> dist(min, max);
     return dist(getEngine());

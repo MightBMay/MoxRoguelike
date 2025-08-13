@@ -41,7 +41,7 @@ void UI_CooldownSprite::init(){
 
 	// set position to the base sprite's position, plus offset to keep it covering the base sprite.
 	cooldownObject->setPosition(parent->getPosition() + sf::Vector2f{ 0.0f,static_cast<float>(textureRect.y/2)});
-	//cooldownObject->setScale(originalScale.x, 0); // copy base scale, in case it was scaled before adding component.
+	cooldownObject->setScale(originalScale.x, 0); // set y scale to 0, as it starts off cooldown.
 
 	auto& manager = GameObjectManager::getInstance();
 	manager.setRenderLayer(cooldownObject, manager.getRenderLayer(parent)+1 ); // set to layer above the parent object
