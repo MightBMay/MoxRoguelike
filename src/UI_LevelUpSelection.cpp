@@ -1,23 +1,41 @@
 #include "UI_LevelUpSelection.h"
 #include "UI_Button.h"
-#include "GameObject.h"
 #include "Weapon.h"
 #include "StatUpgrade.h"
 #include "Global.h"
-#include "Renderable.h"
+
+
+Selection::Selection(std::shared_ptr<GameObject> object) {
+	obj = object;
+	button = obj->addComponent<UI_Button>(window);
+	text = std::make_shared<sf::Text>(*font);
+	renderTexture = std::make_shared<sf::RenderTexture>(size);
+	obj->setSprite(renderTexture->getTexture(), {} );
+	renderSprite = obj->getSprite();
+	renderSprite->setColor(sf::Color::Cyan);
+	renderable = obj->getRenderable();
+	GameObjectManager::getInstance().addExternalRenderable(renderable, 200);
+}
+
 
 UI_LevelUpSelection::UI_LevelUpSelection(std::string fontPath) {
 	
 	
 	Selection::backgroundTexture = TextureManager::getTexture("../assets/sprites/cardboard.png");
+	Selection::backgroundTexture->setRepeated(true);
 	Selection::font = std::make_shared<sf::Font>(fontPath);
+	auto buttonSpacing = Selection::size.x +20;
 	
 	for (int i = 0; i < quantity; ++i) { 
 		
 		std::shared_ptr<GameObject> obj = GameObject::Create(200);
+		obj->setPosition(postion + sf::Vector2f(i * buttonSpacing, 0));
 		std::shared_ptr<Selection> selection = std::make_shared<Selection>(obj);
+		
 		Selections[i] = selection;
+		selection->UpdateOption();
 	}
+	
 }
 
 void UI_LevelUpSelection::UpdateOption(int index, std::weak_ptr<WeaponBase> weapon) {
@@ -45,25 +63,21 @@ void Selection::OnClick() {
 }
 
 
-Selection::Selection(std::shared_ptr<GameObject> object) {
-	obj = object;
-	button = obj->addComponent<UI_Button>(window);
-	renderTexture = std::make_shared<sf::RenderTexture>(sf::Vector2u(300, 500));
-	text = std::make_shared<sf::Text>(*font);
-	renderSprite = std::make_shared<sf::Sprite>(*Selection::backgroundTexture);
-	renderable = std::make_shared<Renderable>(renderSprite);
-	//GameObjectManager::getInstance().addExternalRenderable(renderable,200);
 
-}
 
 void Selection::UpdateOption() {
+	auto originalPosition = obj->getPosition();
 	text->setString(GetDescription());
 
 	renderSprite->setTexture(*backgroundTexture);
+	renderSprite->setPosition({0, 0}); // reset position, as we modify the position of rendersprite for the final object
+									// to change where it actually renders. 
+
 	renderTexture->draw(*renderSprite);
 	renderTexture->draw(*text);
 
 	renderSprite->setTexture(renderTexture->getTexture());
+	renderSprite->setPosition(originalPosition);
 
 
 

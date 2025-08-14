@@ -166,6 +166,7 @@ public:
 
     // Sprite management
     void setSprite(const std::string& path, const sf::IntRect& rect = sf::IntRect());
+    void setSprite(const sf::Texture& texture, const sf::IntRect& rect);
     void removeSprite();
     bool hasSprite() const { return sprite != nullptr; }
 
@@ -226,7 +227,7 @@ public:
 
     // Object management
     void add(std::weak_ptr<GameObject> obj, int renderLayer = 0);
-    void addExternalRenderable(std::shared_ptr<Renderable> drawable, int layer = 0);
+    void addExternalRenderable(std::shared_ptr<Renderable> renderable, int layer = 0);
 
     void remove(std::weak_ptr<GameObject> obj);
     void removeExternalRenderable(std::shared_ptr<Renderable> renderable);

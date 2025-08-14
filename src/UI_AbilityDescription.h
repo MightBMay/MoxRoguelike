@@ -40,7 +40,7 @@ public:
 		renderable->drawable = sprite;
 		GameObjectManager& manager = GameObjectManager::getInstance();
 		manager.removeExternalRenderable(renderable); // remove the renderable to garentee duplicate additions cant happen.
-		manager.addExternalRenderable(renderable, 121); // background for ability description is on 120.
+		manager.addExternalRenderable(renderable, 211); // background for ability description is on 210.
 
 	}
 

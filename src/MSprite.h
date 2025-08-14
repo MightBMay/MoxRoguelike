@@ -27,8 +27,15 @@ public:
             setTextureRect(rect);
         }
     }
+    MSprite(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rect = sf::IntRect() ):
+    sf::Sprite(*texture), textureRef(texture), texturePath("") {
 
-    MSprite(std::shared_ptr<sf::Texture> texture) : sf::Sprite(*texture), textureRef(texture) {}
+    }
+
+    MSprite(const sf::Texture& texture, const sf::IntRect& rect = sf::IntRect()) : sf::Sprite(texture) {
+        if (rect != sf::IntRect())
+            setTextureRect(rect);
+    }
     ~MSprite() {
     }
 
@@ -43,7 +50,8 @@ public:
     }
     std::string getPath() const { return texturePath; }
     const void Destroy() {
-        TextureManager::releaseTexture(texturePath);
+        if(!texturePath.empty())
+            TextureManager::releaseTexture(texturePath);
     
     }
 
