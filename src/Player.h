@@ -4,15 +4,15 @@
 
 
 
+
 class Timer;
 class GameObject;
-class AbilityBar;
-class WeaponBar;
-class StatUpgradeBar;
 class StatUpgrade;
 enum StatType;
+
 class UI_AbilityDescription;
 class UI_SpriteBarHolder;
+class PlayerUI;
 class ProgressBar;
 
 struct StatGroup {
@@ -81,6 +81,9 @@ public:
 
 	const float& Size() const;
 
+	const int& XP(int baseXP) const;
+	const void AddXP(int baseXp);
+
 	/// <summary>
 	///  Add a StatUpgrade to the player.
 	/// </summary>
@@ -96,13 +99,24 @@ public:
 private:
 	std::array< std::shared_ptr<StatUpgrade>,6>& statUpgrades;
 	MEvent<int> onMaxHealthChange{};
+
+
+	int level = 1;
+	int curXp = 0;
+	int xpToNext = 100;
+
 	int curHp;
 	const float size = 32;
+
 	StatGroup maxHp;
 	StatGroup defence;
 	StatGroup healthRegen;
 	StatGroup speed;
 	StatGroup damage;
+	/// <summary>
+	/// NOT the actual variable for xp value. that is curXP.
+	/// </summary>
+	StatGroup xp;
 };
 
 
@@ -120,9 +134,8 @@ public:
 	void HandleRegen(float deltatime);
 
 	static bool isVulnrable() { return _isVulnrable; }
-
+	static std::shared_ptr<PlayerStats> getStats() { return stats; }
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
-	std::shared_ptr<UI_SpriteBarHolder> getSpriteBarUI() { return spriteBar; }
 	void EnableBarUI(int value);
 
 	virtual void AddWeapon(int slotIndex, int weaponIndex);
@@ -133,11 +146,10 @@ public:
 	virtual void Destroy() override {}
 
 protected:
-	// ui bars.
-	std::shared_ptr<UI_SpriteBarHolder> spriteBar;
 
-	// ability stuff.
-	std::shared_ptr <GameObject> abilityDescription;
+	std::shared_ptr<PlayerUI> playerUI;
+	Timer hitFlickerTimer{ hitFlickerDuration, false};
+
 	std::array<std::weak_ptr<WeaponBase>, 3> abilityHolder;
 
 
@@ -149,13 +161,6 @@ protected:
 	//stat upgrades
 
 	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
-
-	//health and healthbar
-	std::shared_ptr<GameObject> healtBarObj;
-	std::weak_ptr<ProgressBar> healthBar;
-	Timer hitFlickerTimer{ hitFlickerDuration, false};
-
-
 
 
 	float healthRegenTimer = 1;
@@ -170,7 +175,7 @@ private:
 	static inline bool _isVulnrable = true;
 	static constexpr float hitFlickerDuration = 0.125f;
 	static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
-	std::shared_ptr<PlayerStats> stats = nullptr;
+	static inline std::shared_ptr<PlayerStats> stats = nullptr;
 	void UpdateFacingDirection();
 
 

@@ -76,14 +76,19 @@ public:
 		if (attackTimer < -0.1) return;
 		cooldownTickEvent.invoke(attackTimer);
 	}
-	virtual void Fire() = 0;
-	virtual void init() = 0;
-	virtual void Destroy() = 0;
+
 
 	std::shared_ptr<WeaponStats> getStats() const { return stats; }
 	float getAttackSpeed() const { return stats->attackSpeed; }
 	float getAttackTimer() const { return attackTimer; }
 
+
+	/// <summary>
+	/// Must be defined in weapon subclass (projectile type must be assigned in the override).
+	/// </summary>
+	virtual void Fire() = 0;
+	virtual void init() {}
+	virtual void Destroy() {}
 	virtual const std::string getDescription() const = 0;
 
 protected:
@@ -96,32 +101,6 @@ protected:
 
 };
 
-
-// need to store projectiletype somehow.
-template<typename projectileType>
-class  Weapon :public WeaponBase
-{
-public:
-	Weapon(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		WeaponBase(stats), window(window) {}
-
-
-
-	virtual void Fire() override{
-		sf::Vector2f direction = getMouseWorldPos(window, playerView) -parent->getPosition();
-		auto projectile = projPool.make<projectileType>(5,direction.normalized(), stats);		
-		attackTimer = stats->attackSpeed;
-
-	}
-	virtual void init() override {}
-	virtual void Destroy()override {}
-	virtual const std::string getDescription() const override { return "weapon test class"; };
-	
-
-protected:
-	std::shared_ptr<sf::RenderWindow> window;
-
-};
 
 
 

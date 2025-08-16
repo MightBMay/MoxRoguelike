@@ -162,7 +162,15 @@ public:
 
     void setOrigin(float x, float y) { setOrigin( { x, y } ); }
     void setOrigin(const sf::Vector2f& origin);
-    void setActive(bool value) { _isActive = value; }
+
+    /// <summary>
+    /// Sets the activity of a gameobject. Can set andRenderable to copy the original value to the renderables enabled state.
+    /// </summary>
+    void setActive(bool value, bool andRenderable = false) {
+        _isActive = value;
+        if (andRenderable)
+            renderable->enabled = value;
+    }
 
     // Sprite management
     void setSprite(const std::string& path, const sf::IntRect& rect = sf::IntRect());

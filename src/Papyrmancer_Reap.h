@@ -1,12 +1,12 @@
 #pragma once
 #include"Weapon.h"
 #include "Sow_Projectile.h"
-template<typename ProjectileType>
-class Papyrmancer_Reap : public Weapon<ProjectileType> {
+
+class Papyrmancer_Reap : public WeaponBase {
 public:
 	static inline int count = 0;
-	Papyrmancer_Reap(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		Weapon(stats, window) {}
+	Papyrmancer_Reap(std::shared_ptr<WeaponStats> stats) :
+		WeaponBase(stats){}
 
 	void Fire() override {
 	
@@ -39,4 +39,5 @@ public:
 		return
 			"Papyrmancer Reap\nShoot a projectile from\nall enemies marked with\nsow towards the player,\ndealing damage to enemies\non the path back.";
 	};
+
 };

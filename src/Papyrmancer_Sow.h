@@ -2,12 +2,12 @@
 #include "Weapon.h"
 #include "Sow_Projectile.h"
 
-template<typename ProjectileType>
-class Papyrmancer_Sow : public Weapon<ProjectileType> {
+
+class Papyrmancer_Sow : public WeaponBase {
 public:
 	static inline int count = 0;
-	Papyrmancer_Sow(std::shared_ptr<WeaponStats> stats, std::shared_ptr<sf::RenderWindow> window) :
-		Weapon(stats, window) {}
+	Papyrmancer_Sow(std::shared_ptr<WeaponStats> stats) :
+		WeaponBase(stats) {}
 
 	void Fire() override {
 		static const sf::Vector2f zero = { 0,0 };

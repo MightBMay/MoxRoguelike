@@ -5,6 +5,7 @@
 #include "Projectile.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
+#include "PlayerUI.h"
 #include "ProgressBar.h"
 #include "Input.h"
 #include "StatUpgrade.h"
@@ -42,6 +43,17 @@ const int PlayerStats::Damage(int originalDamage) const {
 	return damage.evaluate(originalDamage);
 }
 const float& PlayerStats::Size() const { return size; }
+const int& PlayerStats::XP(int baseXP) const { return curXp; }
+const void PlayerStats::AddXP(int baseXp) {
+	curXp += xp.evaluate(baseXp);
+	while (curXp >= xpToNext) {
+		curXp -= xpToNext;
+		++level;
+		
+		//xpToNext = GetNextXP();   get next level xp value.
+	}
+	// re calculate stats here
+}
 
 std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 	for (auto& upgrade :statUpgrades) { // iterate upgrade array
@@ -98,32 +110,34 @@ void PlayerStats::RecalculateStats() {
 
 
 Player::Player() : hitFlickerTimer(hitFlickerDuration) {
-	stats = std::make_shared<PlayerStats>(statUpgradeHolder,100, 5, 5, 300);
+	
 }
 
 void Player::init() {
-	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Player::ResetHitFlicker);
-	sf::IntRect& healthBarRect = sf::IntRect{ {0,0},{256,32} };
+	auto sharedThis = shared_from_this();
+	playerUI = std::make_shared<PlayerUI>(sharedThis);
+	stats = std::make_shared<PlayerStats>(statUpgradeHolder, 100, 5, 5, 300);
+	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
 
-	spriteBar = std::make_shared<UI_SpriteBarHolder>(shared_from_this());
-
-
-	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", healthBarRect, 130);
-	healtBarObj->getSprite()->SetRepeated(true);
-	healtBarObj->setPosition(0, 1048);
 	stats->RecalculateStats();// unlikely, but in case something changes before init call.
+
 	int maxHp = stats->MaxHp();
-	healthBar = healtBarObj->addComponent<ProgressBar>(
-		healthBarRect,
+	// have to set these in player because we need values from stats, and stats and playerUI need eachothers values.
+	playerUI->healthBar = playerUI->healtBarObj->addComponent<ProgressBar>(
+		sf::IntRect{{ 0,0 }, { 256,32 }},
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
 		0,
 		maxHp);
-	auto healthBarS = healthBar.lock();
-	
+	auto healthBarS = playerUI->healthBar.lock();
+
 	healthBarS->updateBar(maxHp);
 	healthBarS->setFillColor(sf::Color(192, 64, 64, 128));
-	stats->getMaxHpChangeEvent().subscribe(healthBar, &ProgressBar::setRange);
+
+	stats->getMaxHpChangeEvent().subscribe(playerUI->healthBar, &ProgressBar::setRange);
+
+
+	// DEBUG
 	AddWeapon(0, 0);
 	AddWeapon(1, 0);
 	AddWeapon(2, 1);
@@ -152,7 +166,7 @@ void Player::HandleRegen(float deltatime) {
 			if (curHp > maxHp) { // if heal went over max hp, set to max hp.
 				curHp = maxHp;
 			}
-			healthBar.lock()->updateBar(curHp);
+			playerUI->UpdateHealthbar(curHp);
 		}
 	}
 
@@ -209,10 +223,10 @@ void Player::takeDamage(int _damage){
 	_isVulnrable = false;
 	hitFlickerTimer.start();
 	parent->getSprite()->setColor(hitColour);
-	healthBar.lock()->updateBar(curHp);
+	playerUI->UpdateHealthbar(curHp);
 }
 
-void Player::EnableBarUI(int value) { spriteBar->EnableBarUI(value); }
+void Player::EnableBarUI(int value) { playerUI->SetSpriteBarEnabled(value); }
 
 void Player::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
@@ -228,44 +242,34 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(0, parent).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
-	spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
+	playerUI->spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
 }
 
 void Player::AddStat(StatType type)
 {
 	std::shared_ptr<StatUpgrade> ptr = stats->AddUpgrade(type);
 	if (ptr)
-		spriteBar->statBar->LinkStat(ptr);
+		playerUI->spriteBar->statBar->LinkStat(ptr);
 }
 
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };		
 
-	 auto weaponQ = parent->addComponent<Papyrmancer_Sow<Sow_Projectile>>(
-		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1),
-		window);
-	 spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
+	 auto weaponQ = parent->addComponent<Papyrmancer_Sow>(
+		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1));
+	 playerUI->spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
 
 
-	 auto weaponE = parent->addComponent<Papyrmancer_Reap<Reap_Projectile>>(
-		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1),
-		 window
-		 );
-	 spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
+	 auto weaponE = parent->addComponent<Papyrmancer_Reap>(
+		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1));
+	 playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
 
 
 	auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
+	playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
 
 	abilityHolder[0] = weaponQ;
 	abilityHolder[1] = weaponE;
 	abilityHolder[2] = weaponR;
-
-
-	abilityDescription = GameObject::Create(120);
-	abilityDescription->setPosition(1528, 652);
-
-	abilityDescription->addComponent<UI_AbilityDescription>(window);
-
 }

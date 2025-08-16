@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "StatUpgrade.h"
 #include "Global.h"
+#include "Player.h"
 
 
 Selection::Selection(std::shared_ptr<GameObject> object) {
@@ -16,6 +17,61 @@ Selection::Selection(std::shared_ptr<GameObject> object) {
 	renderable = obj->getRenderable();
 	GameObjectManager::getInstance().addExternalRenderable(renderable, 200);
 }
+
+void Selection::OnClick() {
+	if (auto weapon_S = weaponPtr.lock()) {
+		// upgrade weapon here.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	}
+
+	else if (auto stat_S = statPtr.lock()) {
+		stat_S->LevelUp();
+		Player::getStats()->RecalculateStats();
+	}
+
+}
+
+void Selection::UpdateOption() {
+	auto originalPosition = obj->getPosition();
+	text->setString(GetDescription());
+
+	renderSprite->setTexture(*backgroundTexture);
+	renderSprite->setPosition({ 0, 0 }); // reset position, as we modify the position of rendersprite for the final object
+									// to change where it actually renders. 
+
+	renderTexture->draw(*renderSprite);
+	renderTexture->draw(*text);
+
+	renderSprite->setTexture(renderTexture->getTexture());
+	renderSprite->setPosition(originalPosition);
+
+
+
+}
+
+std::string Selection::GetDescription() {
+	if (auto weapon_S = weaponPtr.lock())
+		return weapon_S->getDescription();
+	else if (auto stat_S = statPtr.lock())
+		return stat_S->GetStatString();
+	else return "";
+}
+
+
+
+void UI_LevelUpSelection::Show() {
+	for (auto& selecton : Selections) {
+		selecton->obj->setActive(true, true);
+		selecton->button.lock()->SetEnabled(true);
+	}
+}
+
+void UI_LevelUpSelection::Hide() {
+	for (auto& selecton : Selections) {
+		selecton->obj->setActive(false, true);
+		selecton->button.lock()->SetEnabled(false);
+	}
+}
+
 
 
 UI_LevelUpSelection::UI_LevelUpSelection(std::string fontPath) {
@@ -51,42 +107,3 @@ void UI_LevelUpSelection::UpdateOption(int index, std::weak_ptr<StatUpgrade> sta
 	selection->statPtr = stat;
 }
 
-void Selection::OnClick() {
-	if (auto weapon_S = weaponPtr.lock()) {
-		// upgrade weapon here.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	}
-		
-	else if (auto stat_S = statPtr.lock()) {
-		//stat_S->LevelUp(); figure out how to call player::playerstats::recalculatestats as well.
-	}
-
-}
-
-
-
-
-void Selection::UpdateOption() {
-	auto originalPosition = obj->getPosition();
-	text->setString(GetDescription());
-
-	renderSprite->setTexture(*backgroundTexture);
-	renderSprite->setPosition({0, 0}); // reset position, as we modify the position of rendersprite for the final object
-									// to change where it actually renders. 
-
-	renderTexture->draw(*renderSprite);
-	renderTexture->draw(*text);
-
-	renderSprite->setTexture(renderTexture->getTexture());
-	renderSprite->setPosition(originalPosition);
-
-
-
-}
-
-std::string Selection::GetDescription() {
-	if (auto weapon_S = weaponPtr.lock())
-		return weapon_S->getDescription();
-	else if (auto stat_S = statPtr.lock())
-		return stat_S->GetStatString();
-	else return "";
-}

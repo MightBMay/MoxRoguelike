@@ -20,9 +20,9 @@ public:
 
 protected:
 	/// <summary>
-/// Called upon hovering mouse over the UI element.
-/// </summary>
-/// <returns> returns true if the object is being hovered over.</returns>
+	/// Checks if the mouse is currently hovering over the UI_Element's rect.
+	/// </summary>
+	/// <returns> returns true if the object is being hovered over.</returns>
 	virtual bool isHovering();
 
 
@@ -30,6 +30,8 @@ protected:
 	virtual void onKeyboardDown() {}
 	virtual void onKeyboardHold() {}
 	virtual void onKeyboardUp() {}
+	
+	
 	virtual void OnHover() = 0;
 	virtual void OnHoverExit() = 0;
 	virtual void OnClick(const int button) = 0;

@@ -95,7 +95,7 @@ int main() {
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
 
-	levelUpUI = std::make_shared<UI_LevelUpSelection>();
+	//levelUpUI = std::make_shared<UI_LevelUpSelection>();
 
 #pragma region make background
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
@@ -133,7 +133,6 @@ int main() {
 		}
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(0);
 
-		
 
 		// Update and render
 		
