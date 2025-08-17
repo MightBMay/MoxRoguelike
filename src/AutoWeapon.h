@@ -1,7 +1,6 @@
 #pragma once
 #include "Weapon.h"
 #include "EnemyManager.h"
-template<typename projectileType>
 class AutoWeapon : public WeaponBase {
 
 public:
@@ -9,10 +8,11 @@ public:
 	AutoWeapon(std::shared_ptr<WeaponStats>& stats):WeaponBase(stats){}
 
 	virtual void Fire() override {
-		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), stats->range);
+		auto playerPos = parent->getPosition();
+		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(playerPos, stats->range);
 		if (!closestEnemy) return;
-		sf::Vector2f direction =  closestEnemy->getPosition() - parent->getPosition();
-		auto projectile = projPool.make<projectileType>(5, direction.normalized(), stats);
+		sf::Vector2f direction =  closestEnemy->getPosition() - playerPos;
+		auto projectile = projPool.make<Projectile>(5, direction.normalized(), stats);
 		attackTimer = stats->attackSpeed;
 	}
 	virtual void update(float deltaTime) override{
@@ -20,11 +20,17 @@ public:
 		attackTimer -= deltaTime;
 		cooldownTickEvent.invoke(attackTimer);
 	}
-	virtual void init() {}
-	virtual void Destroy() {}
-	virtual const std::string getDescription() const { return weaponDescription; }
+
+	virtual void LevelUp()override {
+
+	}
+
+	virtual void init()override { }
+	virtual void Destroy()override {}
+	virtual const std::string getDescription() const override {return weaponDescription; }
 
 protected:
-	static inline const std::string weaponDescription = 
-		"Automatically firing weapon, that targets the closest enemy within range.";
+	std::string weaponDescription =
+		"Automatically firing weapon,\n that targets the closest enemy within range.";
+	
 };

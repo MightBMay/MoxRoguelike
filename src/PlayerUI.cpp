@@ -29,11 +29,11 @@ PlayerUI::PlayerUI(std::weak_ptr<Player> player) {
 void PlayerUI::UpdateHealthbar(int newHealth) {
 	healthBar.lock()->updateBar(newHealth);
 }
-void PlayerUI::UI_AddStat(StatType stat) {
-
+void PlayerUI::UI_AddStat(std::shared_ptr<StatUpgrade> stat) {
+	spriteBar->statBar->LinkStat(stat);
 }
-void PlayerUI::UI_AddWeapon(int slotIndex, int weaponIndex) {
-
+void PlayerUI::UI_AddWeapon(int slotIndex, std::shared_ptr<WeaponBase> weapon) {
+	spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
 }
 
 void PlayerUI::SetSpriteBarEnabled(int value) { spriteBar->EnableBarUI(value); }

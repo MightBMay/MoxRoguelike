@@ -21,10 +21,10 @@ public:
         _actionToKeys.clear();
 
         // Example default bindings
-        BindKey("up", sf::Keyboard::Scan::W);
-        BindKey("down", sf::Keyboard::Scan::S);
-        BindKey("left", sf::Keyboard::Scan::A);       
-        BindKey("right", sf::Keyboard::Scan::D);
+        BindKeys("up", { sf::Keyboard::Scan::W, sf::Keyboard::Scan::Up});
+        BindKeys("down", {sf::Keyboard::Scan::S, sf::Keyboard::Scan::Down });
+        BindKeys("left", { sf::Keyboard::Scan::A, sf::Keyboard::Scan::Left });
+        BindKeys("right", { sf::Keyboard::Scan::D, sf::Keyboard::Scan::Right });
         BindKey("ability1", sf::Keyboard::Scan::Q);
         BindKey("ability2", sf::Keyboard::Scan::E);
     }

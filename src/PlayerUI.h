@@ -29,8 +29,8 @@ public:
 
 	void SetSpriteBarEnabled(int value);
 	void UpdateHealthbar(int newHealth);
-	void UI_AddStat(StatType stat);
-	void UI_AddWeapon(int slotIndex, int weaponIndex);
+	void UI_AddStat(std::shared_ptr<StatUpgrade> stat);
+	void UI_AddWeapon(int slotIndex, std::shared_ptr<WeaponBase> weapon);
 
 private:
 

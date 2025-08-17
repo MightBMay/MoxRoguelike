@@ -138,14 +138,11 @@ void Player::init() {
 
 
 	// DEBUG
-	AddWeapon(0, 0);
-	AddWeapon(1, 0);
-	AddWeapon(2, 1);
-	AddWeapon(3, 1);
-	CreateAbilities(window);
+	//AddWeapon(0, 0);
+	//AddWeapon(1, 1);
+	AddWeapon(2, 2);
 
-	//AddWeapon(4, 2);
-	//AddWeapon(5, 2);
+	CreateAbilities(window);
 
 	
 	
@@ -177,8 +174,15 @@ void Player::update(float deltatime) {
 
 	//DEBUG STUFF
 	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num5)) AddStat(StatType::Health);
+	if (Input::GetKeyDown(sf::Keyboard::Scancode::Space)) {
+		std::cout << "\n";
+		for (auto& item : weaponHolder) {
+			if(auto itemp = item.lock())
+				std::cout << "Derived type: " << typeid(*itemp).name() << "\n";
+				
+		}
+	}
 	// END OF DEBUG
-
 	hitFlickerTimer.update(deltatime);
 	HandleRegen(deltatime);
 
@@ -239,10 +243,10 @@ void Player::UpdateFacingDirection() {
 
 void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	if (slotIndex > 6 || slotIndex < 0) return;// check slotIndex bounds
-	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(0, parent).lock();
+	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
-	playerUI->spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
+	playerUI->UI_AddWeapon(slotIndex, weapon);
 }
 
 void Player::AddStat(StatType type)
@@ -258,16 +262,16 @@ void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	 auto weaponQ = parent->addComponent<Papyrmancer_Sow>(
 		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1));
-	 playerUI->spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponQ.lock()));
+	 playerUI->spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, weaponQ.lock());
 
 
 	 auto weaponE = parent->addComponent<Papyrmancer_Reap>(
 		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1));
-	 playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponE.lock()));
+	 playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, weaponE.lock());
 
 
 	auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, std::static_pointer_cast<WeaponBase>(weaponR.lock()));
+	playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
 
 	abilityHolder[0] = weaponQ;
 	abilityHolder[1] = weaponE;

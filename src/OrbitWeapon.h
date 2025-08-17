@@ -1,12 +1,11 @@
 #pragma once
 #include "Weapon.h"
+#include "OrbitProjectile.h"
 #include <SFML/Graphics/RenderWindow.hpp>
-template<typename projectileType>
-class OrbitWeapon :public WeaponBase {
-	static_assert(std::is_base_of_v<OrbitProjectile, projectileType>,
-		"projectileType must be derived from OrbitProjectile");
+
+class OrbitWeapon :public AutoWeapon {
 public:
-	OrbitWeapon(std::shared_ptr<WeaponStats>, std::shared_ptr<sf::RenderWindow> window):WeaponBase(stats, window){
+	OrbitWeapon(std::shared_ptr<WeaponStats> stats):AutoWeapon(stats){
 	
 	
 	}
@@ -14,12 +13,17 @@ public:
 
 	virtual void Fire() override {
 		static const sf::Vector2f zero(0, 0);
-		auto projectile = projPool.make<projectileType>(5, zero, stats);
+		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), stats->range);
+		if (!closestEnemy) return;
+		auto projectile = projPool.make<OrbitProjectile>(5, zero, stats);
 		attackTimer = stats->attackSpeed;
+
+	}
+	virtual void LevelUp()override {
 
 	}
 	virtual void init() override {}
 	virtual void Destroy()override {}
-	virtual const std::string getDescription() const override { return "weapon test class"; };
+	virtual const std::string getDescription() const override { return "Orbit weapon"; };
 
 };

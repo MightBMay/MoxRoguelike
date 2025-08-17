@@ -7,10 +7,10 @@
 
 void OrbitProjectile::init() {
     player_s = player.lock();
-    Projectile::init();
+    parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
+    parent->setOrigin(16, 16);
 }       // Called when component is added
 void OrbitProjectile::update(float deltaTime) {
-
 
 
     remainingDuration -= deltaTime;

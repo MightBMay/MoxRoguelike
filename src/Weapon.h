@@ -87,6 +87,10 @@ public:
 	/// Must be defined in weapon subclass (projectile type must be assigned in the override).
 	/// </summary>
 	virtual void Fire() = 0;
+	/// <summary>
+	/// Handles incrementing weapon level, stats, and any special effects that occour upon leveling.
+	/// </summary>
+	virtual void LevelUp() = 0;
 	virtual void init() {}
 	virtual void Destroy() {}
 	virtual const std::string getDescription() const = 0;
