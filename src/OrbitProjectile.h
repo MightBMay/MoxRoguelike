@@ -8,13 +8,14 @@ class Enemy;
 class OrbitProjectile : public Projectile {
    
 public:
-    OrbitProjectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats) 
-        :Projectile(direction, stats) {}
+    OrbitProjectile(sf::Vector2f direction, 
+        int* damage, float* speed, float* range, int* projectileSize, int pierce)
+        :Projectile(direction, damage, speed, range, projectileSize, pierce) {}
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
 
-    virtual void CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP) override;
+    virtual void CheckEnemies(sf::Vector2f curPos) override;
 
 private:
     static constexpr float orbitRadius = 150.0f; // Your desired orbit distance

@@ -6,15 +6,15 @@
 class Papyrmancer_Sow : public WeaponBase {
 public:
 	static inline int count = 0;
-	Papyrmancer_Sow(std::shared_ptr<WeaponStats> stats) :
-		WeaponBase(stats) {}
+	Papyrmancer_Sow() :
+		WeaponBase(std::string("Papyrmancer Sow")) {}
 
 	void Fire() override {
 		static const sf::Vector2f zero = { 0,0 };
-		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, stats);
+		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
 
 			// spawn projectile with no direction, with ptr to weapons stats.
-		attackTimer = stats->attackSpeed;
+		attackTimer = attackSpeed;
 
 	}
 
@@ -35,4 +35,6 @@ public:
 		return
 			"Papyrmancer Sow\nShoot a projectile that\nfollows the cursor.\nUpon hitting an enemy\napplies Sow.";
 	};
+
+
 };

@@ -7,15 +7,14 @@
 
 
 
-Reap_Projectile::Reap_Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats) :
-	Projectile(direction, stats) {
+Reap_Projectile::Reap_Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
+	Projectile(direction, damage,speed,range,projectileSize,pierce) {
 
 }
 
 void Reap_Projectile::update(float deltaTime) {
-	auto statsP = stats.lock();
 	auto playerP = player.lock();
-	if (!playerP || !statsP) return;
+	if (!playerP) return;
 
 
 	sf::Vector2f curPos = parent->getPosition(); 
@@ -28,13 +27,13 @@ void Reap_Projectile::update(float deltaTime) {
 	}
 	direction = newDirection.normalized();
 	parent->setRotation(vectorToAngle(direction));
-	parent->move(direction * statsP->speed * deltaTime);
+	parent->move(direction * (*speed)* deltaTime);
 
 
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
+	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end()) return;
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 

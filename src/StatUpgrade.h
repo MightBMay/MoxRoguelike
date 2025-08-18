@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <sstream>
+#include "Player.h"
 enum StatType
 {
 	Empty,
@@ -23,6 +24,7 @@ public:
 	void LevelUp() {
 		if (level >= 9) return; // stop at level value 9 (level 10)
 		level++;
+		Player::getStats()->RecalculateStats();
 	}
 	int GetLevel() const{ return level; }
 	int getFlat() { return flatStats[level];}

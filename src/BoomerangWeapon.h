@@ -3,9 +3,10 @@
 #include "BoomerangProjectile.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 
+
 class BoomerangWeapon :public AutoWeapon {
 public:
-	BoomerangWeapon(std::shared_ptr<WeaponStats> stats) :AutoWeapon(stats) {
+	BoomerangWeapon() :AutoWeapon(std::string("Boomerang Weapon")) {
 
 
 	}
@@ -14,20 +15,21 @@ public:
 	virtual void Fire() override {
 		
 		auto position = parent->getPosition();
-		auto closestEnemy = EnemyManager::getClosest(position, stats->range);
+		auto closestEnemy = EnemyManager::getClosest(position, range);
 		if (!closestEnemy) return; // in case no enemy was in range.
 		sf::Vector2f direction = (closestEnemy->getPosition() - position);
 		if(direction.lengthSquared()!=0)direction = direction.normalized();
+		std::cout << "\nrange(wep):  " << range;
 
-		auto projectile = projPool.make<BoomerangProjectile>(5, direction, stats);
-		attackTimer = stats->attackSpeed;
+		auto projectile = projPool.make<BoomerangProjectile>(5,direction, &damage, &speed, &range, &projRadius, pierce);
+		attackTimer = attackSpeed;
 
 	}
 	virtual void LevelUp()override {
 
 	}
-	virtual void init() override { }
 	virtual void Destroy()override {}
 	virtual const std::string getDescription() const override {return "Boomerang weapon"; };
+
 
 };

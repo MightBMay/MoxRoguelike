@@ -1,0 +1,45 @@
+{
+  "weapons": {
+
+    "Auto Weapon": {
+      "damage": 3,
+      "speed": 500,
+      "range": 650,
+      "attackSpeed": 1.5,
+      "projSize": 32,
+      "pierce": 10
+    },
+
+    "Boomerang Weapon": {
+      "damage": 3,
+      "speed": 900,
+      "range": 1000,
+      "attackSpeed": 0.5
+    },
+
+    "Orbit Weapon": {
+      "damage": 3,
+      "speed": 900,
+      "range": 1000,
+      "attackSpeed": 3
+    },
+
+    "Papyrmancer Sow": {
+      "damage": 3,
+      "speed": 900,
+      "range": 1000,
+      "attackSpeed": 3
+    },
+
+    "Papyrmancer Reap": {
+      "damage": 3,
+      "speed": 900,
+      "range": 1000,
+      "attackSpeed": 0.4
+    }
+
+
+
+
+  }
+}

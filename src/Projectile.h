@@ -5,7 +5,6 @@
 #include "GameObjectPool.h"
 class EnemyManager;
 class GameObject;
-struct WeaponStats;
 
 constexpr size_t MAX_PROJECTILES = 512;
 
@@ -15,28 +14,29 @@ public:
     static inline GameObjectPool<Projectile> projPool{true};
     static inline std::weak_ptr<GameObject> player;
     int pierceCount = 0;
+
     sf::Vector2f direction = { 0,0 };
     // projectile stats would also go here.
 
-    /// <summary>
-    /// Creates base projectile.
-    /// </summary>
-    /// <param name="speed"> speed the projectile moves</param>
-    /// <param name="direction"> direction of the projectile</param>
-    /// <param name="range"> maximum travel distance SQUARED of the projectile.</param>
-    Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats);
+ 
+    Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce);
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
-    virtual void CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP);
+    virtual void CheckEnemies(sf::Vector2f curPos);
     virtual const std::string& getSpritePath() const {
         return spritePath;
     }
 
 protected:
     
+    const int* damage;
+    const float* speed;
+    const float* range;
+    const int* projSize;
+
+
     std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
-    std::weak_ptr<WeaponStats> stats;
     sf::Vector2f startPos = { 0,0 };
 
 private:

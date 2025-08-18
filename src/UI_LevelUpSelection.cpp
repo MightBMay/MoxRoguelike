@@ -19,24 +19,22 @@ Selection::Selection(std::shared_ptr<GameObject> object) {
 }
 
 void Selection::OnClick() {
-	if (auto weapon_S = weaponPtr.lock()) {
-		// upgrade weapon here.~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	}
+	if (auto weapon_S = weaponPtr.lock())
+		weapon_S->LevelUp();
 
-	else if (auto stat_S = statPtr.lock()) {
+	else if (auto stat_S = statPtr.lock()) 
 		stat_S->LevelUp();
-		Player::getStats()->RecalculateStats();
-	}
+		
 
 }
 
 void Selection::UpdateOption() {
-	auto originalPosition = obj->getPosition();
+	auto originalPosition = obj->getPosition();// since we re use the sprite to the 
+											   // renderTexture, we gotta reposition.
 	text->setString(GetDescription());
 
 	renderSprite->setTexture(*backgroundTexture);
-	renderSprite->setPosition({ 0, 0 }); // reset position, as we modify the position of rendersprite for the final object
-									// to change where it actually renders. 
+	renderSprite->setPosition({ 0, 0 }); // draw background at 0,0
 
 	renderTexture->draw(*renderSprite);
 	renderTexture->draw(*text);
@@ -94,16 +92,16 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::string fontPath) {
 	
 }
 
-void UI_LevelUpSelection::UpdateOption(int index, std::weak_ptr<WeaponBase> weapon) {
-	if (index < 0 || index >= quantity) return;
-	auto& selection = Selections[index];
+void UI_LevelUpSelection::UpdateOption(int selectionIndex, std::weak_ptr<WeaponBase> weapon) {
+	if (selectionIndex < 0 || selectionIndex >= quantity) return;
+	auto& selection = Selections[selectionIndex];
 	selection->weaponPtr = weapon;
 
 
 }
-void UI_LevelUpSelection::UpdateOption(int index, std::weak_ptr<StatUpgrade> stat) {
-	if (index < 0 || index >= quantity) return;
-	auto& selection = Selections[index];
+void UI_LevelUpSelection::UpdateOption(int selectionIndex, std::weak_ptr<StatUpgrade> stat) {
+	if (selectionIndex < 0 || selectionIndex >= quantity) return;
+	auto& selection = Selections[selectionIndex];
 	selection->statPtr = stat;
 }
 

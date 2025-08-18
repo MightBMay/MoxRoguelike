@@ -138,9 +138,9 @@ void Player::init() {
 
 
 	// DEBUG
-	//AddWeapon(0, 0);
+	AddWeapon(0, 2);
 	//AddWeapon(1, 1);
-	AddWeapon(2, 2);
+	//AddWeapon(2, 2);
 
 	CreateAbilities(window);
 
@@ -260,20 +260,18 @@ void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };		
 
-	 auto weaponQ = parent->addComponent<Papyrmancer_Sow>(
-		std::make_shared<WeaponStats>(1, 1000, 0, 32, 0.0666f, 1));
+	 auto weaponQ = parent->addComponent<Papyrmancer_Sow>();
 	 playerUI->spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, weaponQ.lock());
 
 
-	 auto weaponE = parent->addComponent<Papyrmancer_Reap>(
-		 std::make_shared<WeaponStats>(1, 1500, 1000, 32, 1.5f, 1));
+	 auto weaponE = parent->addComponent<Papyrmancer_Reap>();
 	 playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, weaponE.lock());
 
 
-	auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
+	//auto weaponR = WeaponBase::CreateWeapon(1, parent);
+	//playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
 
 	abilityHolder[0] = weaponQ;
 	abilityHolder[1] = weaponE;
-	abilityHolder[2] = weaponR;
+	//abilityHolder[2] = weaponR;
 }

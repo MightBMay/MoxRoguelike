@@ -56,8 +56,8 @@ public:
 	UI_LevelUpSelection(std::string fontPath = "../assets/fonts/amazon ember.ttf");
 	void Show();
 	void Hide();
-	void UpdateOption(int index, std::weak_ptr<WeaponBase> weapon);
-	void UpdateOption(int index, std::weak_ptr<StatUpgrade> weapon);
+	void UpdateOption(int selectionIndex, std::weak_ptr<WeaponBase> weapon);
+	void UpdateOption(int selectionIndex, std::weak_ptr<StatUpgrade> weapon);
 
 
 };

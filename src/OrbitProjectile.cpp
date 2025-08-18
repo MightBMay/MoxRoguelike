@@ -38,18 +38,18 @@ void OrbitProjectile::update(float deltaTime) {
         }
     }
 
-    CheckEnemies(newPos, stats.lock());
+    CheckEnemies(newPos);
 
 }
 
-void OrbitProjectile::CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP) {
-    auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
+void OrbitProjectile::CheckEnemies(sf::Vector2f curPos) {
+    auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
 // iterate over all enemies within range of projectile.
     for (auto& enemy : inRangeEnemies) {
         auto it = enemyCooldowns.find(enemy); // try to find enemy in map of cooldowns
         if (it != enemyCooldowns.end() && it->second > 0) continue; // if enemy is found, and cd has not finished, continue.
 
-        enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
+        enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
         enemyCooldowns[enemy] = hitCooldown;
         
         --pierceCount; // decrement and check pierce.

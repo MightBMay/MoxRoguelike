@@ -5,36 +5,36 @@
 
 
 void AOE_Projectile::update(float deltaTime) {
-	auto statsP = stats.lock();
-	parent->move(direction * statsP->speed * deltaTime);
+	
+	parent->move(direction * (*speed) * deltaTime);
 	auto curPos = parent->getPosition();
 
-	if ((curPos - startPos).lengthSquared() >= statsP->range) {
+	if ((curPos - startPos).lengthSquared() >= *range) {
 
 		// also explode at the of range.
 		auto inAOE = EnemyManager::getInRange(curPos, aoeSize);
 		for (auto& enemy : inAOE) {
-			enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage);
+			enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage);
 		}
 		projPool.release(parent);
 	}
 
-	CheckEnemies(curPos, statsP);
+	CheckEnemies(curPos);
 
 
 }
 
-void AOE_Projectile::CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP) {
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
+void AOE_Projectile::CheckEnemies(sf::Vector2f curPos) {
+	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
 // iterate over all enemies within range of projectile.
 
 	for (auto& enemy : inRangeEnemies) {
 		// damage the enemy the projectile collides with twice.
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); 
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); 
 
 		auto inAOE = EnemyManager::getInRange(curPos, aoeSize);
 		for (auto& enemy : inAOE) {
-			enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage);
+			enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage);
 		}
 
 		projPool.release(parent); // remove on first enemy since it explodes

@@ -23,7 +23,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Input.h"
-
+#include "JsonLoader.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
@@ -78,6 +78,8 @@ int main() {
 	int frameCount = 0;
 	const sf::Time updateInterval = sf::seconds(0.25f);
 #pragma endregion
+
+	GameDataLoader::loadAllData();
 
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 	Projectile::projPool.init(512, 10);

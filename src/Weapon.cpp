@@ -6,27 +6,65 @@
 #include "AoeProjectile.h"
 #include "OrbitProjectile.h"
 #include "BoomerangProjectile.h"
+#include "JsonLoader.h"
 
 
 const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> WeaponBase::weaponList
 {
-	{0,[](const shared_ptr<GameObject> obj) {
-			auto stats = std::make_shared<WeaponStats>(3, 500, 650, 32, 1.5f, 30);
+	{0,[](const shared_ptr<GameObject> obj) { return obj->addComponent<AutoWeapon>(std::string("Auto Weapon")); }},
 
-			return obj->addComponent<AutoWeapon>(stats); 
-		}
-	},
+	{1,[](const shared_ptr<GameObject> obj) { return obj->addComponent<BoomerangWeapon>(); } },
 
-	{1,[](const shared_ptr<GameObject> obj) {
-			auto stats = std::make_shared<WeaponStats>(3, 900, 1000, 32, 0.5f, 35);
-			return obj->addComponent<BoomerangWeapon>(stats); 
-		}
-	},
-
-	{2,[](const shared_ptr<GameObject> obj) {
-			auto stats = std::make_shared<WeaponStats>(3,900,1000,32,3,5);
-			return obj->addComponent<OrbitWeapon>(stats); 
-		}
-	},
+	{2,[](const shared_ptr<GameObject> obj) { return obj->addComponent<OrbitWeapon>(); } },
 
 };
+
+const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
+	auto& json = GameDataLoader::getWeapon(weaponName);
+	if (json.contains("damage")) // check if json defined a dmg.
+		damage = json["damage"]; // if so, get dmg
+	else {
+		damage = 0; // if not, set a default value.
+		// for some stats, you really should define a value. log that there is none.
+		std::cerr << "\n\"damage\" not found in JSON for: " << weaponName; 
+	}
+
+	// the above pattern repeats.
+
+	if (json.contains("speed"))
+		speed = json["speed"];
+	else {
+		speed = 0;
+		std::cerr << "\n \"speed\" not found in JSON for: " << weaponName;
+	}
+
+
+	if (json.contains("attackSpeed")) {
+		attackSpeed = 1.0f / json["attackSpeed"]; // attack speed number represents firings per second. 
+	}
+		
+	else {
+		attackSpeed = 0;
+		std::cerr << "\n \"attackSpeed\" not found in JSON for: " << weaponName;
+	}
+	std::cout << "\n"<<weaponName<<" Attack Speed : " << attackSpeed;
+
+	if (json.contains("range")) {
+		range = json["range"];
+		range *= range; // distance checks use sqr magnitude, so sqr range to counteract that.
+	}
+
+	else range = std::numeric_limits<int>::max(); // unlimited range by default. 
+
+	if (json.contains("pierce"))
+		pierce = json["pierce"];
+	else pierce = std::numeric_limits<int>::max(); // unlimited pierce by default.
+
+	if (json.contains("projSize")){
+		projRadius = json["projSize"];
+		projRadius *= projRadius; // distance checks are squared again.
+	}
+	else projRadius = 1024; // 32x32 default size
+
+	return json;
+}

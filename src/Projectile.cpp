@@ -6,8 +6,8 @@
 #include "TrailRenderer.h"
 
 
-Projectile::Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats) :
-	stats(stats), pierceCount(stats.lock()->pierce), direction(direction) {}
+Projectile::Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
+	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {}
 
 void Projectile::init() {
 	parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
@@ -20,29 +20,28 @@ void Projectile::init() {
 
 
 void Projectile::update(float deltaTime) {
-	auto statsP = stats.lock();
-	parent->move(direction * statsP->speed * deltaTime);
+	parent->move(direction * (*speed)* deltaTime);
 	auto curPos = parent->getPosition();
 
-	if ((curPos - startPos).lengthSquared() >= statsP->range) {
+	if ((curPos - startPos).lengthSquared() >= *range) {
 		projPool.release(parent);
 		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 		// it looping the last trail until new proj made.
 
 	}
 
-	CheckEnemies(curPos, statsP);
+	CheckEnemies(curPos);
 
 	
 
 }
 
-void Projectile::CheckEnemies(sf::Vector2f curPos, std::shared_ptr<WeaponStats>& statsP) {
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, statsP->projRadius);
+void Projectile::CheckEnemies(sf::Vector2f curPos) {
+	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
 // iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(statsP->_damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 		--pierceCount; // decrement and check pierce.
 		if (pierceCount <= 0) {

@@ -5,15 +5,15 @@ class AutoWeapon : public WeaponBase {
 
 public:
 
-	AutoWeapon(std::shared_ptr<WeaponStats>& stats):WeaponBase(stats){}
+	AutoWeapon(std::string& weaponName) :WeaponBase(weaponName) {}
 
 	virtual void Fire() override {
 		auto playerPos = parent->getPosition();
-		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(playerPos, stats->range);
+		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(playerPos, range);
 		if (!closestEnemy) return;
 		sf::Vector2f direction =  closestEnemy->getPosition() - playerPos;
-		auto projectile = projPool.make<Projectile>(5, direction.normalized(), stats);
-		attackTimer = stats->attackSpeed;
+		auto projectile = projPool.make<Projectile>(5, direction.normalized(), &damage,&speed,&range,&projRadius, pierce);
+		attackTimer = attackSpeed;
 	}
 	virtual void update(float deltaTime) override{
 		if (attackTimer <= 0) Fire();
@@ -24,8 +24,6 @@ public:
 	virtual void LevelUp()override {
 
 	}
-
-	virtual void init()override { }
 	virtual void Destroy()override {}
 	virtual const std::string getDescription() const override {return weaponDescription; }
 

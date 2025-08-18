@@ -5,8 +5,8 @@
 class Papyrmancer_Reap : public WeaponBase {
 public:
 	static inline int count = 0;
-	Papyrmancer_Reap(std::shared_ptr<WeaponStats> stats) :
-		WeaponBase(stats){}
+	Papyrmancer_Reap() :
+		WeaponBase(std::string("Papyrmancer Reap")) {}
 
 	void Fire() override {
 	
@@ -15,14 +15,14 @@ public:
 		const sf::Vector2f zero = { 0,0 }; // can initially set direction to 0, as it is overwritten in update().
 		for (auto& enemy : sowedEnemies) { // for all sowed enemies,
 			if (!enemy->isActive()) continue;
-			auto projectile = Projectile::projPool.make<Reap_Projectile>(5,zero, stats); 
+			auto projectile = Projectile::projPool.make<Reap_Projectile>(5,zero, &damage,&speed,&range,&projRadius,pierce); 
 						if (!projectile) return;
 			// spawn projectile with no direction, with ptr to weapons stats.
 			projectile->setPosition(enemy->getPosition()); // set position to start from the enemy.
 		}
 			
 		Sow_Projectile::ClearSowedEnemies();
-		attackTimer = stats->attackSpeed;
+		attackTimer = attackSpeed;
 
 	}
 
@@ -43,5 +43,6 @@ public:
 		return
 			"Papyrmancer Reap\nShoot a projectile from\nall enemies marked with\nsow towards the player,\ndealing damage to enemies\non the path back.";
 	};
+
 
 };

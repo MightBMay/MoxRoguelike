@@ -3,12 +3,12 @@
 #include "Projectile.h"
 class EnemyManager;
 class GameObject;
-struct WeaponStats;
+
 
 class Reap_Projectile : public Projectile {
 
 public:
-	Reap_Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats);
+	Reap_Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce);
 	void update(float deltaTime) override final;
 	const std::string& getSpritePath() const final {
 		return spritePath;

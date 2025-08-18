@@ -8,37 +8,6 @@
 
 
 
-struct WeaponStats
-{
-
-public:
-	//s.e
-	const int _damage=0;
-	//s.e
-	const float speed=0;
-	// distance the projectile travels
-	const int range=0;
-	// width of the collision check with enemies
-	const float projRadius=0;
-	// how many projectiles can be fired in a second.
-	const float attackSpeed=0;
-	// how many enemies the projectile can hit before being destroyed.
-	const int pierce=0;
-
-
-	/// <summary>
-	/// remember, range and projRadius are SQUARED to avoid the root when calcualting.
-	/// </summary>
-	WeaponStats(int _damage, float speed, int range, float projRadius, float attackSpeed, int pierce) :
-		_damage(_damage), speed(speed), range(range* range), 
-		projRadius(projRadius* projRadius), attackSpeed(1.0f/attackSpeed),
-		pierce(pierce) {}
-
-private:
-
-};
-
-
 class WeaponBase : public Component {
 
 private:
@@ -56,7 +25,7 @@ private:
 
 
 public:
-	WeaponBase(std::shared_ptr<WeaponStats>& stats):stats(stats){}
+	WeaponBase(std::string& weaponName) :name(weaponName){};
 
 	static std::weak_ptr<WeaponBase> CreateWeapon(int index, std::shared_ptr<GameObject>& playerObj) {
 		auto it = weaponList.find(index); // search map for index
@@ -78,9 +47,13 @@ public:
 	}
 
 
-	std::shared_ptr<WeaponStats> getStats() const { return stats; }
-	float getAttackSpeed() const { return stats->attackSpeed; }
-	float getAttackTimer() const { return attackTimer; }
+	const int& getDamage() const { return damage; }
+	const float& getSpeed() const { return speed; }
+	const float& getRange() const { return range; }
+	const float& getProjectileRadius() const { return projRadius; }
+	const float& getPierce() const { return pierce; }
+	const float& getAttackSpeed() const { return attackSpeed; }
+	const float& getAttackTimer() const { return attackTimer; }
 
 
 	/// <summary>
@@ -91,16 +64,48 @@ public:
 	/// Handles incrementing weapon level, stats, and any special effects that occour upon leveling.
 	/// </summary>
 	virtual void LevelUp() = 0;
-	virtual void init() {}
+
+	
+	virtual void init() { LoadInfoFromJson(name); }
 	virtual void Destroy() {}
 	virtual const std::string getDescription() const = 0;
 
+
 protected:
-	std::shared_ptr<WeaponStats> stats;
+	
+
+	//s.e
+	int damage=0;
+
+	//s.e
+	float speed = 0;
+
+	// distance the projectile travels
+	float range = 0;
+
+	// width of the collision check with enemies
+	int projRadius = 0;
+
+	// how many projectiles can be fired in a second.
+	float attackSpeed = 0;
+
+	// how many enemies the projectile can hit before being destroyed.
+	int pierce = 0;
+
+	std::string description = "";
+	std::string name = "";
+
+	/// <summary>
+	/// uses a string weapon name [CASE SENSITIVE] to index weapons.json and load any stats.
+	/// </summary>
+	virtual const json& LoadInfoFromJson(std::string weaponName);
+
 
 	MEvent<float> cooldownTickEvent{};
 	GameObjectPool<Projectile>& projPool = Projectile::projPool;
 	float attackTimer = 0;
+
+
 
 
 };

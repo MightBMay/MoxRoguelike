@@ -3,12 +3,11 @@
 #include "TrailRenderer.h"
 class EnemyManager;
 class GameObject;
-struct WeaponStats;
 
 class Sow_Projectile : public Projectile {
 	
 public:
-	Sow_Projectile(sf::Vector2f direction, std::weak_ptr<WeaponStats> stats);
+	Sow_Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce);
 	static std::unordered_set<std::shared_ptr<GameObject>>& GetSowedEnemies() {
 		return sowedEnemies;
 	}
