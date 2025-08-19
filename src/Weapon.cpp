@@ -6,7 +6,7 @@
 #include "AoeProjectile.h"
 #include "OrbitProjectile.h"
 #include "BoomerangProjectile.h"
-#include "JsonLoader.h"
+
 
 
 const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> WeaponBase::weaponList
@@ -18,7 +18,7 @@ const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<Game
 	{2,[](const shared_ptr<GameObject> obj) { return obj->addComponent<OrbitWeapon>(); } },
 
 };
-
+					   
 const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 	auto& json = GameDataLoader::getWeapon(weaponName);
 	if (json.contains("damage")) // check if json defined a dmg.
@@ -32,7 +32,7 @@ const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 	// the above pattern repeats.
 
 	if (json.contains("speed"))
-		speed = json["speed"];
+		speed = json["speed"].get<float>();
 	else {
 		speed = 0;
 		std::cerr << "\n \"speed\" not found in JSON for: " << weaponName;
@@ -40,14 +40,12 @@ const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 
 
 	if (json.contains("attackSpeed")) {
-		attackSpeed = 1.0f / json["attackSpeed"]; // attack speed number represents firings per second. 
+		attackSpeed = 1 / json["attackSpeed"].get<float>(); // attack speed number represents firings per second. 
 	}
-		
 	else {
 		attackSpeed = 0;
 		std::cerr << "\n \"attackSpeed\" not found in JSON for: " << weaponName;
 	}
-	std::cout << "\n"<<weaponName<<" Attack Speed : " << attackSpeed;
 
 	if (json.contains("range")) {
 		range = json["range"];
@@ -65,6 +63,11 @@ const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 		projRadius *= projRadius; // distance checks are squared again.
 	}
 	else projRadius = 1024; // 32x32 default size
+
+	if (json.contains("description")) 
+		description = json["description"];
+	else { description = "DESCRIPTION FOR WEAPON "+ name +"NOT FOUND"; }
+	
 
 	return json;
 }

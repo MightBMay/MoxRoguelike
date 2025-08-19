@@ -2,6 +2,7 @@
   "weapons": {
 
     "Auto Weapon": {
+      "description":  "An automatically firing weapon\n",
       "damage": 3,
       "speed": 500,
       "range": 650,
@@ -11,6 +12,7 @@
     },
 
     "Boomerang Weapon": {
+      "description": "Fires projectile that upon \nreaching max range, returns \ntowards the player.",
       "damage": 3,
       "speed": 900,
       "range": 1000,
@@ -18,6 +20,7 @@
     },
 
     "Orbit Weapon": {
+      "description": "Fires projectiles that \norbit the player.",
       "damage": 3,
       "speed": 900,
       "range": 1000,
@@ -25,16 +28,17 @@
     },
 
     "Papyrmancer Sow": {
+      "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
-      "speed": 900,
+      "speed": 500,
       "range": 1000,
       "attackSpeed": 3
     },
 
     "Papyrmancer Reap": {
+      "description": "Creates a projectile at all\nenemies marked with Sow,\nrecalling them towards the\nplayer dealing damage to all\nenemies along the path.",
       "damage": 3,
       "speed": 900,
-      "range": 1000,
       "attackSpeed": 0.4
     }
 

@@ -31,10 +31,5 @@ public:
 		cooldownTickEvent.invoke(attackTimer);
 	}
 
-	const std::string getDescription() const override {
-		return
-			"Papyrmancer Sow\nShoot a projectile that\nfollows the cursor.\nUpon hitting an enemy\napplies Sow.";
-	};
-
 
 };

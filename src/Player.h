@@ -25,6 +25,7 @@ private:
 public:
 	StatGroup() {}
 	StatGroup(int base) :base(base) {}
+	StatGroup(int base, int flat, float mult) :base(base), flat(flat),mult(mult){}
 
 	int& getBase() { return base; }
 	int& getFlat() { return flat; }
@@ -46,8 +47,11 @@ public:
 struct PlayerStats {
 public:
 
-	PlayerStats( std::array<std::shared_ptr<StatUpgrade>,6>& upgradeArray, int maxHp,int defence, int healthRegen, int speed )
-		:statUpgrades(upgradeArray), maxHp(maxHp), curHp(maxHp/2),defence(defence), healthRegen(healthRegen), speed(speed) {}
+	PlayerStats( std::string className, std::array<std::shared_ptr<StatUpgrade>,6>& upgradeArray)
+		:statUpgrades(upgradeArray) {
+
+		LoadInfoFromJson(className);
+	}
 
 	int& getMaxHp() { return maxHp.getBase(); }
 	int& getCurHp() { return curHp; }
@@ -95,7 +99,8 @@ public:
 	std::shared_ptr<StatUpgrade> AddUpgrade(StatType type);
 	void RecalculateStats();
 
-
+protected:
+	virtual const json& LoadInfoFromJson(std::string className);
 private:
 	std::array< std::shared_ptr<StatUpgrade>,6>& statUpgrades;
 	MEvent<int> onMaxHealthChange{};
@@ -128,7 +133,7 @@ public:
 	bool facingDirection = false;
 
 
-	Player();
+	Player(std::string className);
 
 
 	void HandleRegen(float deltatime);
@@ -146,7 +151,7 @@ public:
 	virtual void Destroy() override {}
 
 protected:
-
+	std::string className = "";
 	std::shared_ptr<PlayerUI> playerUI;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
 
@@ -169,7 +174,6 @@ protected:
 		parent->getSprite()->setColor(sf::Color::White);
 		_isVulnrable = true;
 	}
-
 
 private:
 	static inline bool _isVulnrable = true;

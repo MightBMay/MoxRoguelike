@@ -21,8 +21,8 @@ public:
 			s_weapons = std::make_shared<json>(json::parse(weapon_file));
 
 			// Load player classes (uncomment when ready)
-			// std::ifstream player_file("../assets/gamedata/playerClasses.json");
-			// s_player_classes = std::make_shared<json>(json::parse(player_file));
+			 std::ifstream player_file("../assets/gamedata/playerclasses.json");
+			 s_player_classes = std::make_shared<json>(json::parse(player_file));
 
 			// Load enemies (uncomment when ready)
 			// std::ifstream enemy_file("../assets/gamedata/enemies.json");

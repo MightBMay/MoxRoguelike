@@ -1,0 +1,16 @@
+{
+  "player_classes": {
+
+
+    "Papyrmancer": {
+      "health": 100,
+      "healthRegen": 3,
+      "defence": 0,
+      "speed": 300
+
+    }
+
+
+
+  }
+}

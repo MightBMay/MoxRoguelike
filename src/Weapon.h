@@ -4,6 +4,7 @@
 #include "Projectile.h"
 #include "MEvent.h"
 #include "Global.h"
+#include "JsonLoader.h"
 
 
 
@@ -25,7 +26,7 @@ private:
 
 
 public:
-	WeaponBase(std::string& weaponName) :name(weaponName){};
+	WeaponBase(std::string& weaponName) :name(weaponName){ LoadInfoFromJson(name); };
 
 	static std::weak_ptr<WeaponBase> CreateWeapon(int index, std::shared_ptr<GameObject>& playerObj) {
 		auto it = weaponList.find(index); // search map for index
@@ -66,9 +67,9 @@ public:
 	virtual void LevelUp() = 0;
 
 	
-	virtual void init() { LoadInfoFromJson(name); }
+	virtual void init() {  }
 	virtual void Destroy() {}
-	virtual const std::string getDescription() const = 0;
+	const std::string getDescription() const { return description; }
 
 
 protected:

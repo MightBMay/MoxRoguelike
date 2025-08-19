@@ -109,14 +109,15 @@ void PlayerStats::RecalculateStats() {
 }
 
 
-Player::Player() : hitFlickerTimer(hitFlickerDuration) {
-	
+Player::Player(std::string className) :className(className), hitFlickerTimer(hitFlickerDuration) {
+
 }
 
 void Player::init() {
 	auto sharedThis = shared_from_this();
 	playerUI = std::make_shared<PlayerUI>(sharedThis);
-	stats = std::make_shared<PlayerStats>(statUpgradeHolder, 100, 5, 5, 300);
+	std::cout << className;
+	stats = std::make_shared<PlayerStats>(className,statUpgradeHolder);
 	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
 
 	stats->RecalculateStats();// unlikely, but in case something changes before init call.
@@ -138,8 +139,8 @@ void Player::init() {
 
 
 	// DEBUG
-	AddWeapon(0, 2);
-	//AddWeapon(1, 1);
+	//AddWeapon(0, 0);
+	AddWeapon(1, 1);
 	//AddWeapon(2, 2);
 
 	CreateAbilities(window);
@@ -274,4 +275,34 @@ void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 	abilityHolder[0] = weaponQ;
 	abilityHolder[1] = weaponE;
 	//abilityHolder[2] = weaponR;
+}
+
+const json& PlayerStats::LoadInfoFromJson(std::string className) {
+	auto& json = GameDataLoader::getPlayerClass(className);
+
+	if (json.contains("health")) {
+		maxHp = StatGroup(json["health"]);
+		curHp = maxHp.getBase();
+		
+	}
+	else { maxHp = StatGroup(); std::cerr << "\nHealth value not found for: " << className; }
+
+	if (json.contains("defence")) {
+		defence = StatGroup(json["defence"]);
+	}
+	else { defence = StatGroup(); std::cerr << "\Defence value not found for: " << className; }
+
+	if (json.contains("healthRegen")) {
+		healthRegen = StatGroup(json["healthRegen"]);
+	}
+	else { healthRegen = StatGroup(); std::cerr << "\nHealth Regen value not found for: " << className; }
+
+	if (json.contains("speed")) {
+		speed = StatGroup(json["speed"]);
+	}
+	else { speed = StatGroup(); std::cerr << "\Speed value not found for: " << className; }
+
+
+	return json;
+
 }

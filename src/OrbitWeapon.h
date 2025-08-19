@@ -23,7 +23,7 @@ public:
 
 	}
 	virtual void Destroy()override {}
-	virtual const std::string getDescription() const override { return "Orbit weapon"; };
+
 
 
 };

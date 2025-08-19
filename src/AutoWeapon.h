@@ -25,10 +25,7 @@ public:
 
 	}
 	virtual void Destroy()override {}
-	virtual const std::string getDescription() const override {return weaponDescription; }
 
-protected:
-	std::string weaponDescription =
-		"Automatically firing weapon,\n that targets the closest enemy within range.";
+
 	
 };

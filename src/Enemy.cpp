@@ -107,7 +107,10 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 }
 
 bool Enemy::takeDamage(int _damage) {
-	_curHp -= _damage;
+	int finalDamage = Player::getStats()->Damage(_damage);
+	_curHp -= finalDamage;
+	std::cout << "damage: "<<finalDamage;
+	
 	if (_curHp <= 0) {
 		Destroy();
 		return true;
