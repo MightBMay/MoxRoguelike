@@ -27,23 +27,34 @@ void StatGroup::UpdateValues(std::shared_ptr<StatUpgrade> upgrade) {
 }
 
 
+/// <returns>Player's max HP modified by any upgrades to their stats.</returns>
 const int PlayerStats::MaxHp() const { 
 	return maxHp.evaluate();
 }
+/// <returns>Player's health regen modified by any upgrades to their stats.</returns>
 const int PlayerStats::HealthRegen()const {
 	return healthRegen.evaluate();
 }
+/// <returns>Player's defence modified by any upgrades to their stats.</returns>
 const int PlayerStats::Defence()const {
 	return defence.evaluate();
 }
+/// <returns>Player's speed modified by any upgrades to their stats.</returns>
 const float PlayerStats::Speed() const { 
 	return speed.evaluate();
 }
+/// <returns> given damage amount, modified by any upgrades to their stats.</returns>
 const int PlayerStats::Damage(int originalDamage) const { 
 	return damage.evaluate(originalDamage);
 }
+/// <returns>given base attack speed, modified by any upgrades to their stats.</returns>
+const float PlayerStats::AttackSpeed(float originalSpeed) const {
+	return attackSpeed.evaluate_f(originalSpeed);
+}
 const float& PlayerStats::Size() const { return size; }
-const int& PlayerStats::XP(int baseXP) const { return curXp; }
+// returns current player xp.
+const int& PlayerStats::CurXP() const { return curXp; }
+/// <returns> Adds given xp value to curxp, and handles leveling up. takes into account XP stat..</returns>
 const void PlayerStats::AddXP(int baseXp) {
 	curXp += xp.evaluate(baseXp);
 	while (curXp >= xpToNext) {
@@ -140,8 +151,8 @@ void Player::init() {
 
 	// DEBUG
 	//AddWeapon(0, 0);
-	AddWeapon(1, 1);
-	//AddWeapon(2, 2);
+	//AddWeapon(1, 1);
+	AddWeapon(2, 2);
 
 	CreateAbilities(window);
 
@@ -301,6 +312,18 @@ const json& PlayerStats::LoadInfoFromJson(std::string className) {
 		speed = StatGroup(json["speed"]);
 	}
 	else { speed = StatGroup(); std::cerr << "\Speed value not found for: " << className; }
+
+	if (json.contains("xp")) {
+		xp = StatGroup(0,0,json["xp"]);
+	}
+	else { xp = StatGroup(); }
+
+	if (json.contains("attackSpeed")) {
+		std::cout << "attackspeed: " << json["attackSpeed"];
+		attackSpeed = StatGroup(0,0,json["attackSpeed"]);
+	}
+	else { attackSpeed = StatGroup(); }
+
 
 
 	return json;

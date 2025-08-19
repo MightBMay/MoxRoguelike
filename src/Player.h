@@ -39,6 +39,9 @@ public:
 	int evaluate(int base) const{
 		return static_cast<int>((base + flat) * mult);
 	}
+	float evaluate_f(float base) const {
+		return (base + flat) * mult;
+	}
 
 
 
@@ -83,9 +86,11 @@ public:
 	/// </summary>
 	const float Speed() const;
 
+	const float AttackSpeed(float originalSpeed)const;
+
 	const float& Size() const;
 
-	const int& XP(int baseXP) const;
+	const int& CurXP() const;
 	const void AddXP(int baseXp);
 
 	/// <summary>
@@ -118,6 +123,7 @@ private:
 	StatGroup healthRegen;
 	StatGroup speed;
 	StatGroup damage;
+	StatGroup attackSpeed;
 	/// <summary>
 	/// NOT the actual variable for xp value. that is curXP.
 	/// </summary>

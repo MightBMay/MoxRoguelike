@@ -16,7 +16,7 @@ public:
 		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), range);
 		if (!closestEnemy) return;
 		auto projectile = projPool.make<OrbitProjectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
-		attackTimer = attackSpeed;
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 
 	}
 	virtual void LevelUp()override {

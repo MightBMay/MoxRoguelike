@@ -1,6 +1,7 @@
 #pragma once
 #include "Weapon.h"
 #include "EnemyManager.h"
+#include "Player.h"
 class AutoWeapon : public WeaponBase {
 
 public:
@@ -13,7 +14,7 @@ public:
 		if (!closestEnemy) return;
 		sf::Vector2f direction =  closestEnemy->getPosition() - playerPos;
 		auto projectile = projPool.make<Projectile>(5, direction.normalized(), &damage,&speed,&range,&projRadius, pierce);
-		attackTimer = attackSpeed;
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 	}
 	virtual void update(float deltaTime) override{
 		if (attackTimer <= 0) Fire();

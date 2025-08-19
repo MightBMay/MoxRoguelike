@@ -7,6 +7,9 @@
 #include "JsonLoader.h"
 
 
+class PlayerStats;
+
+
 
 
 class WeaponBase : public Component {
@@ -26,7 +29,7 @@ private:
 
 
 public:
-	WeaponBase(std::string& weaponName) :name(weaponName){ LoadInfoFromJson(name); };
+	WeaponBase(std::string& weaponName);
 
 	static std::weak_ptr<WeaponBase> CreateWeapon(int index, std::shared_ptr<GameObject>& playerObj) {
 		auto it = weaponList.find(index); // search map for index
@@ -53,7 +56,7 @@ public:
 	const float& getRange() const { return range; }
 	const float& getProjectileRadius() const { return projRadius; }
 	const float& getPierce() const { return pierce; }
-	const float& getAttackSpeed() const { return attackSpeed; }
+	const float& getAttackSpeed() const;
 	const float& getAttackTimer() const { return attackTimer; }
 
 
@@ -105,6 +108,7 @@ protected:
 	MEvent<float> cooldownTickEvent{};
 	GameObjectPool<Projectile>& projPool = Projectile::projPool;
 	float attackTimer = 0;
+	std::shared_ptr<PlayerStats> playerStats;
 
 
 

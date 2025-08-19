@@ -6,7 +6,15 @@
 #include "AoeProjectile.h"
 #include "OrbitProjectile.h"
 #include "BoomerangProjectile.h"
+#include "Player.h"
 
+WeaponBase::WeaponBase(std::string& weaponName) :name(weaponName) {
+	LoadInfoFromJson(name);
+	// technically re assigns this every time we make a weapon, but wtv
+	playerStats = Player::getStats();
+};
+
+const float& WeaponBase::getAttackSpeed() const { return playerStats->AttackSpeed(attackSpeed); }
 
 
 const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> WeaponBase::weaponList

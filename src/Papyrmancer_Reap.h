@@ -22,7 +22,7 @@ public:
 		}
 			
 		Sow_Projectile::ClearSowedEnemies();
-		attackTimer = attackSpeed;
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 
 	}
 

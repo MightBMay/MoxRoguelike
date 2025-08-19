@@ -21,7 +21,7 @@ public:
 		if(direction.lengthSquared()!=0)direction = direction.normalized();
 
 		auto projectile = projPool.make<BoomerangProjectile>(5,direction, &damage, &speed, &range, &projRadius, pierce);
-		attackTimer = attackSpeed;
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 
 	}
 	virtual void LevelUp()override {

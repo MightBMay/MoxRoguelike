@@ -14,7 +14,7 @@ public:
 		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
 
 			// spawn projectile with no direction, with ptr to weapons stats.
-		attackTimer = attackSpeed;
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 
 	}
 
