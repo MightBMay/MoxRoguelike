@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Component.h"
 #include "Timer.h"
+#include "JsonLoader.h"
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -18,7 +19,7 @@ public:
 	float _attackSpeed=0;
 
 	float _speed=0;
-	float _size=0;
+	float _size=86;
 	float _attackSize=0;
 	
 	// max number of attacks in 1 second
@@ -34,7 +35,9 @@ public:
 	/// <summary>
 	/// base enemy constructor
 	/// </summary>
-	Enemy(int level) :level(level){}  // having pure virtual methods called like this FORCES all enemy subclasses to define their stats.
+	Enemy(int level, std::string enemyType) :level(level),enemyType(enemyType){
+		LoadInfoFromJson(enemyType);
+	}  
 		 
 
 	float getSpeed() {
@@ -67,7 +70,7 @@ public:
 
 
 protected:
-
+	std::string enemyType= "";
 	inline void ResetHitFlicker();
 
 	Timer hitFlickerTimer{hitFlickerDuration, false};
@@ -87,6 +90,44 @@ protected:
 	virtual const float attackSize() const = 0;
 	virtual float speed() const = 0;
 	virtual float size() const = 0;
+
+	virtual void LoadInfoFromJson(std::string enemyType) {
+		auto& json = GameDataLoader::getEnemy(enemyType);
+		if (json.contains("hp")) {
+			_maxHp = json["hp"];
+			_curHp = _maxHp;
+		}
+		else { std::cerr << "\n\"hp\" not found/defined in json for " << enemyType; }
+
+		if (json.contains("damage")) {
+			_damage= json["damage"];
+		}
+		else { std::cerr << "\nDamage not found/defined in json for " << enemyType; }
+
+		if (json.contains("attack speed")) {
+			_attackSpeed = 1/ json["attack speed"].get<float>();
+		}
+		else { std::cerr << " not found/defined in json for " << enemyType; }
+
+		if (json.contains("attack size")) {
+			_attackSize = json["attack size"];
+		}
+		else { std::cerr << " \n\"attack size\"not found/defined in json for " << enemyType; }
+
+		if (json.contains("speed")) {
+			_speed = json["speed"];
+			
+		}
+		else { std::cerr << "\n\"speed\" not found/defined in json for " << enemyType; }
+
+		if (json.contains("size")) {
+			_size = json["size"];
+			
+		}
+		else { std::cerr << "\n\"size \" not found/defined in json for " << enemyType; }
+
+
+	}
 
 
 

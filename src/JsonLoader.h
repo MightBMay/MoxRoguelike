@@ -30,8 +30,8 @@ public:
 
 
 			// Load enemies (uncomment when ready)
-			// std::ifstream enemy_file("../assets/gamedata/enemies.json");
-			// s_enemies = std::make_shared<json>(json::parse(enemy_file));
+			 std::ifstream enemy_file("../assets/gamedata/enemies.json");
+			 s_enemies = std::make_shared<json>(json::parse(enemy_file));
 
 			return true;
 		}

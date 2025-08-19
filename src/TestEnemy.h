@@ -4,7 +4,7 @@
 class TestEnemy : public Enemy {
 
 public:
-	TestEnemy(int level) :Enemy(level) {
+	TestEnemy(int level, std::string enemyType) :Enemy(level, enemyType) {
 
 	}
 

@@ -1,0 +1,12 @@
+{
+  "enemies": {
+    "test enemy": {
+      "hp": 5,
+      "damage": 6,
+      "attack speed": 5,
+      "attack size": 6,
+      "speed": 175,
+      "size": 86
+    }
+  }
+}
