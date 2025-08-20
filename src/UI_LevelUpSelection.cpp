@@ -6,24 +6,27 @@
 #include "Player.h"
 
 
-Selection::Selection(std::shared_ptr<GameObject> object) {
+Selection::Selection(std::shared_ptr<GameObject> object, std::weak_ptr<Player> player):player(player) {
+	statType = Empty;
 	obj = object;
 	button = obj->addComponent<UI_Button>(window);
 	text = std::make_shared<sf::Text>(*font);
+	text->setOutlineThickness(2);
 	renderTexture = std::make_shared<sf::RenderTexture>(size);
 	obj->setSprite(renderTexture->getTexture(), {} );
 	renderSprite = obj->getSprite();
-	renderSprite->setColor(sf::Color::Cyan);
 	renderable = obj->getRenderable();
 	GameObjectManager::getInstance().addExternalRenderable(renderable, 200);
+
 }
 
 void Selection::OnClick() {
-	if (auto weapon_S = weaponPtr.lock())
-		weapon_S->LevelUp();
+	 
+	if (weaponId >= 0)
+		player.lock()->AddWeapon(weaponId);
 
-	else if (auto stat_S = statPtr.lock()) 
-		stat_S->LevelUp();
+	else if (statType != StatType::Empty)
+		player.lock()->AddStat(statType);
 		
 
 }
@@ -34,11 +37,13 @@ void Selection::UpdateOption() {
 	text->setString(GetDescription());
 
 	renderSprite->setTexture(*backgroundTexture);
+	renderSprite->setColor(sf::Color::Cyan); // DEBUG makes it easier to see.
 	renderSprite->setPosition({ 0, 0 }); // draw background at 0,0
 
 	renderTexture->draw(*renderSprite);
 	renderTexture->draw(*text);
-
+	renderTexture->display();
+	renderSprite->setColor(sf::Color::White);
 	renderSprite->setTexture(renderTexture->getTexture());
 	renderSprite->setPosition(originalPosition);
 
@@ -47,11 +52,29 @@ void Selection::UpdateOption() {
 }
 
 std::string Selection::GetDescription() {
-	if (auto weapon_S = weaponPtr.lock())
-		return weapon_S->getDescription();
-	else if (auto stat_S = statPtr.lock())
-		return stat_S->GetStatString();
-	else return "";
+	if (weaponId >= 0) {
+		std::string weaponName = GameDataLoader::getWeaponNameFromIndex(weaponId);
+		auto& json = GameDataLoader::getWeapon(weaponName);
+		if (json.contains("description"))
+			return json["description"];
+		else 
+			std::cerr << "\n" << weaponName << " is missing description field.";
+
+		
+	}
+
+	else if (statType != StatType::Empty) {
+		std::cout << "\n\n" " ( " << statType;
+		std::string statName = GameDataLoader::getStatNameFromIndex(statType);
+		
+		auto& json = GameDataLoader::getStatUpgrade(statName);
+		if (json.contains("description"))
+			return json["description"];
+		else
+			std::cerr << "\n" << statName << " is missing description field";
+	}
+	
+	return "";
 }
 
 
@@ -72,7 +95,7 @@ void UI_LevelUpSelection::Hide() {
 
 
 
-UI_LevelUpSelection::UI_LevelUpSelection(std::string fontPath) {
+UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath) {
 	
 	
 	Selection::backgroundTexture = TextureManager::getTexture("../assets/sprites/cardboard.png");
@@ -84,24 +107,30 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::string fontPath) {
 		
 		std::shared_ptr<GameObject> obj = GameObject::Create(200);
 		obj->setPosition(postion + sf::Vector2f(i * buttonSpacing, 0));
-		std::shared_ptr<Selection> selection = std::make_shared<Selection>(obj);
+		std::shared_ptr<Selection> selection = std::make_shared<Selection>(obj,player);
 		
 		Selections[i] = selection;
+
+		auto buttonS = selection->button.lock();
+		buttonS->getOnClick().subscribe(selection, &Selection::OnClick);
+
 		selection->UpdateOption();
 	}
 	
 }
 
-void UI_LevelUpSelection::UpdateOption(int selectionIndex, std::weak_ptr<WeaponBase> weapon) {
+void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
 	auto& selection = Selections[selectionIndex];
-	selection->weaponPtr = weapon;
+	selection->weaponId = weaponIndex;
+	selection->UpdateOption();
 
 
 }
-void UI_LevelUpSelection::UpdateOption(int selectionIndex, std::weak_ptr<StatUpgrade> stat) {
+void UI_LevelUpSelection::UpdateOption(int selectionIndex, StatType statType) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
 	auto& selection = Selections[selectionIndex];
-	selection->statPtr = stat;
+	selection->statType = statType;
+	selection->UpdateOption();
 }
 

@@ -9,7 +9,6 @@
 #include "Player.h"
 
 WeaponBase::WeaponBase(std::string& weaponName) :name(weaponName) {
-	LoadInfoFromJson(name);
 	// technically re assigns this every time we make a weapon, but wtv
 	playerStats = Player::getStats();
 };
@@ -27,14 +26,14 @@ const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<Game
 
 };
 					   
-const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
-	auto& json = GameDataLoader::getWeapon(weaponName);
+const json& WeaponBase::LoadInfoFromJson() {
+	auto& json = GetJsonData();
 	if (json.contains("damage")) // check if json defined a dmg.
 		damage = json["damage"]; // if so, get dmg
 	else {
 		damage = 0; // if not, set a default value.
 		// for some stats, you really should define a value. log that there is none.
-		std::cerr << "\n\"damage\" not found in JSON for: " << weaponName; 
+		std::cerr << "\n\"damage\" not found in JSON for: " << name; 
 	}
 
 	// the above pattern repeats.
@@ -43,7 +42,7 @@ const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 		speed = json["speed"].get<float>();
 	else {
 		speed = 0;
-		std::cerr << "\n \"speed\" not found in JSON for: " << weaponName;
+		std::cerr << "\n \"speed\" not found in JSON for: " << name;
 	}
 
 
@@ -52,7 +51,7 @@ const json& WeaponBase::LoadInfoFromJson(std::string weaponName) {
 	}
 	else {
 		attackSpeed = 0;
-		std::cerr << "\n \"attackSpeed\" not found in JSON for: " << weaponName;
+		std::cerr << "\n \"attackSpeed\" not found in JSON for: " << name;
 	}
 
 	if (json.contains("range")) {

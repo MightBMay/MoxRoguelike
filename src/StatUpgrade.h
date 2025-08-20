@@ -17,6 +17,7 @@ enum StatType
 };
 
 struct StatUpgrade {
+	
 public:
 	static inline const std::string StatTypeToString[] =
 	{ "empty", "health","health regen","defence", "damage", "speed", "attack speed", "gold" };
@@ -25,9 +26,9 @@ public:
 		LoadFlat(StatTypeToString[type]);
 		LoadMult(StatTypeToString[type]);
 	}
-	bool isMaxLevel() { return level >= 9; }
+	bool isMaxLevel() { return level >= maxLevel; }
 	void LevelUp() {
-		if (level >= 9) return; // stop at level value 9 (level 10)
+		if (isMaxLevel()) return; // stop at level value 9 (level 10)
 		level++;
 		Player::getStats()->RecalculateStats();
 	}
@@ -44,7 +45,7 @@ public:
 	}
 
 private:
-
+	static constexpr int maxLevel = 9;
 
 	std::array<int, 10> flatStats = {};
 	std::array<float, 10> multStats = {};

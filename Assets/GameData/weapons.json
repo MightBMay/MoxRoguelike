@@ -1,8 +1,15 @@
 {
+
+  "weapon indices": {
+    "0": "Auto Weapon",
+    "1": "Boomerang Weapon",
+    "2": "Orbit Weapon"
+  },
+
   "weapons": {
 
     "Auto Weapon": {
-      "description":  "An automatically firing weapon\n",
+      "description": "An automatically firing weapon\n",
       "damage": 3,
       "speed": 500,
       "range": 650,
@@ -25,7 +32,13 @@
       "speed": 900,
       "range": 1000,
       "attackSpeed": 3
-    },
+    }
+
+
+  },
+
+
+  "abilities": {
 
     "Papyrmancer Sow": {
       "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
@@ -41,9 +54,6 @@
       "speed": 900,
       "attackSpeed": 0.4
     }
-
-
-
 
   }
 }

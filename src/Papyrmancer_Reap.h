@@ -2,11 +2,11 @@
 #include"Weapon.h"
 #include "Sow_Projectile.h"
 
-class Papyrmancer_Reap : public WeaponBase {
+class Papyrmancer_Reap : public AbilityBase {
 public:
 	static inline int count = 0;
 	Papyrmancer_Reap() :
-		WeaponBase(std::string("Papyrmancer Reap")) {}
+		AbilityBase(std::string("Papyrmancer Reap")) {}
 
 	void Fire() override {
 	
@@ -38,7 +38,8 @@ public:
 		cooldownTickEvent.invoke(attackTimer);
 	}
 
-
+protected:
+	const json& GetJsonData()override { return GameDataLoader::getAbility(name); }
 
 
 };

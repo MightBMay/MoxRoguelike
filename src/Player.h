@@ -149,6 +149,9 @@ public:
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
 	void EnableBarUI(int value);
 
+	const std::array<std::weak_ptr<WeaponBase>, 6>& getWeapons() const { return weaponHolder; }
+	const std::array<int, 6>& getWeaponIndices() const { return weaponIndices; }
+	virtual void AddWeapon(int weaponIndex);
 	virtual void AddWeapon(int slotIndex, int weaponIndex);
 	virtual void AddStat(StatType type);
 	virtual void takeDamage(int _damage);

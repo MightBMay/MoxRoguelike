@@ -9,10 +9,12 @@
 						// but it works when it's in the header for whatever reason so we take those.
 class WeaponBase;
 class StatUpgrade;
+enum StatType;
 class GameObject;
 class GameObjectManager;
 class UI_Button;
 class Renderable;
+class Player;
 
 
 struct Selection {
@@ -29,17 +31,18 @@ public:
 
 	std::shared_ptr<sf::Text> text;
 
-	std::weak_ptr<WeaponBase> weaponPtr;
-	std::weak_ptr<StatUpgrade> statPtr;
+	int weaponId = -1;
+	StatType statType;
 
 	std::string GetDescription();
 
+	std::weak_ptr<Player> player;
 	
 
 	void UpdateOption();
 
 	void OnClick();
-	Selection(std::shared_ptr<GameObject> object);
+	Selection(std::shared_ptr<GameObject> object, std::weak_ptr<Player> player);
 };
 
 class UI_LevelUpSelection {
@@ -48,16 +51,16 @@ private:
 	static constexpr int quantity = 3;
 	std::shared_ptr<sf::Font> font;
 	std::array<std::shared_ptr<Selection>, quantity> Selections;
-
+	std::weak_ptr<Player> player;
 
 
 
 public:
-	UI_LevelUpSelection(std::string fontPath = "../assets/fonts/amazon ember.ttf");
+	UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath = "../assets/fonts/amazon ember.ttf");
 	void Show();
 	void Hide();
-	void UpdateOption(int selectionIndex, std::weak_ptr<WeaponBase> weapon);
-	void UpdateOption(int selectionIndex, std::weak_ptr<StatUpgrade> weapon);
+	void UpdateOption(int selectionIndex, int weaponIndex);
+	void UpdateOption(int selectionIndex, StatType statType);
 
 
 };

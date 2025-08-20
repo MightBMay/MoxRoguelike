@@ -6,8 +6,7 @@
       "health": 100,
       "healthRegen": 3,
       "defence": 0,
-      "speed": 300,
-      "attackSpeed":0.75 
+      "speed": 300
 
     }
 

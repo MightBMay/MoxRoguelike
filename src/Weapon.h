@@ -11,7 +11,6 @@ class PlayerStats;
 
 
 
-
 class WeaponBase : public Component {
 
 private:
@@ -40,6 +39,31 @@ public:
 		}
 		
 		return it->second(playerObj); // calls function stored in enemylist which 
+	}
+	static const json& getRandomWeaponJson() {
+		auto& data = *GameDataLoader::GetWeaponsData(); // get weapon data.
+		static std::vector<std::string> weaponNames;
+
+
+		
+		//confirm data validity.
+		if (!data.contains("weapons") || !data["weapons"].is_object()) { std::cerr << "\nError getting weapons data"; return json(); }
+		const json& weapons = data["weapons"]; // get list of weapons.
+
+		if (weaponNames.empty()) {// only iterate the first time.
+			for (auto it = weapons.begin(); it != weapons.end(); ++it) {
+				weaponNames.push_back(it.key());
+			}
+			std::cout << "Cached " << weaponNames.size() << " weapon names\n";
+		}
+
+		
+		return GameDataLoader::getWeapon( // get weapon using name like normal.
+				weaponNames[rng::getInt(0, weaponNames.size() - 1)]
+				);
+		
+		
+	
 	}
 
 	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
@@ -70,7 +94,7 @@ public:
 	virtual void LevelUp() = 0;
 
 	
-	virtual void init() {  }
+	virtual void init() { LoadInfoFromJson(); }
 	virtual void Destroy() {}
 	const std::string getDescription() const { return description; }
 
@@ -99,10 +123,8 @@ protected:
 	std::string description = "";
 	std::string name = "";
 
-	/// <summary>
-	/// uses a string weapon name [CASE SENSITIVE] to index weapons.json and load any stats.
-	/// </summary>
-	virtual const json& LoadInfoFromJson(std::string weaponName);
+	virtual const json& LoadInfoFromJson();
+	virtual const json& GetJsonData() {  return GameDataLoader::getWeapon(name); }
 
 
 	MEvent<float> cooldownTickEvent{};
@@ -115,6 +137,19 @@ protected:
 
 };
 
+/// <summary>
+/// used for class specific abilities. not really much actual change, mainly just overrides getjsondata() to get from the abilities section.
+/// </summary>
+class AbilityBase : public WeaponBase {
+
+public:
+	AbilityBase(std::string abilityName):WeaponBase(abilityName){}
+protected:
+
+	//Ability base class lets me override this. this allows me to keep the index system 
+
+	virtual const json& GetJsonData() override {  return GameDataLoader::getAbility(name); }
+};
 
 
 

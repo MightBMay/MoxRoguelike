@@ -3,11 +3,11 @@
 #include "Sow_Projectile.h"
 
 
-class Papyrmancer_Sow : public WeaponBase {
+class Papyrmancer_Sow : public AbilityBase {
 public:
 	static inline int count = 0;
 	Papyrmancer_Sow() :
-		WeaponBase(std::string("Papyrmancer Sow")) {}
+		AbilityBase(std::string("Papyrmancer Sow")) {}
 
 	void Fire() override {
 		static const sf::Vector2f zero = { 0,0 };

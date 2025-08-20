@@ -67,6 +67,7 @@ const void PlayerStats::AddXP(int baseXp) {
 }
 
 std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
+
 	for (auto& upgrade :statUpgrades) { // iterate upgrade array
 
 		if (!upgrade) { // if array element is null, fill with new upgrade, then exit.
@@ -127,7 +128,6 @@ Player::Player(std::string className) :className(className), hitFlickerTimer(hit
 void Player::init() {
 	auto sharedThis = shared_from_this();
 	playerUI = std::make_shared<PlayerUI>(sharedThis);
-	std::cout << className;
 	stats = std::make_shared<PlayerStats>(className,statUpgradeHolder);
 	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
 
@@ -150,8 +150,8 @@ void Player::init() {
 
 
 	// DEBUG
-	//AddWeapon(0, 0);
-	//AddWeapon(1, 1);
+	AddWeapon(0, 0);
+	AddWeapon(1, 1);
 	AddWeapon(2, 2);
 
 	CreateAbilities(window);
@@ -253,8 +253,45 @@ void Player::UpdateFacingDirection() {
 	}
 }
 
+/// <summary>
+/// iterates weapon list and adds to the first empty slot, or levels up the weapon if you already have it.
+/// </summary>
+/// <param name="weaponIndex"></param>
+void Player::AddWeapon(int weaponIndex) {
+	int firstEmpty = -1;
+	for (size_t i = 0; i < weaponIndices.size();i++)
+	{
+		if (weaponIndices[i] == weaponIndex) { // if
+			weaponHolder[i].lock()->LevelUp(); 
+			return;
+		}
+		if (weaponIndices[i] == -1 && firstEmpty == -1) { // if this is the first empty slot, store it.
+			firstEmpty = i;
+		}
+	}
+	if (firstEmpty == -1) { std::cerr << "\nTried to add weapon with full weaponHolder"; return; }
+	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
+	weaponHolder[firstEmpty] = weapon;
+	weaponIndices[firstEmpty] = weaponIndex;
+	playerUI->UI_AddWeapon(firstEmpty, weapon);
+	
+}
+/// <summary>
+/// manually adds a weapon to a slot. if you already have the weapon, instead levels the existing one up.
+/// </summary>
+/// <param name="slotIndex"></param>
+/// <param name="weaponIndex"></param>
 void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	if (slotIndex > 6 || slotIndex < 0) return;// check slotIndex bounds
+
+	for (int i = 0; i < weaponIndices.size();++i) // if weapon already exists on player, level it up instead.
+		if (weaponIndices[i] == weaponIndex) { 
+			weaponHolder[i].lock()->LevelUp(); 
+			
+			return; 
+		}
+	
+
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;

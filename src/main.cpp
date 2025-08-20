@@ -96,8 +96,12 @@ int main() {
 #pragma endregion
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
-
-	//levelUpUI = std::make_shared<UI_LevelUpSelection>();
+	auto& playerComp = player->getDerivativesOfComponent<Player>();
+	levelUpUI = std::make_shared<UI_LevelUpSelection>(playerComp);
+	auto& temp = playerComp->getWeaponIndices();
+	for (int i = 0; i < 3; ++i) {
+		levelUpUI->UpdateOption(i, temp[i]);
+	}
 
 #pragma region make background
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.

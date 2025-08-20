@@ -53,10 +53,32 @@ public:
 	static const json& getWeapon(const std::string& weaponName) {
 		return (*s_weapons)["weapons"][weaponName];
 	}
+	/// <summary>
+	/// converts a weapon index to string, then uses the returned weapon name to get the actual weapon data.
+	/// </summary>
+	static const json& getWeaponFromIndex(const int weaponIndex) {
+		return getWeapon((*s_weapons)["weapon indices"][std::to_string(weaponIndex)]);
+	}
+	static const std::string getWeaponNameFromIndex(const int weaponIndex) {
+		return (*s_weapons)["weapon indices"][std::to_string(weaponIndex)];
+	}
+
+	static const json& getAbility(const std::string& abilityName) {
+		return (*s_weapons)["abilities"][abilityName];
+	}
 
 	static const json& getStatUpgrade(const std::string& statType) {
 		return (*s_stat_upgrades)["stat_upgrades"][statType];
 	}
+
+	static const json& getStatFromIndex(const int statIndex) {
+		return getStatUpgrade((*s_stat_upgrades)["stat indices"][std::to_string(statIndex)]);
+	}
+	static const std::string getStatNameFromIndex(const int statIndex) {
+		return (*s_stat_upgrades)["stat indices"][std::to_string(statIndex)];
+	}
+
+
 
 	// Optional: Get direct access to the shared JSON objects
 	static std::shared_ptr<const json> GetWeaponsData() { return s_weapons; }
@@ -69,6 +91,7 @@ private:
 	static inline std::shared_ptr<const json> s_player_classes = nullptr;
 	static inline std::shared_ptr<const json> s_enemies = nullptr;
 	static inline std::shared_ptr<const json> s_weapons = nullptr;
+
 	static inline std::shared_ptr<const json> s_stat_upgrades= nullptr;
 };
 
