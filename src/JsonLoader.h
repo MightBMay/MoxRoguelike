@@ -60,6 +60,7 @@ public:
 		return getWeapon((*s_weapons)["weapon indices"][std::to_string(weaponIndex)]);
 	}
 	static const std::string getWeaponNameFromIndex(const int weaponIndex) {
+		std::cout << "\nindex: " << weaponIndex;
 		return (*s_weapons)["weapon indices"][std::to_string(weaponIndex)];
 	}
 

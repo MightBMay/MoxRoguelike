@@ -29,7 +29,7 @@ private:
 
 public:
 	WeaponBase(std::string& weaponName);
-
+	static int WeaponListSize() { return weaponList.size(); }
 	static std::weak_ptr<WeaponBase> CreateWeapon(int index, std::shared_ptr<GameObject>& playerObj) {
 		auto it = weaponList.find(index); // search map for index
 		//if index not found, return and error log.

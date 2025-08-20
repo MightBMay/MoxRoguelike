@@ -28,6 +28,7 @@
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"
 #include "UI_LevelUpSelection.h"
+#include "StatUpgrade.h"
 
 
 std::shared_ptr<sf::RenderWindow> window;
@@ -96,11 +97,16 @@ int main() {
 #pragma endregion
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
-	auto& playerComp = player->getDerivativesOfComponent<Player>();
-	levelUpUI = std::make_shared<UI_LevelUpSelection>(playerComp);
-	auto& temp = playerComp->getWeaponIndices();
+	levelUpUI = std::make_shared<UI_LevelUpSelection>(player->getDerivativesOfComponent<Player>());
 	for (int i = 0; i < 3; ++i) {
-		levelUpUI->UpdateOption(i, temp[i]);
+		int upgradeType = rng::getInt(0, 1);
+		if (upgradeType == 0) {
+			levelUpUI->UpdateOption(i, rng::getInt(0, WeaponBase::WeaponListSize() - 1));
+		}
+		else {
+			StatType statType = static_cast<StatType>(rng::getInt(0, StatType::typeCount));
+			levelUpUI->UpdateOption(i, statType);
+		}
 	}
 
 #pragma region make background

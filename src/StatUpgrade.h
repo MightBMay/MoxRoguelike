@@ -12,7 +12,12 @@ enum StatType
 	Speed,
 	HealthRegen,
 	AttackSpeed,
-	Gold
+	Gold,
+	/// <summary>
+	/// not an actual stat type, but can be used to get the number of stat types there are.
+	/// keep in mind this value is the amount of types starting at 1, not 0.
+	/// </summary>
+	typeCount
 
 };
 

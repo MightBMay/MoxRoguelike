@@ -64,7 +64,6 @@ std::string Selection::GetDescription() {
 	}
 
 	else if (statType != StatType::Empty) {
-		std::cout << "\n\n" " ( " << statType;
 		std::string statName = GameDataLoader::getStatNameFromIndex(statType);
 		
 		auto& json = GameDataLoader::getStatUpgrade(statName);
@@ -85,6 +84,23 @@ void UI_LevelUpSelection::Show() {
 		selecton->button.lock()->SetEnabled(true);
 	}
 }
+void UI_LevelUpSelection::ShowRandomSelections() {
+
+	std::shuffle(shuffledWeapons.begin(), shuffledWeapons.end(), rng::getEngine());
+	std::shuffle(shuffledStats.begin(), shuffledStats.end(), rng::getEngine());
+
+	for (int i = 0; i < 3; ++i) {
+		int upgradeType = rng::getInt(0, 1);
+		if (upgradeType == 0) {
+			// DEBUG /TODO find some way to exclude max leveled stats and weapons
+			UpdateOption(i, shuffledWeapons[i]);
+		}
+		else {
+			// DEBUG /TODO find some way to exclude max leveled stats and weapons
+			UpdateOption(i, shuffledStats[i]);
+		}
+	}
+}
 
 void UI_LevelUpSelection::Hide() {
 	for (auto& selecton : Selections) {
@@ -92,6 +108,7 @@ void UI_LevelUpSelection::Hide() {
 		selecton->button.lock()->SetEnabled(false);
 	}
 }
+
 
 
 
@@ -116,6 +133,20 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 
 		selection->UpdateOption();
 	}
+
+		// Precompute ranges as before
+	int weaponCount = WeaponBase::WeaponListSize();
+	weaponRange.resize(weaponCount);
+	std::iota(weaponRange.begin(), weaponRange.end(), 0);
+
+	statRange.resize(StatType::typeCount);
+	for (int i = 0; i < StatType::typeCount; ++i) {
+		statRange[i] = static_cast<StatType>(i);
+	}
+
+	// Initialize shuffled versions
+	shuffledWeapons = weaponRange;
+	shuffledStats = statRange;
 	
 }
 

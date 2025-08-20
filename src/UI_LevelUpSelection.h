@@ -52,12 +52,17 @@ private:
 	std::shared_ptr<sf::Font> font;
 	std::array<std::shared_ptr<Selection>, quantity> Selections;
 	std::weak_ptr<Player> player;
+	static std::vector<int> weaponRange;
+	static std::vector<StatType> statRange;
+	static std::vector<int> shuffledWeapons;  // For reuse
+	static std::vector<StatType> shuffledStats; // For reuse
 
 
 
 public:
 	UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath = "../assets/fonts/amazon ember.ttf");
 	void Show();
+	void ShowRandomSelections();
 	void Hide();
 	void UpdateOption(int selectionIndex, int weaponIndex);
 	void UpdateOption(int selectionIndex, StatType statType);

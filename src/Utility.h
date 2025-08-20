@@ -48,8 +48,7 @@ public:
             num = dist(engine);
         return values;
     }
-
-private:
-    // Static engine (initialized once)
     static std::mt19937& getEngine();
+
+   
 };
