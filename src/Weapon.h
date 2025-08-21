@@ -65,7 +65,7 @@ public:
 		
 	
 	}
-
+	bool isMaxLevel() { return level  >= maxLevel; }
 	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
 
 	virtual void update(float deltaTime)override {
@@ -101,7 +101,8 @@ public:
 
 protected:
 	
-
+	static constexpr int maxLevel = 9;
+	int level = 0;
 	//s.e
 	int damage=0;
 

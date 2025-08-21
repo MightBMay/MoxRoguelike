@@ -159,6 +159,14 @@ public:
 	void update(float deltatime) override;
 	virtual void Destroy() override {}
 
+
+	/// <returns>Returns the slot index the weapon is in, or -1 if not found. </returns>
+	int hasWeapon(int weaponIndex);
+	bool isWeaponMaxLevel(int weaponIndex);
+	/// <returns>Returns the slot index the stat is in, or -1 if not found. </returns>
+	int hasStat(StatType type);
+	bool isStatUpgradeMaxLevel(StatType type);
+
 protected:
 	std::string className = "";
 	std::shared_ptr<PlayerUI> playerUI;

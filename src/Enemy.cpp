@@ -7,6 +7,7 @@
 
 
 void Enemy::init() {
+	LoadInfoFromJson(enemyType);
 	EnemyManager::getInstance().add(parent->shared_from_this());
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
 	// upon adding enemymovement, this gameobject becomes an enemy.

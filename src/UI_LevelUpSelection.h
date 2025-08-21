@@ -22,6 +22,7 @@ public:
 	static constexpr sf::Vector2u size = sf::Vector2u(500, 700);
 	static inline std::shared_ptr<sf::Texture> backgroundTexture;
 	static inline std::shared_ptr<sf::Font> font;
+	
 	std::shared_ptr<GameObject> obj;
 	std::weak_ptr<UI_Button> button;
 	
@@ -49,13 +50,15 @@ class UI_LevelUpSelection {
 private:
 	static constexpr sf::Vector2f postion = sf::Vector2f(200, 175);
 	static constexpr int quantity = 3;
+	static inline int numRemainingLevels = 0;
+
 	std::shared_ptr<sf::Font> font;
 	std::array<std::shared_ptr<Selection>, quantity> Selections;
 	std::weak_ptr<Player> player;
-	static std::vector<int> weaponRange;
-	static std::vector<StatType> statRange;
-	static std::vector<int> shuffledWeapons;  // For reuse
-	static std::vector<StatType> shuffledStats; // For reuse
+	std::vector<int> weaponRange;
+	std::vector<StatType> statRange;
+	std::vector<int> shuffledWeapons;  // For reuse
+	std::vector<StatType> shuffledStats; // For reuse
 
 
 
@@ -64,6 +67,7 @@ public:
 	void Show();
 	void ShowRandomSelections();
 	void Hide();
+	void HideIfNoLevels();
 	void UpdateOption(int selectionIndex, int weaponIndex);
 	void UpdateOption(int selectionIndex, StatType statType);
 

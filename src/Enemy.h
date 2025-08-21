@@ -36,7 +36,7 @@ public:
 	/// base enemy constructor
 	/// </summary>
 	Enemy(int level, std::string enemyType) :level(level),enemyType(enemyType){
-		LoadInfoFromJson(enemyType);
+		
 	}  
 		 
 

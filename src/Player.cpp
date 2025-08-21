@@ -305,6 +305,38 @@ void Player::AddStat(StatType type)
 		playerUI->spriteBar->statBar->LinkStat(ptr);
 }
 
+bool Player::isWeaponMaxLevel(int weaponIndex) {
+	int slotNumber = hasWeapon(weaponIndex);
+	if (slotNumber < 0 || slotNumber >= weaponHolder.size()) return false;
+
+	auto weaponS = weaponHolder[slotNumber].lock();
+	if (!weaponS) return false;
+	return weaponS->isMaxLevel();
+
+}
+int Player::hasWeapon(int weaponIndex) {
+	for (int i =0;i<weaponIndices.size();++i)
+		if (weaponIndices[i] == weaponIndex) return i;
+	return -1;
+}
+
+bool Player::isStatUpgradeMaxLevel(StatType type) {
+	int slotNumber = hasStat(type);
+	if (slotNumber < 0 || slotNumber >= statUpgradeHolder.size()) return false;
+
+	auto statS = statUpgradeHolder[slotNumber];
+	if (!statS) return false;
+	return statS->isMaxLevel();
+}
+int Player::hasStat(StatType type) {
+	for (int i = 0; i<statUpgradeHolder.size(); ++i)
+		if (statUpgradeHolder[i]->type == type) return i;
+	
+	return -1;
+}
+
+
+
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 
 	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };		

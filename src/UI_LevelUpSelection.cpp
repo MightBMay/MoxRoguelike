@@ -85,21 +85,81 @@ void UI_LevelUpSelection::Show() {
 	}
 }
 void UI_LevelUpSelection::ShowRandomSelections() {
-
+	// shuffle weapons and stats to get random order with no repeats.
 	std::shuffle(shuffledWeapons.begin(), shuffledWeapons.end(), rng::getEngine());
 	std::shuffle(shuffledStats.begin(), shuffledStats.end(), rng::getEngine());
+	auto& playerS = player.lock();
 
+	// track current position in each shuffled array
+	int weaponIndex = 0;
+	int statIndex = 0;
+
+	// generate 3 upgrade options 
 	for (int i = 0; i < 3; ++i) {
+		// choose between weapon or stat upgrade 
 		int upgradeType = rng::getInt(0, 1);
+		bool foundOption = false;
+
 		if (upgradeType == 0) {
-			// DEBUG /TODO find some way to exclude max leveled stats and weapons
-			UpdateOption(i, shuffledWeapons[i]);
+			
+			// iterate shuffled weapons until one isnt max level
+			while (weaponIndex < shuffledWeapons.size() && !foundOption) {
+				int currentWeapon = shuffledWeapons[weaponIndex];
+				// check if this weapon can be upgraded further
+				if (!playerS->isWeaponMaxLevel(currentWeapon)) {
+					UpdateOption(i, currentWeapon);
+					foundOption = true; // escapes loop and cancels fallback checking of the other option type.
+				}
+				weaponIndex++; // move to next shuffled weapon
+			}
 		}
 		else {
-			// DEBUG /TODO find some way to exclude max leveled stats and weapons
-			UpdateOption(i, shuffledStats[i]);
+
+			// iterate shuffled stats until one isnt max level
+			while (statIndex < shuffledStats.size() && !foundOption) {
+				int currentStat = shuffledStats[statIndex];
+				// Check if this stat can be upgraded further
+				if (!playerS->isStatUpgradeMaxLevel(static_cast<StatType>(currentStat))) {
+					UpdateOption(i, currentStat);
+					foundOption = true; // escapes loop and cancels fallback checking of the other option type.
+				}
+				statIndex++; // move to next shuffled stat 
+			}
 		}
+
+		// if chosen category from upgradeType has no more options, try to find a fill in from the other type.
+		if (!foundOption) {
+			if (upgradeType == 0) {
+				// no weapon left, try stat.
+				while (statIndex < shuffledStats.size() && !foundOption) {
+					int currentStat = shuffledStats[statIndex];
+					if (!playerS->isStatUpgradeMaxLevel(static_cast<StatType>(currentStat))) {
+						UpdateOption(i, currentStat);
+						foundOption = true;
+					}
+					statIndex++;
+				}
+			}
+			else {
+				// no stats left, try weapon
+				while (weaponIndex < shuffledWeapons.size() && !foundOption) {
+					int currentWeapon = shuffledWeapons[weaponIndex];
+					if (!playerS->isWeaponMaxLevel(currentWeapon)) {
+						UpdateOption(i, currentWeapon);
+						foundOption = true;
+					}
+					weaponIndex++;
+				}
+			}
+		}
+
+		if (!foundOption) { // prob a good idea to log this.
+			std::cout << "\nNo More Levelup options found.";
+		}
+
 	}
+
+	Show(); // Display the UI with the selected upgrade options
 }
 
 void UI_LevelUpSelection::Hide() {
@@ -109,6 +169,13 @@ void UI_LevelUpSelection::Hide() {
 	}
 }
 
+void UI_LevelUpSelection::HideIfNoLevels() {
+	if (numRemainingLevels <= 0) Hide();
+	else {
+		numRemainingLevels--;
+		ShowRandomSelections();
+	}
+}
 
 
 
@@ -128,8 +195,9 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 		
 		Selections[i] = selection;
 
-		auto buttonS = selection->button.lock();
-		buttonS->getOnClick().subscribe(selection, &Selection::OnClick);
+		auto& onClickEvent = selection->button.lock()->getOnClick();
+		onClickEvent.subscribe(selection, &Selection::OnClick);
+		//onClickEvent.subscribe()
 
 		selection->UpdateOption();
 	}
@@ -139,9 +207,9 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 	weaponRange.resize(weaponCount);
 	std::iota(weaponRange.begin(), weaponRange.end(), 0);
 
-	statRange.resize(StatType::typeCount);
-	for (int i = 0; i < StatType::typeCount; ++i) {
-		statRange[i] = static_cast<StatType>(i);
+	statRange.resize(StatType::typeCount-1);
+	for (int i = 1; i < StatType::typeCount; ++i) {
+		statRange[i-1] = static_cast<StatType>(i);
 	}
 
 	// Initialize shuffled versions
@@ -152,6 +220,7 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 
 void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
+	std::cout << "\nweapon: " << weaponIndex;
 	auto& selection = Selections[selectionIndex];
 	selection->weaponId = weaponIndex;
 	selection->UpdateOption();
@@ -160,6 +229,7 @@ void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {
 }
 void UI_LevelUpSelection::UpdateOption(int selectionIndex, StatType statType) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
+	std::cout << "\nstat: " << statType;
 	auto& selection = Selections[selectionIndex];
 	selection->statType = statType;
 	selection->UpdateOption();

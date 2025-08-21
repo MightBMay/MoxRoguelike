@@ -98,16 +98,9 @@ int main() {
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
 	levelUpUI = std::make_shared<UI_LevelUpSelection>(player->getDerivativesOfComponent<Player>());
-	for (int i = 0; i < 3; ++i) {
-		int upgradeType = rng::getInt(0, 1);
-		if (upgradeType == 0) {
-			levelUpUI->UpdateOption(i, rng::getInt(0, WeaponBase::WeaponListSize() - 1));
-		}
-		else {
-			StatType statType = static_cast<StatType>(rng::getInt(0, StatType::typeCount));
-			levelUpUI->UpdateOption(i, statType);
-		}
-	}
+	levelUpUI->ShowRandomSelections();
+
+
 
 #pragma region make background
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
