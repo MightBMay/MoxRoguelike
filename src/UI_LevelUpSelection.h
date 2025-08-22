@@ -15,13 +15,14 @@ class GameObjectManager;
 class UI_Button;
 class Renderable;
 class Player;
-
+class UI_LevelUpSelection;
 
 struct Selection {
 public:
 	static constexpr sf::Vector2u size = sf::Vector2u(500, 700);
 	static inline std::shared_ptr<sf::Texture> backgroundTexture;
 	static inline std::shared_ptr<sf::Font> font;
+	static inline UI_LevelUpSelection* LevelUpUI = nullptr;
 	
 	std::shared_ptr<GameObject> obj;
 	std::weak_ptr<UI_Button> button;
@@ -50,7 +51,7 @@ class UI_LevelUpSelection {
 private:
 	static constexpr sf::Vector2f postion = sf::Vector2f(200, 175);
 	static constexpr int quantity = 3;
-	static inline int numRemainingLevels = 0;
+	
 
 	std::shared_ptr<sf::Font> font;
 	std::array<std::shared_ptr<Selection>, quantity> Selections;
@@ -63,6 +64,7 @@ private:
 
 
 public:
+	static inline int numRemainingLevels = 2;
 	UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath = "../assets/fonts/amazon ember.ttf");
 	void Show();
 	void ShowRandomSelections();

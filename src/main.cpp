@@ -97,8 +97,8 @@ int main() {
 #pragma endregion
 
 	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
-	levelUpUI = std::make_shared<UI_LevelUpSelection>(player->getDerivativesOfComponent<Player>());
-	levelUpUI->ShowRandomSelections();
+	
+
 
 
 

@@ -5,11 +5,12 @@
 #include "StatUpgrade.h"
 #include "UI_AbilityBar.h"
 #include "UI_AbilityDescription.h"
+#include "UI_LevelUpSelection.h"
 
 PlayerUI::PlayerUI(std::weak_ptr<Player> player) {
 
 	spriteBar = std::make_shared<UI_SpriteBarHolder>(player);
-
+	levelUpUI = std::make_shared<UI_LevelUpSelection>(player);
 
 
 	sf::IntRect& healthBarRect = sf::IntRect{ {0,0},{256,32} };

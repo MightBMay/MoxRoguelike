@@ -19,7 +19,7 @@ public:
 		attackTimer = playerStats->AttackSpeed(attackSpeed);
 
 	}
-	virtual void LevelUp()override {
+	virtual void UpdateStats()override {
 
 	}
 	virtual void Destroy()override {}

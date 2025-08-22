@@ -7,6 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 class GameObject;
+class Player;
 
 class Enemy : public Component, public std::enable_shared_from_this<Enemy> {
 public:
@@ -20,7 +21,10 @@ public:
 
 	float _speed=0;
 	float _size=86;
+	float halfSize = 43;// used for some checks, was a waste to calculate per frame per enemy.
 	float _attackSize=0;
+
+	int xpValue = 0;
 	
 	// max number of attacks in 1 second
 	float attackTimer = 0;
@@ -46,12 +50,14 @@ public:
 	}
 
 	virtual bool takeDamage(int _damage);
-
+	virtual void OnDeath();
 	virtual void Attack(float deltaTime, GameObject* player);
 
 	static void SetPlayer(GameObject* player);
-	static GameObject* GetPlayer() { return _player; }
+	static GameObject* GetPlayer() { return _playerObj; }
+
 	virtual void setSprite();
+
 	virtual void log() {
 		std::cout <<
 			"\nEnemy: " <<
@@ -59,7 +65,8 @@ public:
 			"\nhp: " << _curHp << "/ " << _maxHp <<
 			"\ndamage: " << _damage <<
 			"\nspeed: " << _speed<<
-			"\nsize: " << _size;
+			"\nsize: " << _size<<
+			"\nxp: "<< xpValue;
 
 	}
 
@@ -122,10 +129,14 @@ protected:
 
 		if (json.contains("size")) {
 			_size = json["size"];
+			halfSize = _size / 2.0f;
 			
 		}
 		else { std::cerr << "\n\"size \" not found/defined in json for " << enemyType; }
 
+		if (json.contains("xp")) {
+			xpValue = json["xp"];
+		}else{ std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
 
 	}
 
@@ -136,8 +147,8 @@ private:
 	static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
 
 
-	static inline GameObject* _player = nullptr;
-	float halfSize;// used for some checks, but is a waste to calculate per frame per enemy.
+	static inline GameObject* _playerObj = nullptr;
+	static inline Player* _playerComponent = nullptr;
 	void UpdateFacingDirection();
 
 

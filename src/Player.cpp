@@ -4,6 +4,7 @@
 #include "Timer.h"
 #include "Projectile.h"
 #include "UI_CooldownSprite.h"
+#include "UI_LevelUpSelection.h"
 #include "UI_AbilityBar.h"
 #include "PlayerUI.h"
 #include "ProgressBar.h"
@@ -55,16 +56,6 @@ const float& PlayerStats::Size() const { return size; }
 // returns current player xp.
 const int& PlayerStats::CurXP() const { return curXp; }
 /// <returns> Adds given xp value to curxp, and handles leveling up. takes into account XP stat..</returns>
-const void PlayerStats::AddXP(int baseXp) {
-	curXp += xp.evaluate(baseXp);
-	while (curXp >= xpToNext) {
-		curXp -= xpToNext;
-		++level;
-		
-		//xpToNext = GetNextXP();   get next level xp value.
-	}
-	// re calculate stats here
-}
 
 std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 
@@ -153,6 +144,12 @@ void Player::init() {
 	AddWeapon(0, 0);
 	AddWeapon(1, 1);
 	AddWeapon(2, 2);
+
+	auto& tempWep = weaponHolder[0].lock();
+	for (int i = 0; i < 10; ++i) {
+	 tempWep->UpdateStats();
+	}
+	std::cout << tempWep->isMaxLevel();
 
 	CreateAbilities(window);
 
@@ -261,7 +258,7 @@ void Player::AddWeapon(int weaponIndex) {
 	int firstEmpty = -1;
 	for (size_t i = 0; i < weaponIndices.size();i++)
 	{
-		if (weaponIndices[i] == weaponIndex) { // if
+		if (weaponIndices[i] == weaponIndex) { // if already has weapon, level it up
 			weaponHolder[i].lock()->LevelUp(); 
 			return;
 		}
@@ -286,7 +283,7 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 
 	for (int i = 0; i < weaponIndices.size();++i) // if weapon already exists on player, level it up instead.
 		if (weaponIndices[i] == weaponIndex) { 
-			weaponHolder[i].lock()->LevelUp(); 
+			weaponHolder[i].lock()->LevelUp();
 			
 			return; 
 		}
@@ -330,12 +327,18 @@ bool Player::isStatUpgradeMaxLevel(StatType type) {
 }
 int Player::hasStat(StatType type) {
 	for (int i = 0; i<statUpgradeHolder.size(); ++i)
-		if (statUpgradeHolder[i]->type == type) return i;
+		
+		if (statUpgradeHolder[i] && statUpgradeHolder[i]->type == type) return i;
 	
 	return -1;
 }
 
+const void Player::AddXP(int baseXp) {
+	int levelsGained = stats->AddXp(baseXp);
+	UI_LevelUpSelection::numRemainingLevels = levelsGained;
 
+
+}
 
 void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
 

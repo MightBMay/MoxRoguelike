@@ -47,13 +47,16 @@ void Enemy::Destroy() {
 	auto& parentPTR = parent;
 	EnemyManager::getInstance().remove(parentPTR, true);
 	EnemyManager::removeHitboxVisual(parentPTR);
+
 }
 
 void Enemy::SetPlayer(GameObject* player) {
-	_player = player; // called once near playerObj creation to assign a target.
+	_playerObj = player; // called once near playerObj creation to assign a target.
+	_playerComponent = player->getDerivativesOfComponent<Player>().get();
+
 }
 void Enemy::update(float deltatime) {
-	static const sf::Vector2f* playerPos = &_player->getPosition();
+	static const sf::Vector2f* playerPos = &_playerObj->getPosition();
 	sf::Vector2f newDirection = (*playerPos - parent->getPosition());
 	float newSqrMag = newDirection.lengthSquared();
 	if (newSqrMag <= halfSize) { direction = { 0,0 }; }
@@ -65,7 +68,7 @@ void Enemy::update(float deltatime) {
 
 	// checks attack timer and range check on playerObj, and deals _damage if it should. 
 	if (Player::isVulnrable()) {
-		Attack(deltatime, _player);
+		Attack(deltatime, _playerObj);
 	}
 	hitFlickerTimer.update(deltatime);
 
@@ -112,6 +115,7 @@ bool Enemy::takeDamage(int _damage) {
 	_curHp -= finalDamage;
 	
 	if (_curHp <= 0) {
+		OnDeath();
 		Destroy();
 		return true;
 	}
@@ -120,6 +124,10 @@ bool Enemy::takeDamage(int _damage) {
 	parent->getSprite()->setColor(hitColour);
 	return false;
 
+}
+
+void Enemy::OnDeath() {
+	_playerComponent->AddXP(xpValue);
 }
 
 

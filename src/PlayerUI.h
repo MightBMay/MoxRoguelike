@@ -9,6 +9,7 @@ class WeaponBase;
 class StatUpgrade;
 class ProgressBar;
 enum StatType;
+class UI_LevelUpSelection;
 
 struct PlayerUI
 {
@@ -20,7 +21,7 @@ public:
 
 	// ability stuff.
 	std::shared_ptr <GameObject> abilityDescription;
-
+	std::shared_ptr <UI_LevelUpSelection> levelUpUI;
 
 	//health and healthbar
 	std::shared_ptr<GameObject> healtBarObj;

@@ -18,9 +18,6 @@ public:
 
 	}
 
-	virtual void LevelUp()override {
-
-	}
 
 	virtual void update(float deltaTime)override {
 		if (Input::GetActionDown("ability1")) {

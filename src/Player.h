@@ -91,8 +91,24 @@ public:
 	const float& Size() const;
 
 	const int& CurXP() const;
-	const void AddXP(int baseXp);
 
+	/// <summary>
+	/// Adds an amount of XP to the players current xp, taking into account stat bonuses.
+	/// </summary>
+	/// <returns> returns the amount of levels gained</returns>
+	int AddXp(int baseXp) {
+		int levelsGained = 0;
+		curXp += xp.evaluate(baseXp);
+		while (curXp >= xpToNext) {
+			curXp -= xpToNext;
+			++levelsGained;
+			// DEBUG/TODO:
+			//xpToNext = GetNextXP();   get next level xp value.
+		}
+			// DEBUG/TODO:
+		// re calculate stats here as well.
+		return levelsGained;
+	}
 	/// <summary>
 	///  Add a StatUpgrade to the player.
 	/// </summary>
@@ -144,6 +160,9 @@ public:
 
 	void HandleRegen(float deltatime);
 
+	const void AddXP(int baseXp);
+
+
 	static bool isVulnrable() { return _isVulnrable; }
 	static std::shared_ptr<PlayerStats> getStats() { return stats; }
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window);
@@ -176,13 +195,13 @@ protected:
 
 
 	//picked up weapons
-	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder;
+	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder{};
 	std::array<int, 6> weaponIndices = { -1,-1,-1,-1,-1,-1 }; // used to track what weapon the player has
 
 
 	//stat upgrades
 
-	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder;
+	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder{};
 
 
 	float healthRegenTimer = 1;

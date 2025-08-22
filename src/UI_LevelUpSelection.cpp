@@ -6,14 +6,14 @@
 #include "Player.h"
 
 
-Selection::Selection(std::shared_ptr<GameObject> object, std::weak_ptr<Player> player):player(player) {
+Selection::Selection(std::shared_ptr<GameObject> object, std::weak_ptr<Player> player) :player(player) {
 	statType = Empty;
 	obj = object;
 	button = obj->addComponent<UI_Button>(window);
 	text = std::make_shared<sf::Text>(*font);
 	text->setOutlineThickness(2);
 	renderTexture = std::make_shared<sf::RenderTexture>(size);
-	obj->setSprite(renderTexture->getTexture(), {} );
+	obj->setSprite(renderTexture->getTexture(), {});
 	renderSprite = obj->getSprite();
 	renderable = obj->getRenderable();
 	GameObjectManager::getInstance().addExternalRenderable(renderable, 200);
@@ -21,13 +21,16 @@ Selection::Selection(std::shared_ptr<GameObject> object, std::weak_ptr<Player> p
 }
 
 void Selection::OnClick() {
-	 
+
 	if (weaponId >= 0)
 		player.lock()->AddWeapon(weaponId);
 
 	else if (statType != StatType::Empty)
 		player.lock()->AddStat(statType);
-		
+	UI_LevelUpSelection::numRemainingLevels--;
+	if (LevelUpUI == nullptr) { std::cerr << "\nError in assigning levelupui ptr, was still null when trying to access."; return; }
+	LevelUpUI->HideIfNoLevels();
+
 
 }
 
@@ -57,22 +60,22 @@ std::string Selection::GetDescription() {
 		auto& json = GameDataLoader::getWeapon(weaponName);
 		if (json.contains("description"))
 			return json["description"];
-		else 
+		else
 			std::cerr << "\n" << weaponName << " is missing description field.";
 
-		
+
 	}
 
 	else if (statType != StatType::Empty) {
 		std::string statName = GameDataLoader::getStatNameFromIndex(statType);
-		
+
 		auto& json = GameDataLoader::getStatUpgrade(statName);
 		if (json.contains("description"))
 			return json["description"];
 		else
 			std::cerr << "\n" << statName << " is missing description field";
 	}
-	
+
 	return "";
 }
 
@@ -84,6 +87,9 @@ void UI_LevelUpSelection::Show() {
 		selecton->button.lock()->SetEnabled(true);
 	}
 }
+/// <summary>
+/// Shuffles and assigns random weapons and stats to the Selection Options, then shows them to the screen.
+/// </summary>
 void UI_LevelUpSelection::ShowRandomSelections() {
 	// shuffle weapons and stats to get random order with no repeats.
 	std::shuffle(shuffledWeapons.begin(), shuffledWeapons.end(), rng::getEngine());
@@ -97,11 +103,11 @@ void UI_LevelUpSelection::ShowRandomSelections() {
 	// generate 3 upgrade options 
 	for (int i = 0; i < 3; ++i) {
 		// choose between weapon or stat upgrade 
-		int upgradeType = rng::getInt(0, 1);
+		int upgradeType = 0;// rng::getInt(0, 1);
 		bool foundOption = false;
 
 		if (upgradeType == 0) {
-			
+
 			// iterate shuffled weapons until one isnt max level
 			while (weaponIndex < shuffledWeapons.size() && !foundOption) {
 				int currentWeapon = shuffledWeapons[weaponIndex];
@@ -117,9 +123,9 @@ void UI_LevelUpSelection::ShowRandomSelections() {
 
 			// iterate shuffled stats until one isnt max level
 			while (statIndex < shuffledStats.size() && !foundOption) {
-				int currentStat = shuffledStats[statIndex];
+				StatType currentStat = shuffledStats[statIndex];
 				// Check if this stat can be upgraded further
-				if (!playerS->isStatUpgradeMaxLevel(static_cast<StatType>(currentStat))) {
+				if (!playerS->isStatUpgradeMaxLevel(currentStat)) {
 					UpdateOption(i, currentStat);
 					foundOption = true; // escapes loop and cancels fallback checking of the other option type.
 				}
@@ -132,8 +138,8 @@ void UI_LevelUpSelection::ShowRandomSelections() {
 			if (upgradeType == 0) {
 				// no weapon left, try stat.
 				while (statIndex < shuffledStats.size() && !foundOption) {
-					int currentStat = shuffledStats[statIndex];
-					if (!playerS->isStatUpgradeMaxLevel(static_cast<StatType>(currentStat))) {
+					StatType currentStat = shuffledStats[statIndex];
+					if (!playerS->isStatUpgradeMaxLevel(currentStat)) {
 						UpdateOption(i, currentStat);
 						foundOption = true;
 					}
@@ -170,34 +176,38 @@ void UI_LevelUpSelection::Hide() {
 }
 
 void UI_LevelUpSelection::HideIfNoLevels() {
-	if (numRemainingLevels <= 0) Hide();
+	if (numRemainingLevels <= 0) {
+		Hide();
+	}
 	else {
-		numRemainingLevels--;
 		ShowRandomSelections();
 	}
+
+
 }
 
 
 
-UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath) {
-	
-	
+UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath) :player(player) {
+
+	if (!player.lock()) std::cout << "no player";
 	Selection::backgroundTexture = TextureManager::getTexture("../assets/sprites/cardboard.png");
 	Selection::backgroundTexture->setRepeated(true);
 	Selection::font = std::make_shared<sf::Font>(fontPath);
-	auto buttonSpacing = Selection::size.x +20;
-	
-	for (int i = 0; i < quantity; ++i) { 
-		
+	auto buttonSpacing = Selection::size.x + 20;
+	Selection::LevelUpUI = this;
+
+	for (int i = 0; i < quantity; ++i) {
+
 		std::shared_ptr<GameObject> obj = GameObject::Create(200);
 		obj->setPosition(postion + sf::Vector2f(i * buttonSpacing, 0));
-		std::shared_ptr<Selection> selection = std::make_shared<Selection>(obj,player);
-		
+		std::shared_ptr<Selection> selection = std::make_shared<Selection>(obj, player);
+
 		Selections[i] = selection;
 
 		auto& onClickEvent = selection->button.lock()->getOnClick();
 		onClickEvent.subscribe(selection, &Selection::OnClick);
-		//onClickEvent.subscribe()
+		
 
 		selection->UpdateOption();
 	}
@@ -207,15 +217,17 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 	weaponRange.resize(weaponCount);
 	std::iota(weaponRange.begin(), weaponRange.end(), 0);
 
-	statRange.resize(StatType::typeCount-1);
+	statRange.resize(StatType::typeCount - 1);
 	for (int i = 1; i < StatType::typeCount; ++i) {
-		statRange[i-1] = static_cast<StatType>(i);
+		statRange[i - 1] = static_cast<StatType>(i);
 	}
 
 	// Initialize shuffled versions
 	shuffledWeapons = weaponRange;
 	shuffledStats = statRange;
-	
+
+	Hide();
+
 }
 
 void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {

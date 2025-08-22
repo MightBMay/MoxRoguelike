@@ -91,7 +91,15 @@ public:
 	/// <summary>
 	/// Handles incrementing weapon level, stats, and any special effects that occour upon leveling.
 	/// </summary>
-	virtual void LevelUp() = 0;
+	virtual void UpdateStats() = 0;
+
+	virtual void LevelUp() {
+		++level;
+		std::cout << "\nLevel: " << level;
+		UpdateStats();
+	}
+
+	
 
 	
 	virtual void init() { LoadInfoFromJson(); }
@@ -148,7 +156,7 @@ public:
 protected:
 
 	//Ability base class lets me override this. this allows me to keep the index system 
-
+	virtual void UpdateStats() override {}
 	virtual const json& GetJsonData() override {  return GameDataLoader::getAbility(name); }
 };
 
