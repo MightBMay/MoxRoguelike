@@ -1,4 +1,4 @@
-#include "Background.h"
+#include "pch.h"
 #include "GameObject.h"
 void BackgroundImage::init() {
 	sprite = parent->getSprite();

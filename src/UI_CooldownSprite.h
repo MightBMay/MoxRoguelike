@@ -1,9 +1,10 @@
 #pragma once
-#include "UI.h"
+
 #include "Weapon.h"
-#include "MEvent.h"
+
 #include "UI_AbilityDescription.h"
 
+class UI_Element;
 class StatUpgrade;
 class MSprite;
 

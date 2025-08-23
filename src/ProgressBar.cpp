@@ -1,4 +1,4 @@
-#include "ProgressBar.h"
+#include "pch.h"
 #include "GameObject.h"
 
 
@@ -53,4 +53,22 @@ void ProgressBar::updateBar(float value) {
 	//else
 		//fillSprite->setScale({ startScale.x, startScale.y * curValue });
 
+}
+
+void ProgressBar::setFillColor(sf::Color& colour) { 
+	if (fillSprite) fillSprite->setColor(colour); 
+}
+
+void ProgressBar::setRange(float min, float max) {
+	minValue = min;
+	maxValue = max;
+}
+
+void ProgressBar::setRange(int min, int max) {
+	minValue = min;
+	maxValue = max;
+}
+
+void ProgressBar::setRange(int max) {
+	maxValue = max;
 }

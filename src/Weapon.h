@@ -1,12 +1,8 @@
 #pragma once
-#include "Component.h"
-#include "Utility.h"
 #include "Projectile.h"
-#include "MEvent.h"
-#include "Global.h"
 #include "JsonLoader.h"
 
-
+class Component;
 class PlayerStats;
 
 

@@ -1,29 +1,13 @@
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/VideoMode.hpp>
-
-#include <sstream>
-#include <iostream>
+#include "pch.h"
 
 #include "GameObject.h"
-#include "MSprite.h"
-#include "Utility.h"
-#include "TextureManager.h"
 #include "EnemyManager.h"
 #include "Projectile.h"
 #include "Weapon.h"
-#include "Background.h"
-#include "Vignette.h"
-#include "Global.h"
 #include "ProgressBar.h"
-#include "TrailRenderer.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "Input.h"
-#include "JsonLoader.h"
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
 #include "UI_AbilityBar.h"

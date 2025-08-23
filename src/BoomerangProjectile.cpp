@@ -1,9 +1,9 @@
+#include "pch.h"
 #include "BoomerangProjectile.h"
 #include "Weapon.h"
-#include "Utility.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
-#include <SFML/System/Vector2.hpp>
+
 void BoomerangProjectile::update(float deltaTime) {
 	auto curPos = parent->getPosition();
 

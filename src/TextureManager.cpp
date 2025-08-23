@@ -1,5 +1,4 @@
-#include "TextureManager.h"
-#include <stdexcept>
+#include "pch.h"
 
 // Define the TextureEntry struct (private implementation)
 

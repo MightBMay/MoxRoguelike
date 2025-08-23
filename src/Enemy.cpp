@@ -1,9 +1,9 @@
-#pragma once
+#include "pch.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "GameObject.h"
 #include "Player.h"
-#include "TimedDestroy.h"
+
 
 
 void Enemy::init() {

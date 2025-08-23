@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Weapon.h"
 #include "GameObject.h"
 #include "AutoWeapon.h"

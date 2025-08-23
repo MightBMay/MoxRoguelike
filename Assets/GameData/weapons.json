@@ -43,7 +43,7 @@
     "Papyrmancer Sow": {
       "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
-      "speed": 500,
+      "speed": 3000,
       "range": 1000,
       "attackSpeed": 3
     },

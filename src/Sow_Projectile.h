@@ -1,6 +1,6 @@
 #pragma once
 #include "Projectile.h"
-#include "TrailRenderer.h"
+
 class EnemyManager;
 class GameObject;
 
@@ -19,6 +19,7 @@ public:
 		return spritePath;
 	}
 
+	void CheckEnemies(sf::Vector2f curPos) override;
 	void init() override final;
 
 	

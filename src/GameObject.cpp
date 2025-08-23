@@ -1,8 +1,6 @@
 #include "GameObject.h"
-#include "Component.h"
-#include "Renderable.h"
-#include "Global.h"
-#include "UI.h"
+
+#include "pch.h"
 
 
 GameObject::GameObject() { renderable = std::make_shared<Renderable>(); };
@@ -86,6 +84,12 @@ void GameObject::setSprite(const sf::Texture& texture, const sf::IntRect& rect) 
     sprite->setRotation(sf::degrees(rotation));
     sprite->setScale(scale);
     renderable->drawable = sprite;
+}
+
+void GameObject::setActive(bool value, bool andRenderable) {
+    _isActive = value;
+    if (andRenderable)
+        renderable->enabled = value;
 }
 
 

@@ -1,9 +1,10 @@
+#include "pch.h"
 #include "Reap_Projectile.h"
 #include "GameObject.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "Weapon.h"
-#include "Global.h"
+
 
 
 

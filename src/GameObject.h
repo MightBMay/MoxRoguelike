@@ -1,29 +1,13 @@
 #pragma once
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/Transform.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <memory>
-#include <string>
-#include <typeindex>
-#include <unordered_map>
-#include <iostream>
-#include <map>
-#include "Renderable.h"
-#include "Component.h"
-#include "MSprite.h"
-
-
 
 
 
 class Component;
 class GameObjectManager;
 class Renderable;
+class MSprite;
+class Renderable;
+
 
 class GameObject : public std::enable_shared_from_this<GameObject>{
 public:
@@ -166,11 +150,7 @@ public:
     /// <summary>
     /// Sets the activity of a gameobject. Can set andRenderable to copy the original value to the renderables enabled state.
     /// </summary>
-    void setActive(bool value, bool andRenderable = false) {
-        _isActive = value;
-        if (andRenderable)
-            renderable->enabled = value;
-    }
+    void setActive(bool value, bool andRenderable = false);
 
     // Sprite management
     void setSprite(const std::string& path, const sf::IntRect& rect = sf::IntRect());

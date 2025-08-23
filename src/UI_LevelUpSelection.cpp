@@ -1,8 +1,8 @@
+#include "pch.h"
 #include "UI_LevelUpSelection.h"
 #include "UI_Button.h"
 #include "Weapon.h"
 #include "StatUpgrade.h"
-#include "Global.h"
 #include "Player.h"
 
 
@@ -190,7 +190,6 @@ void UI_LevelUpSelection::HideIfNoLevels() {
 
 UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::string fontPath) :player(player) {
 
-	if (!player.lock()) std::cout << "no player";
 	Selection::backgroundTexture = TextureManager::getTexture("../assets/sprites/cardboard.png");
 	Selection::backgroundTexture->setRepeated(true);
 	Selection::font = std::make_shared<sf::Font>(fontPath);
@@ -232,7 +231,6 @@ UI_LevelUpSelection::UI_LevelUpSelection(std::weak_ptr<Player> player, std::stri
 
 void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
-	std::cout << "\nweapon: " << weaponIndex;
 	auto& selection = Selections[selectionIndex];
 	selection->weaponId = weaponIndex;
 	selection->UpdateOption();
@@ -241,7 +239,6 @@ void UI_LevelUpSelection::UpdateOption(int selectionIndex, int weaponIndex) {
 }
 void UI_LevelUpSelection::UpdateOption(int selectionIndex, StatType statType) {
 	if (selectionIndex < 0 || selectionIndex >= quantity) return;
-	std::cout << "\nstat: " << statType;
 	auto& selection = Selections[selectionIndex];
 	selection->statType = statType;
 	selection->UpdateOption();

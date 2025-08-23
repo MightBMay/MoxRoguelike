@@ -1,6 +1,6 @@
-#include "Vignette.h"
+#include "pch.h"
 #include "GameObject.h"
-#include "Global.h"
+
 
 void Vignette::init() {
 	vignetteShader = std::make_shared<sf::Shader>();

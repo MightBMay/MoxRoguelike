@@ -1,6 +1,6 @@
+#include "pch.h"
 #include "OrbitProjectile.h"
 #include "GameObject.h"
-#include "Utility.h"
 #include "Weapon.h"
 #include "EnemyManager.h"
 #include "Enemy.h"

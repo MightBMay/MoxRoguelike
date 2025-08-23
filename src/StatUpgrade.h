@@ -1,8 +1,7 @@
 #pragma once
-#include <array>
-#include <sstream>
+
 #include "Player.h"
-#include "JsonLoader.h"
+
 enum StatType
 {
 	Empty,
@@ -40,14 +39,7 @@ public:
 	int GetLevel() const { return level; }
 	int getFlat() { return flatStats[level]; }
 	float getMult() { return multStats[level]; }
-	std::string GetStatString() {
-		static std::ostringstream oss; // static to avoid re creating.
-		oss.clear(); // clear and reset string to "".
-		oss.str("");
-		oss << "Grants + " << getFlat() << " | " << (getMult() - 1) * 100 << "%" << StatTypeToString[type];
-		return oss.str();
-
-	}
+	std::string GetStatString();
 
 private:
 	static constexpr int maxLevel = 9;
@@ -56,28 +48,8 @@ private:
 	std::array<float, 10> multStats = {};
 	int level = 0;
 
-	void LoadFlat(std::string statType) {
-		auto& json = GameDataLoader::getStatUpgrade(statType);
-
-		if (json.contains("flat")) {
-			const auto& jsonArray = json["flat"];
-			if (jsonArray.is_array() && jsonArray.size() == flatStats.size()) {
-				flatStats = jsonArray.get<std::array<int, 10>>(); // Direct assignment (C++17+)
-			}
-		}
-	}
-	void LoadMult(std::string statType) {
-		auto& json = GameDataLoader::getStatUpgrade(statType);
-
-		if (json.contains("mult")) {
-			const auto& jsonArray = json["mult"];
-			if (jsonArray.is_array() && jsonArray.size() == flatStats.size()) {
-				multStats = jsonArray.get<std::array<float, 10>>(); // Direct assignment (C++17+)
-			}
-		}
-
-
-	}
+	void LoadFlat(std::string statType);
+	void LoadMult(std::string statType);
 
 
 };

@@ -1,12 +1,6 @@
 #pragma once
 
-#include <array>
-#include <memory>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include "GameObject.h" // for the life of me i cannot figure out why i can't move this to the source file
-						// but it works when it's in the header for whatever reason so we take those.
+
 class WeaponBase;
 class StatUpgrade;
 enum StatType;

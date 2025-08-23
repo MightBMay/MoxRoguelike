@@ -1,9 +1,10 @@
+#include "pch.h"
 #include "Projectile.h"
 #include "GameObject.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
 #include "Weapon.h"
-#include "TrailRenderer.h"
+
 
 
 Projectile::Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :

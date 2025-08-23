@@ -1,15 +1,16 @@
+#include "pch.h"
+
 #include "Player.h"
 #include "GameObject.h"
-#include "Global.h"
-#include "Timer.h"
-#include "Projectile.h"
+
+#include "PlayerUI.h"
 #include "UI_CooldownSprite.h"
 #include "UI_LevelUpSelection.h"
 #include "UI_AbilityBar.h"
-#include "PlayerUI.h"
-#include "ProgressBar.h"
-#include "Input.h"
+
 #include "StatUpgrade.h"
+
+#include "Projectile.h"
 #include "Sow_Projectile.h"
 #include "Reap_Projectile.h"
 #include "Papyrmancer_Reap.h"

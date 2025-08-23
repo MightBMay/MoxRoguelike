@@ -1,11 +1,10 @@
+#include "pch.h"
 #include "Sow_Projectile.h"
 #include "Projectile.h"
 #include "GameObject.h"
 #include "Enemy.h"
 #include "EnemyManager.h"
-#include "TrailRenderer.h"
 #include "Weapon.h"
-#include "Global.h"
 
 
 
@@ -16,30 +15,36 @@ Sow_Projectile::Sow_Projectile(sf::Vector2f direction,
 }
 
 void Sow_Projectile::update(float deltaTime) {
-	static const float influenceRadiusSqr = 2500.0f; // 50px * 50px (adjust as needed)
-	static const float minSpeed = *speed;
-	static const float maxSpeed = minSpeed * 5.0f;
+	static const int minMoveDistance = 100; // snaps projectile to mouse if within this range (squared range)
+	static const float _speed = *speed; // avoids derefrencing projectile speed per update call.
+	static const int rotationSpeed = 720;
 	
 	sf::Vector2f mousePos = getMouseWorldPos(window, playerView);
-	sf::Vector2f curPos = parent->getPosition();
+	const sf::Vector2f& curPos = parent->getPosition();
 	sf::Vector2f newDirection = mousePos - curPos ;
 	float distanceSqr = newDirection.lengthSquared();
-	if (distanceSqr >= 25) {// cancel movement if closer than 5 pixels.
+	if (distanceSqr >= minMoveDistance) { // if far enough away from mouse,
 		direction = newDirection.normalized();
-		
-		float speedFactor = std::min(distanceSqr / influenceRadiusSqr, 1.0f); // Clamped [0,1]
-		float adjustedSpeed = minSpeed + (maxSpeed - minSpeed) * speedFactor;
-		parent->move(direction * adjustedSpeed * deltaTime);
+		parent->move(direction * _speed * deltaTime);
+	}
+	else {// otherwise, cancel movement close enough to mouse, and set position to mouse.
+		parent->setPosition(mousePos);
 	}
 
-	parent->rotate(720 * deltaTime); // spin projectile as some kind of animation.
+	parent->rotate(rotationSpeed * deltaTime); // spin projectile as some kind of animation.
 
-	remainingDuration -= deltaTime;
+	remainingDuration -= deltaTime; // decrement and handle duration.
 	if (remainingDuration <= 0) {
 		Projectile::projPool.release(parent);
 		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 												// it looping the last trail until new proj made.
 	}
+
+	CheckEnemies(curPos);
+
+}
+
+void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
 	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
@@ -47,11 +52,10 @@ void Sow_Projectile::update(float deltaTime) {
 		}
 
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re _damage already damaged enemies.
-		// add to sow list wherever that is.
+
 		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
-
 }
 
 void Sow_Projectile::init() {
@@ -65,6 +69,6 @@ void Sow_Projectile::init() {
 	parent->setRotation(vectorToAngle(direction));
 	parent->setOrigin(16, 16);
 
-	parent->addComponent<TrailRenderer>(0.125f, 30, sf::Color(213,164,106), sf::Color(213, 164, 106));
+	parent->addComponent<TrailRenderer>(0.175f, 30, sf::Color(213, 164, 106), sf::Color(184, 141, 90));// , );
 
 }

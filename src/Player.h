@@ -1,10 +1,10 @@
 #pragma once
-#include "Component.h"
+
 #include "Weapon.h"
 
 
 
-
+class Component;
 class Timer;
 class GameObject;
 class StatUpgrade;

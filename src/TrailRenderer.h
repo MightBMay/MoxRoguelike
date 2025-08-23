@@ -1,15 +1,4 @@
 #pragma once
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <vector>
-#include <chrono>
-#include "Component.h"
-#include "Renderable.h"
 
 
 
@@ -29,8 +18,19 @@ private:
 	std::shared_ptr<Renderable> renderable = nullptr;
 
 	bool emitting = true;
-	static constexpr float updateInterval = 1.0f / 144.0f;
+	static constexpr float updateInterval = 1.0f / 60.0f;
 	float timeSinceLastUpdate = 0;
+
+	// Helper function to interpolate between two colors
+	sf::Color interpolateColor(float t) const {
+		t = std::max(0.f, std::min(1.f, t)); // Clamp t between 0 and 1
+		return sf::Color(
+			static_cast<uint8_t>(endColour.r + t * (startColour.r - endColour.r)),
+			static_cast<uint8_t>(endColour.g + t * (startColour.g - endColour.g)),
+			static_cast<uint8_t>(endColour.b + t * (startColour.b - endColour.b)),
+			static_cast<uint8_t>(endColour.a + t * (startColour.a - endColour.a))
+		);
+	}
 
 protected:
 	void draw(sf::RenderTarget& window, sf::RenderStates states)const override;

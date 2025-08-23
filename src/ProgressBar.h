@@ -1,10 +1,6 @@
-#include "Component.h"
-#include "Renderable.h"
-#include "MSprite.h"
+#pragma once
 
-
-
-
+class Component;
 class Renderable;
 class MSprite;
 
@@ -20,20 +16,11 @@ public:
 	);
 	virtual void updateBar(int value);
 	virtual void updateBar(float value);
-	inline void setFillColor(sf::Color& colour) { if (fillSprite) fillSprite->setColor(colour); }
-	inline void setRange(float min, float max) {
-		minValue = min; 
-		maxValue = max;
-	}
+	void setFillColor(sf::Color& colour);
+	void setRange(float min, float max);
+	void setRange(int min, int max);
 
-	inline void setRange(int min, int max) {
-		minValue = min;
-		maxValue = max;
-	}
-
-	inline void setRange(int max) {
-		maxValue = max;
-	}
+	void setRange(int max);
 	virtual void init() override;
 	virtual void update(float deltaTime) override{}
 	virtual void Destroy() {}

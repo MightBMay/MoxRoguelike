@@ -1,7 +1,6 @@
-#include "TrailRenderer.h"
+#include "pch.h"
 #include "GameObject.h"
-#include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics/PrimitiveType.hpp>
+
 TrailRenderer::TrailRenderer(float duration, float thickness, sf::Color startColour, sf::Color endColour)
     : duration(duration), startColour(startColour),endColour(endColour), thickness(thickness) {
 }
@@ -40,69 +39,55 @@ void TrailRenderer::init() {
     GameObjectManager::getInstance().addExternalRenderable(renderable);
 }
 
-void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) const  {
+void TrailRenderer::draw(sf::RenderTarget& window, sf::RenderStates states) const {
     if (points.size() < 2 || !emitting) return;
 
-    // Create a vertex array for the line strip
-    sf::VertexArray line(sf::PrimitiveType::TriangleStrip, (points.size() - 1) * 2);
-
+    // --- 1. Compute total "squared length" of the trail ---
+    float totalSqLength = 0.f;
     for (size_t i = 0; i < points.size() - 1; i++) {
-        sf::Vector2f direction = points[i + 1].position - points[i].position;
-        float magnitude = std::sqrt(direction.x * direction.x + direction.y * direction.y);
+        sf::Vector2f d = points[i + 1].position - points[i].position;
+        totalSqLength += d.x * d.x + d.y * d.y;
+    }
+    if (totalSqLength < 0.0001f) return; // safeguard for degenerate trails
 
-        // Calculate alpha based on point age
+    // --- 2. Allocate triangles ---
+    sf::VertexArray strip(sf::PrimitiveType::TriangleStrip, points.size() * 2);
+
+    float accumulatedSq = 0.f;
+
+    for (size_t i = 0; i < points.size(); i++) {
+        float progress = static_cast<float>(i) / (points.size() - 1);
+        sf::Color color = interpolateColor(progress);
+
+        // apply alpha fade
         auto now = std::chrono::steady_clock::now();
-        float elapsed1 = std::chrono::duration_cast<std::chrono::duration<float>>(now - points[i].creationTime).count();
-        float elapsed2 = std::chrono::duration_cast<std::chrono::duration<float>>(now - points[i + 1].creationTime).count();
+        float elapsed = std::chrono::duration_cast<std::chrono::duration<float>>(now - points[i].creationTime).count();
+        float alpha = 255.f * (1.f - (elapsed / duration));
+        color.a = static_cast<uint8_t>(std::clamp(alpha, 0.f, 255.f));
 
-        float alpha1 = 255 * (1.f - (elapsed1 / duration));
-        float alpha2 = 255 * (1.f - (elapsed2 / duration));
+        // compute normal offset for thickness
+        sf::Vector2f dir;
+        if (i < points.size() - 1)
+            dir = points[i + 1].position - points[i].position;
+        else
+            dir = points[i].position - points[i - 1].position;
 
-        // Safeguard against division by zero
-        sf::Vector2f unitDirection = 
-            (magnitude > 0.0001f) ? direction / magnitude : sf::Vector2f(1.f, 0.f); // Default direction if points are too close
-        sf::Vector2f unitPerpendicular(-unitDirection.y, unitDirection.x);
+        float mag = std::sqrt(dir.x * dir.x + dir.y * dir.y);
+        sf::Vector2f normal = (mag > 0.0001f) ? sf::Vector2f(-dir.y, dir.x) / mag : sf::Vector2f(1, 0);
 
-        sf::Vector2f offset = 
-            thickness* // base thickness
-            (alpha2/255) // multiplied by alpha (0-1) to scale tip down.
-            / 2.f // /2 because offset is half thickness in both ways.
-            * unitPerpendicular;// direction.
+        sf::Vector2f offset = normal * (thickness * 0.5f * (alpha / 255.f));
 
- 
+        // 2 vertices per point
+        strip[i * 2].position = points[i].position + offset;
+        strip[i * 2].color = color;
 
-
-        sf::Color color1 = startColour;
-        sf::Color color2 = endColour;
-        color1.a = alpha1;
-        color2.a = alpha2;
- 
-        // Add the two vertices for this segment
-        line[i * 2].position = points[i].position + offset;
-        line[i * 2].color = color1;
-
-        line[i * 2 + 1].position = points[i].position - offset;
-        line[i * 2 + 1].color = color1;
+        strip[i * 2 + 1].position = points[i].position - offset;
+        strip[i * 2 + 1].color = color;
     }
-    /*
-    if (renderable->shader != nullptr) {
-       
-        states.texture = texture.get(); 
 
-        states.shader = renderable->shader.get(); 
-
-        if (auto shader = renderable->shader.get()) { 
-            shader->setUniform("trailTexture", sf::Shader::CurrentTexture);
-
-        }
-
-    }
-    */
-
-
-
-    window.draw(line, states);
+    window.draw(strip, states);
 }
+
 
 void TrailRenderer::Destroy() {
     GameObjectManager::getInstance().removeExternalRenderable(renderable);

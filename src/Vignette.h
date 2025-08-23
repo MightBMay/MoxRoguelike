@@ -1,7 +1,4 @@
 #pragma once
-#include "Component.h"
-
-#include <SFML/Graphics/Shader.hpp>
 class Vignette : public Component {
 public:
     virtual void init() override;

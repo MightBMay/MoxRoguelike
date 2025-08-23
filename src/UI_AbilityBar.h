@@ -1,9 +1,5 @@
 #pragma once
-#include <array>
-#include <memory>
-#include <string>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Rect.hpp>
+
 class WeaponBase;
 class GameObject;
 class StatUpgrade;

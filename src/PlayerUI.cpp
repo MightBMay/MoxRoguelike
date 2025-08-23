@@ -1,7 +1,8 @@
+#include "pch.h"
 #include "PlayerUI.h"
 #include "GameObject.h"
 #include "Weapon.h"
-#include "ProgressBar.h"
+
 #include "StatUpgrade.h"
 #include "UI_AbilityBar.h"
 #include "UI_AbilityDescription.h"

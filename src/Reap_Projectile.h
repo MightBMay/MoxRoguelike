@@ -1,5 +1,5 @@
 #pragma once
-#pragma once
+
 #include "Projectile.h"
 class EnemyManager;
 class GameObject;

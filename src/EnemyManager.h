@@ -1,14 +1,5 @@
 #pragma once
-#include <SFML/System/Vector2.hpp>
-#include "GameObjectPool.h"
-#include "TimedDestroy.h"
-#include "GameObject.h"
-#include "Global.h"
-#include <memory>
-#include <vector>
-#include <functional>
-#include <map>
-#include "Utility.h"
+
 
 
 class GameObject;

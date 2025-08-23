@@ -1,6 +1,4 @@
 #pragma once
-#include "UI.h"
-#include "MEvent.h"
 
 class UI_Button : public UI_Element {
 
@@ -15,9 +13,7 @@ public:
 
 
 
-	virtual void OnClick(const int button) override{
-		onClickEvent.invoke();
-	}
+	virtual void OnClick(const int button) override;
 
 private:
 	MEvent<> onClickEvent; // called on click.

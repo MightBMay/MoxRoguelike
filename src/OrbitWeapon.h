@@ -1,7 +1,6 @@
 #pragma once
 #include "Weapon.h"
 #include "OrbitProjectile.h"
-#include <SFML/Graphics/RenderWindow.hpp>
 
 class OrbitWeapon :public AutoWeapon {
 public:

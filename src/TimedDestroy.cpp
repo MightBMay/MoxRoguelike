@@ -1,4 +1,4 @@
-#include "TimedDestroy.h"
+#include "pch.h"
 #include "EnemyManager.h"
 void TimedDestroy::update(float deltaTime) {
 	timeRemaining -= deltaTime;

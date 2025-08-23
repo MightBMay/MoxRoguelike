@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "UI_Button.h"
 #include "GameObject.h"
 void UI_Button::OnHover() {
@@ -7,4 +8,8 @@ void UI_Button::OnHover() {
 void UI_Button::OnHoverExit() {
 	auto sprite = parent->getSprite();
 	sprite->setColor(sf::Color(255, 255, 255, 255));
+}
+
+void  UI_Button::OnClick(const int button){
+	onClickEvent.invoke();
 }

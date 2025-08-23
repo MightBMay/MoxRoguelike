@@ -1,7 +1,6 @@
 #pragma once
 #include "Weapon.h"
 #include "BoomerangProjectile.h"
-#include <SFML/Graphics/RenderWindow.hpp>
 
 
 class BoomerangWeapon :public AutoWeapon {

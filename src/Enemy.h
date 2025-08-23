@@ -1,11 +1,6 @@
 ﻿#pragma once
-#include <iostream>
-#include "Component.h"
-#include "Timer.h"
-#include "JsonLoader.h"
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Color.hpp>
+class Component;
 class GameObject;
 class Player;
 

@@ -1,16 +1,6 @@
 #pragma once
-#include "UI.h"
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Text.hpp>
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/System/Vector2.hpp>
-
 #include "Weapon.h"
-#include "Renderable.h"
-#include "MSprite.h"
+
 
 
 class UI_AbilityDescription : public UI_Element {

@@ -1,7 +1,4 @@
 #pragma once
-#include "Component.h"
-#include "Global.h"
-#include "MSprite.h"
 
 class BackgroundImage : public Component {
 
