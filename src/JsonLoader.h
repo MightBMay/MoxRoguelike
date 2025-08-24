@@ -2,12 +2,12 @@
 
 
 using json = nlohmann::json;
-class GameDataLoader {
+class GameData {
 public:
 
-	GameDataLoader() = delete;
-	GameDataLoader(const GameDataLoader&) = delete;
-	GameDataLoader& operator=(const GameDataLoader&) = delete;
+	GameData() = delete;
+	GameData(const GameData&) = delete;
+	GameData& operator=(const GameData&) = delete;
 
 
 	static bool loadAllData();
@@ -30,8 +30,6 @@ public:
 
 	static const json& getStatFromIndex(const int statIndex);
 	static const std::string getStatNameFromIndex(const int statIndex);
-
-
 
 	// Optional: Get direct access to the shared JSON objects
 	static std::shared_ptr<const json> GetWeaponsData() { return s_weapons; }

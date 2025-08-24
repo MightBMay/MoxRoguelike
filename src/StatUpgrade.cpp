@@ -10,7 +10,7 @@ std::string StatUpgrade::GetStatString() {
 }
 
 void StatUpgrade::LoadFlat(std::string statType) {
-	auto& json = GameDataLoader::getStatUpgrade(statType);
+	auto& json = GameData::getStatUpgrade(statType);
 
 	if (json.contains("flat")) {
 		const auto& jsonArray = json["flat"];
@@ -20,7 +20,7 @@ void StatUpgrade::LoadFlat(std::string statType) {
 	}
 }
 void StatUpgrade::LoadMult(std::string statType) {
-	auto& json = GameDataLoader::getStatUpgrade(statType);
+	auto& json = GameData::getStatUpgrade(statType);
 
 	if (json.contains("mult")) {
 		const auto& jsonArray = json["mult"];

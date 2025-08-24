@@ -342,7 +342,7 @@ const void Player::AddXP(int baseXp) {
 }
 
 const json& PlayerStats::LoadInfoFromJson(std::string className) {
-	auto& json = GameDataLoader::getPlayerClass(className);
+	auto& json = GameData::getPlayerClass(className);
 
 	if (json.contains("health")) {
 		maxHp = StatGroup(json["health"]);

@@ -64,11 +64,12 @@ int main() {
 	const sf::Time updateInterval = sf::seconds(0.25f);
 #pragma endregion
 
-	GameDataLoader::loadAllData();
+	GameData::loadAllData();
 
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 	Projectile::projPool.init(512, 10);
 	Input::Initialize();
+	
 
 	
 #pragma region fps text stuff

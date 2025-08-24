@@ -127,7 +127,7 @@ void Enemy::ResetHitFlicker() {
 
 
 void Enemy::LoadInfoFromJson(std::string enemyType) {
-	auto& json = GameDataLoader::getEnemy(enemyType);
+	auto& json = GameData::getEnemy(enemyType);
 
 	if (json.contains("hp")) {
 		_maxHp = json["hp"];

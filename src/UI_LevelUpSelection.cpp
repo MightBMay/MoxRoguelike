@@ -56,8 +56,8 @@ void Selection::UpdateOption() {
 
 std::string Selection::GetDescription() {
 	if (weaponId >= 0) {
-		std::string weaponName = GameDataLoader::getWeaponNameFromIndex(weaponId);
-		auto& json = GameDataLoader::getWeapon(weaponName);
+		std::string weaponName = GameData::getWeaponNameFromIndex(weaponId);
+		auto& json = GameData::getWeapon(weaponName);
 		if (json.contains("description"))
 			return json["description"];
 		else
@@ -67,9 +67,9 @@ std::string Selection::GetDescription() {
 	}
 
 	else if (statType != StatType::Empty) {
-		std::string statName = GameDataLoader::getStatNameFromIndex(statType);
+		std::string statName = GameData::getStatNameFromIndex(statType);
 
-		auto& json = GameDataLoader::getStatUpgrade(statName);
+		auto& json = GameData::getStatUpgrade(statName);
 		if (json.contains("description"))
 			return json["description"];
 		else

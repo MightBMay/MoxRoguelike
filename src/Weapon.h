@@ -37,7 +37,7 @@ public:
 		return it->second(playerObj); // calls function stored in enemylist which 
 	}
 	static const json& getRandomWeaponJson() {
-		auto& data = *GameDataLoader::GetWeaponsData(); // get weapon data.
+		auto& data = *GameData::GetWeaponsData(); // get weapon data.
 		static std::vector<std::string> weaponNames;
 
 
@@ -54,7 +54,7 @@ public:
 		}
 
 		
-		return GameDataLoader::getWeapon( // get weapon using name like normal.
+		return GameData::getWeapon( // get weapon using name like normal.
 				weaponNames[rng::getInt(0, weaponNames.size() - 1)]
 				);
 		
@@ -129,7 +129,7 @@ protected:
 	std::string name = "";
 
 	virtual const json& LoadInfoFromJson();
-	virtual const json& GetJsonData() {  return GameDataLoader::getWeapon(name); }
+	virtual const json& GetJsonData() {  return GameData::getWeapon(name); }
 
 
 	MEvent<float> cooldownTickEvent{};
@@ -153,7 +153,7 @@ protected:
 
 	//Ability base class lets me override this. this allows me to keep the index system 
 	virtual void UpdateStats() override {}
-	virtual const json& GetJsonData() override {  return GameDataLoader::getAbility(name); }
+	virtual const json& GetJsonData() override {  return GameData::getAbility(name); }
 };
 
 

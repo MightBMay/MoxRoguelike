@@ -40,7 +40,7 @@ public:
 	}
 
 protected:
-	const json& GetJsonData()override { return GameDataLoader::getAbility(name); }
+	const json& GetJsonData()override { return GameData::getAbility(name); }
 
 
 };
