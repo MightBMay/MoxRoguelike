@@ -12,23 +12,12 @@
       "healthRegen": 3,
       "defence": 0,
       "speed": 300,
-      "spritePath": "../assets/sprites/testanim.png",
-      "spriteSize": [128,128],
-      "animationData": {
-        "default speed": 1,
-        "loop": true,
-        "frame count": 2,
-        "frame data": {
-          "0": 0,
-          "15": 1,
-          "30": 0
-        }
+      "spritePath": "../assets/sprites/gun.png",
+      "spriteSize": [128,128]
+      
 
       }
 
     }
 
-
-
-  }
 }

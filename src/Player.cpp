@@ -143,16 +143,16 @@ void Player::init() {
 	stats->getMaxHpChangeEvent().subscribe(playerUI->healthBar, &ProgressBar::setRange);
 
 
-	// DEBUG
-	AddWeapon(0, 0);
-	AddWeapon(1, 1);
-	AddWeapon(2, 2);
+	//// DEBUG
+	//AddWeapon(0, 0);
+	//AddWeapon(1, 1);
+	//AddWeapon(2, 2);
 
-	auto& tempWep = weaponHolder[0].lock();
-	for (int i = 0; i < 10; ++i) {
-	 tempWep->UpdateStats();
-	}
-	std::cout << tempWep->isMaxLevel();
+	//auto& tempWep = weaponHolder[0].lock();
+	//for (int i = 0; i < 10; ++i) {
+	// tempWep->UpdateStats();
+	//}
+	//std::cout << tempWep->isMaxLevel();
 
 	CreateAbilities(window);
 

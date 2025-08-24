@@ -55,5 +55,31 @@
       "attackSpeed": 0.4
     }
 
+  },
+
+
+  "projectiles": {
+
+
+    "Papyrmancer Sow": {
+      "animation data": {
+        "default speed": 0.75,
+        "loop": true,
+        "frame count": 4,
+        "frame data": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3,
+          "4": 0
+
+        }
+
+      }
+
+
+    }
+
+
   }
 }

@@ -19,7 +19,8 @@ struct Animation
 	void LoadFromJson(const json& json){
 
 		if (json.contains("default speed"))
-			defaultSpeed = json["default speed"];
+			defaultSpeed = json["default speed"].get<float>();
+		else std::cout << "\nanimation default speed not found";
 		
 		if (json.contains("frame count"))
 			frameCount = json["frame count"];
@@ -42,7 +43,7 @@ struct Animation
 
 class Animator : public Component {
 private:
-	static constexpr float animationFrameRate = 1 / 60;
+	static constexpr float animationFrameRate = 1 / 60.0f;
 	std::shared_ptr<MSprite> sprite;
 
 
@@ -50,7 +51,7 @@ private:
 	sf::Vector2i frameSize;
 	float elapsedTime = 0;
 	float animationSpeed = 1;
-	float frameDuration = animationFrameRate * animationSpeed;
+	float frameDuration = 0;
 	int currentFrame = 0;
 	int frameCounter = 0;
 	int columns;
@@ -61,23 +62,28 @@ public:
 	Animator(Animation animation) :
 		animation(animation) {
 		columns = animation.frameCount;
+		animationSpeed = animation.defaultSpeed;
+		frameDuration = animationFrameRate * (1.0f / animationSpeed);
+
 	}
 
 
 
 	void SetAnimation(Animation& newAnimation) {
 		animation = newAnimation;
-		animationSpeed = newAnimation.defaultSpeed;
-		frameDuration = animation.frameCount;
+		animationSpeed = animation.defaultSpeed;
+		frameDuration = animationFrameRate * (1 / animationSpeed);
 		columns = animation.frameCount;
 	}
-
+	void SetRectSize(sf::Vector2i newSize) {
+		frameSize = newSize;
+	}
 
 	/// <param name="newSpeed">new speed of the animation. can be set to a negative value to return to the animation's default speed.</param>
 	void SetAnimationSpeed(float newSpeed) {
 		if (newSpeed < 0) { animationSpeed = animation.defaultSpeed; }
 		animationSpeed = newSpeed;
-		frameDuration = animationFrameRate * animationSpeed;
+		frameDuration = animationFrameRate * (1 / animationSpeed);
 	}
 
 	void update(float deltaTime) {
@@ -139,7 +145,6 @@ public:
 
 		sf::IntRect rect = { { (currentFrame % columns) * frameSize.x, 0 }, frameSize };
 		sprite->setTextureRect(rect);
-		std::cout << "\n anim rect size x: " << rect.position.x;
 
 	}
 

@@ -3,6 +3,7 @@
 #include "EnemyManager.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Animation.h"
 
 
 
@@ -13,17 +14,6 @@ void Enemy::init() {
 	// upon adding enemymovement, this gameobject becomes an enemy.
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
 	// we need a seperate manager for enemies to store their shared_ptr's.
-
-
-	_maxHp  = level * hpPerLevel();
-	_curHp  = _maxHp;
-	_damage = level * damagePerLevel();
-	_attackSpeed = attackSpeed();
-	float sizeRaw = size();
-	_size = sizeRaw * sizeRaw; // square size to save sqr root on distance checks.
-	_speed = speed();
-	_attackSize = attackSize();
-	halfSize = _size / 2.0;
 
 
 	// have to manually add, since enemy object was created with no sprite, 
@@ -171,10 +161,10 @@ void Enemy::LoadInfoFromJson(std::string enemyType) {
 	sf::IntRect rect;
 	if (json.contains("spritePath")) {
 		
-		if (json.contains("spriteWidth") && json.contains("spriteHeight")) {
-			int xSize = json["spriteWidth"];
-			int ySize = json["spriteHeight"];
-			rect = { {},{xSize,ySize} };
+		if (json.contains("spriteSize")) {
+		std::vector<int> rawSize= json["spriteSize"].get<std::vector<int>>();
+		sf::Vector2i size = { rawSize[0],rawSize[1] };
+			rect = { {},size };
 		}
 		else {
 			std::cout << "\Sprite rect not defined for enemy: " << enemyType;
@@ -185,6 +175,14 @@ void Enemy::LoadInfoFromJson(std::string enemyType) {
 			json["spritePath"],
 			rect
 		);
+
+		if (json.contains("animation data")) {
+			Animation animation{};
+			animation.LoadFromJson(json["animation data"]);
+			parent->addComponent<Animator>(animation);
+		}
+
+
 		
 	}
 	else {

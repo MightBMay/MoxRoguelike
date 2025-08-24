@@ -76,22 +76,6 @@ protected:
 
 	Timer hitFlickerTimer{hitFlickerDuration, false};
 
-	// amount of hp gained per level.
-	virtual int hpPerLevel() const = 0;
-	// amount of _damage gained per level
-	virtual int damagePerLevel() const =0;
-	/// <summary>
-	/// attack speed (returns number of attacks per second).
-	/// </summary>
-	virtual float attackSpeed() const = 0;
-
-	/// <summary>
-	/// used to scale the attack hitbox visual. KEEP IN MIND this can be influenced depending on texture size for the hitbox.
-	/// </summary>
-	virtual const float attackSize() const = 0;
-	virtual float speed() const = 0;
-	virtual float size() const = 0;
-
 	virtual void LoadInfoFromJson(std::string enemyType);
 
 

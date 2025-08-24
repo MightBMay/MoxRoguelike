@@ -8,16 +8,59 @@
       "attack speed": 5,
       "attack size": 6,
       "speed": 175,
-      "xp":  1,
+      "xp": 1,
       "size": 86,
       "spritePath": "../assets/sprites/twig.png",
-      "spriteWidth": 128,
-      "spriteHeight": 150
+      "spriteSize": [ 128, 150 ]
+    },
+
+    "scissor enemy": {
+      "hp": 5,
+      "damage": 6,
+      "attack speed": 2.307,
+      "attack size": 6,
+      "speed": 175,
+      "xp": 1,
+      "size": 86,
+      "spritePath": "../assets/sprites/enemies/scissorenemy.png",
+      "spriteSize": [ 128, 150 ],
+      "animation data": {
+        "default speed": 1,
+        "loop": true,
+        "frame count": 10,
+        "frame data": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3,
+          "4": 4,
+          "5": 5,
+          "6": 6,
+          "7": 7,
+          "8": 8,
+          "9": 9,
+          "14": 8,
+          "15": 7,
+          "16": 6,
+          "17": 5,
+          "18": 4,
+          "19": 3,
+          "20": 2,
+          "21": 1,
+          "22": 0,
+          "26": 0
+
+
+
+
+        }
+
+      }
+
+
+
     }
 
 
-
   }
-
-
 }

@@ -17,25 +17,7 @@ namespace playerClasses {
 		Papyrmancer() :Player("Papyrmancer") {
 
 		}
-		void init() override {
-			Player::init();
 
-
-
-
-		}
-
-		virtual const json& LoadInfoFromJson(std::string className)override {
-			const json& json = Player::LoadInfoFromJson(className);
-			Animation animation = Animation();
-			if (json.contains("animationData")) {
-
-				animation.LoadFromJson(json["animationData"]);
-				parent->addComponent<Animator>(animation); // too much effort to move this into init(), but same outcome. 
-															// just needed to load the animation data before making it.
-			}
-			return json;
-		}
 		void CreateAbilities(std::shared_ptr<sf::RenderWindow> window) override final {
 			sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };
 

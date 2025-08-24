@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "EnemyManager.h"
 #include "Enemy.h"
-
+#include "ScissorEnemy.h"
 #include"TestEnemy.h"
 
 
 
 const map<int, function<void(shared_ptr<GameObject>, int)>> EnemyManager::EnemyList 
 {
-    {0,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<TestEnemy>(level, "test enemy"); }},
-    {1,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<TestEnemy>(level, "test enemy"); }}
+    {0,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<TestEnemy>(level); }},
+    {1,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<ScissorEnemy>(level); }}
 };
 
 

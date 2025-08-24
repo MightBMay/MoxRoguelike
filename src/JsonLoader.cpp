@@ -65,6 +65,10 @@ const json& GameData::getWeaponFromIndex(const int weaponIndex) {
 	return (*s_weapons)["weapon indices"][std::to_string(weaponIndex)];
 }
 
+ const json& GameData::getProjectile(const std::string& projectileName) {
+	 return(*s_weapons)["projectiles"][projectileName];
+ }
+
 const json& GameData::getAbility(const std::string& abilityName) {
 	return (*s_weapons)["abilities"][abilityName];
 }

@@ -31,7 +31,7 @@ void Sow_Projectile::update(float deltaTime) {
 		parent->setPosition(mousePos);
 	}
 
-	parent->rotate(rotationSpeed * deltaTime); // spin projectile as some kind of animation.
+	//parent->rotate(rotationSpeed * deltaTime); // spin projectile as some kind of animation.
 
 	remainingDuration -= deltaTime; // decrement and handle duration.
 	if (remainingDuration <= 0) {
