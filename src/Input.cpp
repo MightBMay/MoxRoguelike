@@ -36,7 +36,7 @@ const bool Input::SaveInputToFile() {
     try {
         std::ifstream file(filePath); // open file
         if (!file.is_open()) {
-            std::cerr << "\nError opening input.json  at: " << filePath;
+            std::cerr << "\nError opening input.mox  at: " << filePath;
             return false;
         }
 

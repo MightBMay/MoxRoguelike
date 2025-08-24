@@ -1,7 +1,7 @@
 #include "pch.h"
 
 class Input {
-    static inline const std::string filePath = "../assets/gamedata/input.json";
+    static inline const std::string filePath = "../assets/gamedata/input.mox";
 public:
     static constexpr int MOUSE_LEFT = 0;
     static constexpr int MOUSE_RIGHT = 1;

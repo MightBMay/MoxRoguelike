@@ -4,14 +4,14 @@ using json = nlohmann::json;
 
 bool GameData::loadAllData() {
 	try {
-		std::ifstream file("../assets/gamedata/weapons.json");
+		std::ifstream file("../assets/gamedata/weapons.mox");
 		if (file.is_open()) {
 			s_weapons = std::make_shared<json>(json::parse(file));
 			file.close();
 		}
 
 		
-		file.open("../assets/gamedata/playerclasses.json");
+		file.open("../assets/gamedata/playerclasses.mox");
 		if (file.is_open()) {
 			s_player_classes = std::make_shared<json>(json::parse(file));
 			file.close();
@@ -19,7 +19,7 @@ bool GameData::loadAllData() {
 		
 
 	   // load StatUpgrades
-		file.open("../assets/gamedata/statupgrades.json");
+		file.open("../assets/gamedata/statupgrades.mox");
 		if (file.is_open()) {
 			s_stat_upgrades = std::make_shared<json>(json::parse(file));
 			file.close();
@@ -27,7 +27,7 @@ bool GameData::loadAllData() {
 
 
 	   // Load enemies (uncomment when ready)
-		file.open("../assets/gamedata/enemies.json");
+		file.open("../assets/gamedata/enemies.mox");
 		if (file.is_open()) {
 			s_enemies = std::make_shared<json>(json::parse(file));
 			file.close();
