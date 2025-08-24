@@ -225,14 +225,15 @@ protected:
 		_isVulnrable = true;
 	}
 
-	const json& LoadInfoFromJson(std::string className) {
+	virtual const json& LoadInfoFromJson(std::string className) {
 		auto& json = GameData::getPlayerClass(className);
 
 		if (json.contains("spritePath") && json.contains("spriteSize")) {
 			auto rawSize = json["spriteSize"].get<std::vector<int>>();
 			sf::Vector2i size = { rawSize[0],rawSize[1] };
+			
 			parent->setSprite(json["spritePath"], { {},size });
-			std::cerr << "\nsprite set";
+			GameObjectManager::getInstance().add(parent,5);
 			parent->setOrigin(size.x / 2, size.y / 2);
 
 			if (json.contains("AnimationData")) {
@@ -240,6 +241,7 @@ protected:
 			}
 
 		}
+		else { std::cerr << "\nsprite not loaded for: " << className; }
 
 		stats->LoadInfoFromJson(json);
 

@@ -10,9 +10,9 @@
       "speed": 175,
       "xp":  1,
       "size": 86,
-      "spritePath": "../assets/sprites/gun.png",
+      "spritePath": "../assets/sprites/twig.png",
       "spriteWidth": 128,
-      "spriteHeight": 128
+      "spriteHeight": 150
     }
 
 

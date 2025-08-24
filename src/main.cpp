@@ -83,6 +83,7 @@ int main() {
 
 
 #pragma region make background
+	/*
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
@@ -92,6 +93,8 @@ int main() {
 
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
+
+	*/
 
 	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
 	vignetteObj->addComponent<Vignette>();

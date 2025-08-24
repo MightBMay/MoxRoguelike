@@ -11,39 +11,54 @@
 namespace playerClasses {
 
 
-class Papyrmancer : public Player {
+	class Papyrmancer : public Player {
 
-public:
-	Papyrmancer() :Player("Papyrmancer") {
+	public:
+		Papyrmancer() :Player("Papyrmancer") {
 
-	}
-	void init() override {
-		Player::init();
-		parent->addComponent<Animator>(parent, Animation());
-	}
-	void CreateAbilities(std::shared_ptr<sf::RenderWindow> window) override final {
-		sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };
-
-		auto weaponQ = parent->addComponent<Papyrmancer_Sow>();
-		playerUI->spriteBar->abilityBar->LinkAbility(0, abilityBarIconRect, weaponQ.lock());
+		}
+		void init() override {
+			Player::init();
 
 
-		auto weaponE = parent->addComponent<Papyrmancer_Reap>();
-		playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, weaponE.lock());
 
 
-	   //auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	   //playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
-	
-		abilityHolder[0] = weaponQ;
-		abilityHolder[1] = weaponE;
-		//abilityHolder[2] = weaponR;
-	}
+		}
 
-private:
-	std::string className;
-	
-};
+		virtual const json& LoadInfoFromJson(std::string className)override {
+			const json& json = Player::LoadInfoFromJson(className);
+			Animation animation = Animation();
+			if (json.contains("animationData")) {
+
+				animation.LoadFromJson(json["animationData"]);
+				parent->addComponent<Animator>(animation); // too much effort to move this into init(), but same outcome. 
+															// just needed to load the animation data before making it.
+			}
+			return json;
+		}
+		void CreateAbilities(std::shared_ptr<sf::RenderWindow> window) override final {
+			sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };
+
+			auto weaponQ = parent->addComponent<Papyrmancer_Sow>();
+			playerUI->spriteBar->abilityBar->LinkAbility(0, abilityBarIconRect, weaponQ.lock());
+
+
+			auto weaponE = parent->addComponent<Papyrmancer_Reap>();
+			playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, weaponE.lock());
+
+
+		   //auto weaponR = WeaponBase::CreateWeapon(1, parent);
+		   //playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
+
+			abilityHolder[0] = weaponQ;
+			abilityHolder[1] = weaponE;
+			//abilityHolder[2] = weaponR;
+		}
+
+	private:
+		std::string className;
+
+	};
 
 
 }

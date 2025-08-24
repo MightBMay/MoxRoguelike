@@ -186,14 +186,7 @@ void Player::update(float deltatime) {
 
 	//DEBUG STUFF
 	if (Input::GetKeyDown(sf::Keyboard::Scancode::Num5)) AddStat(StatType::Health);
-	if (Input::GetKeyDown(sf::Keyboard::Scancode::Space)) {
-		std::cout << "\n";
-		for (auto& item : weaponHolder) {
-			if(auto itemp = item.lock())
-				std::cout << "Derived type: " << typeid(*itemp).name() << "\n";
-				
-		}
-	}
+
 	// END OF DEBUG
 	hitFlickerTimer.update(deltatime);
 	HandleRegen(deltatime);
@@ -376,7 +369,6 @@ void PlayerStats::LoadInfoFromJson(const json& json) {
 	else { xp = StatGroup(); }
 
 	if (json.contains("attackSpeed")) {
-		std::cout << "attackspeed: " << json["attackSpeed"];
 		attackSpeed = StatGroup(0,0,json["attackSpeed"]);
 	}
 	else { attackSpeed = StatGroup(); }

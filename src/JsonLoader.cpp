@@ -62,7 +62,6 @@ const json& GameData::getWeaponFromIndex(const int weaponIndex) {
 	return getWeapon((*s_weapons)["weapon indices"][std::to_string(weaponIndex)]);
 }
  const std::string GameData::getWeaponNameFromIndex(const int weaponIndex) {
-	std::cout << "\nindex: " << weaponIndex;
 	return (*s_weapons)["weapon indices"][std::to_string(weaponIndex)];
 }
 
