@@ -51,7 +51,6 @@ public:
 	static void SetPlayer(GameObject* player);
 	static GameObject* GetPlayer() { return _playerObj; }
 
-	virtual void setSprite();
 
 	virtual void log() {
 		std::cout <<
@@ -93,47 +92,7 @@ protected:
 	virtual float speed() const = 0;
 	virtual float size() const = 0;
 
-	virtual void LoadInfoFromJson(std::string enemyType) {
-		auto& json = GameDataLoader::getEnemy(enemyType);
-		if (json.contains("hp")) {
-			_maxHp = json["hp"];
-			_curHp = _maxHp;
-		}
-		else { std::cerr << "\n\"hp\" not found/defined in json for " << enemyType; }
-
-		if (json.contains("damage")) {
-			_damage= json["damage"];
-		}
-		else { std::cerr << "\nDamage not found/defined in json for " << enemyType; }
-
-		if (json.contains("attack speed")) {
-			_attackSpeed = 1/ json["attack speed"].get<float>();
-		}
-		else { std::cerr << " not found/defined in json for " << enemyType; }
-
-		if (json.contains("attack size")) {
-			_attackSize = json["attack size"];
-		}
-		else { std::cerr << " \n\"attack size\"not found/defined in json for " << enemyType; }
-
-		if (json.contains("speed")) {
-			_speed = json["speed"];
-			
-		}
-		else { std::cerr << "\n\"speed\" not found/defined in json for " << enemyType; }
-
-		if (json.contains("size")) {
-			_size = json["size"];
-			halfSize = _size / 2.0f;
-			
-		}
-		else { std::cerr << "\n\"size \" not found/defined in json for " << enemyType; }
-
-		if (json.contains("xp")) {
-			xpValue = json["xp"];
-		}else{ std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
-
-	}
+	virtual void LoadInfoFromJson(std::string enemyType);
 
 
 

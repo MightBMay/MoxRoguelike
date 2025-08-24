@@ -25,22 +25,12 @@ void Enemy::init() {
 	_attackSize = attackSize();
 	halfSize = _size / 2.0;
 
-	setSprite();
+
 	// have to manually add, since enemy object was created with no sprite, 
 	// it isn't added to renderlayers_ due to invalid drawable ptr.
 	GameObjectManager::getInstance().addExternalRenderable(parent->getRenderable(), 1);
 
 
-}
-
-void Enemy::setSprite(){
-	parent->setSprite(
-		"../assets/sprites/twig.png",
-		sf::IntRect{ {0,0},{128,150} }
-	);
-	parent->setOrigin(64, 75);
-	
-	
 }
 
 void Enemy::Destroy() {
@@ -133,6 +123,77 @@ void Enemy::OnDeath() {
 
 void Enemy::ResetHitFlicker() {
 	parent->getSprite()->setColor(sf::Color::White);
+}
+
+
+void Enemy::LoadInfoFromJson(std::string enemyType) {
+	auto& json = GameDataLoader::getEnemy(enemyType);
+
+	if (json.contains("hp")) {
+		_maxHp = json["hp"];
+		_curHp = _maxHp;
+	}
+	else { std::cerr << "\n\"hp\" not found/defined in json for " << enemyType; }
+
+	if (json.contains("damage")) {
+		_damage = json["damage"];
+	}
+	else { std::cerr << "\nDamage not found/defined in json for " << enemyType; }
+
+	if (json.contains("attack speed")) {
+		_attackSpeed = 1 / json["attack speed"].get<float>();
+	}
+	else { std::cerr << " not found/defined in json for " << enemyType; }
+
+	if (json.contains("attack size")) {
+		_attackSize = json["attack size"];
+	}
+	else { std::cerr << " \n\"attack size\"not found/defined in json for " << enemyType; }
+
+	if (json.contains("speed")) {
+		_speed = json["speed"];
+
+	}
+	else { std::cerr << "\n\"speed\" not found/defined in json for " << enemyType; }
+
+	if (json.contains("size")) {
+		_size = json["size"];
+		halfSize = _size / 2.0f;
+
+	}
+	else { std::cerr << "\n\"size \" not found/defined in json for " << enemyType; }
+
+	if (json.contains("xp")) {
+		xpValue = json["xp"];
+	}
+	else { std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
+
+	sf::IntRect rect;
+	if (json.contains("spritePath")) {
+		
+		if (json.contains("spriteWidth") && json.contains("spriteHeight")) {
+			int xSize = json["spriteWidth"];
+			int ySize = json["spriteHeight"];
+			rect = { {},{xSize,ySize} };
+		}
+		else {
+			std::cout << "\Sprite rect not defined for enemy: " << enemyType;
+			rect = { {},{128,128} };
+		}
+		
+		parent->setSprite(
+			json["spritePath"],
+			rect
+		);
+		
+	}
+	else {
+		std::cerr << "\nSprite path not defined for enemy: " << enemyType;
+		parent->setSprite("../assets/sprites/twig.png");
+	}
+	parent->setOrigin(rect.size.x / 2.0f, rect.size.y / 2.0f);
+
+
 }
 
 void Enemy::UpdateFacingDirection() {

@@ -38,6 +38,12 @@
 #include "Renderable.h"
 #include "Utility.h"
 #include "GameObjectPool.h"
+#include "UI_AbilityBar.h"
+#include "UI_AbilityDescription.h"
+#include "UI_Button.h"
+#include "UI_CooldownSprite.h"
+#include "UI_LevelUpSelection.h"
+
 
 #include "Background.h"
 #include "TrailRenderer.h"

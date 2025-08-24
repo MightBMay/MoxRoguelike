@@ -30,7 +30,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& man
 	);
 	playerObj->setOrigin(64, 64);
 	playerObj->setPosition(960, 540);
-	playerObj->addComponent<Player>(std::string("Papyrmancer"));
+	Player::CreatePlayerClass(0, playerObj);
 
 
 

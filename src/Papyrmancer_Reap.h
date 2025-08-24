@@ -1,6 +1,7 @@
 #pragma once
 #include"Weapon.h"
 #include "Sow_Projectile.h"
+#include "Reap_Projectile.h"
 
 class Papyrmancer_Reap : public AbilityBase {
 public:

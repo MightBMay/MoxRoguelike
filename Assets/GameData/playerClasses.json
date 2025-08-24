@@ -1,4 +1,9 @@
 {
+  "IndexToClass": {
+    "0": "Papyrmancer"
+  },
+
+
   "player_classes": {
 
 
@@ -7,7 +12,7 @@
       "healthRegen": 3,
       "defence": 0,
       "speed": 300
-      
+
 
     }
 

@@ -10,15 +10,15 @@
 
 #include "StatUpgrade.h"
 
-#include "Projectile.h"
-#include "Sow_Projectile.h"
-#include "Reap_Projectile.h"
-#include "Papyrmancer_Reap.h"
-#include "Papyrmancer_Sow.h"
-#include "AutoWeapon.h"
-#include "BoomerangProjectile.h"
-#include "OrbitProjectile.h"
 
+#include "Papyrmancer.h"
+
+
+const std::map<int, std::function<std::weak_ptr<Player>(std::shared_ptr<GameObject>)>> Player::playerClassList
+{
+	{0,[](const std::shared_ptr<GameObject> obj) {return obj->addComponent<playerClasses::Papyrmancer>(); }},
+
+};
 
 
 
@@ -339,26 +339,6 @@ const void Player::AddXP(int baseXp) {
 	UI_LevelUpSelection::numRemainingLevels = levelsGained;
 
 
-}
-
-void Player::CreateAbilities(std::shared_ptr<sf::RenderWindow> window) {
-
-	sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };		
-
-	 auto weaponQ = parent->addComponent<Papyrmancer_Sow>();
-	 playerUI->spriteBar->abilityBar->LinkAbility(0,abilityBarIconRect, weaponQ.lock());
-
-
-	 auto weaponE = parent->addComponent<Papyrmancer_Reap>();
-	 playerUI->spriteBar->abilityBar->LinkAbility(1, abilityBarIconRect, weaponE.lock());
-
-
-	//auto weaponR = WeaponBase::CreateWeapon(1, parent);
-	//playerUI->spriteBar->abilityBar->LinkAbility(2, abilityBarIconRect, weaponR.lock());
-
-	abilityHolder[0] = weaponQ;
-	abilityHolder[1] = weaponE;
-	//abilityHolder[2] = weaponR;
 }
 
 const json& PlayerStats::LoadInfoFromJson(std::string className) {

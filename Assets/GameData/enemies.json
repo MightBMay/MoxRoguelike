@@ -9,7 +9,10 @@
       "attack size": 6,
       "speed": 175,
       "xp":  1,
-      "size": 86
+      "size": 86,
+      "spritePath": "../assets/sprites/gun.png",
+      "spriteWidth": 128,
+      "spriteHeight": 128
     }
 
 
