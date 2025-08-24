@@ -23,12 +23,7 @@ std::shared_ptr<GameObject> abilDesc;
 std::shared_ptr<UI_LevelUpSelection> levelUpUI;
 
 void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& manager) {
-	playerObj = GameObject::Create(
-		"../assets/sprites/gun.png",
-		sf::IntRect{ {0, 0}, {128, 128} },
-		5
-	);
-	playerObj->setOrigin(64, 64);
+	playerObj = GameObject::Create(5);
 	playerObj->setPosition(960, 540);
 	Player::CreatePlayerClass(0, playerObj);
 

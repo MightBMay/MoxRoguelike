@@ -119,8 +119,10 @@ Player::Player(std::string className) :className(className), hitFlickerTimer(hit
 
 void Player::init() {
 	auto sharedThis = shared_from_this();
+	
 	playerUI = std::make_shared<PlayerUI>(sharedThis);
 	stats = std::make_shared<PlayerStats>(className,statUpgradeHolder);
+	LoadInfoFromJson(className);
 	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
 
 	stats->RecalculateStats();// unlikely, but in case something changes before init call.
@@ -341,30 +343,32 @@ const void Player::AddXP(int baseXp) {
 
 }
 
-const json& PlayerStats::LoadInfoFromJson(std::string className) {
-	auto& json = GameData::getPlayerClass(className);
+void PlayerStats::LoadInfoFromJson(const json& json) {
 
 	if (json.contains("health")) {
 		maxHp = StatGroup(json["health"]);
 		curHp = maxHp.getBase();
 		
 	}
-	else { maxHp = StatGroup(); std::cerr << "\nHealth value not found for: " << className; }
+	else { maxHp = StatGroup(); std::cerr << "\nHealth value not found"; }
 
 	if (json.contains("defence")) {
 		defence = StatGroup(json["defence"]);
 	}
-	else { defence = StatGroup(); std::cerr << "\Defence value not found for: " << className; }
+	else { defence = StatGroup(); std::cerr << "\Defence value not found";
+	}
 
 	if (json.contains("healthRegen")) {
 		healthRegen = StatGroup(json["healthRegen"]);
 	}
-	else { healthRegen = StatGroup(); std::cerr << "\nHealth Regen value not found for: " << className; }
+	else { healthRegen = StatGroup(); std::cerr << "\nHealth Regen value not found";
+	}
 
 	if (json.contains("speed")) {
 		speed = StatGroup(json["speed"]);
 	}
-	else { speed = StatGroup(); std::cerr << "\Speed value not found for: " << className; }
+	else { speed = StatGroup(); std::cerr << "\Speed value not found";
+	}
 
 	if (json.contains("xp")) {
 		xp = StatGroup(0,0,json["xp"]);
@@ -378,7 +382,5 @@ const json& PlayerStats::LoadInfoFromJson(std::string className) {
 	else { attackSpeed = StatGroup(); }
 
 
-
-	return json;
 
 }

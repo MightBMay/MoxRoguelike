@@ -5,7 +5,7 @@
 #include "Weapon.h"
 #include "Papyrmancer_Sow.h"
 #include "Papyrmancer_Reap.h"
-
+#include "Animation.h"
 
 
 namespace playerClasses {
@@ -17,7 +17,10 @@ public:
 	Papyrmancer() :Player("Papyrmancer") {
 
 	}
-
+	void init() override {
+		Player::init();
+		parent->addComponent<Animator>(parent, Animation());
+	}
 	void CreateAbilities(std::shared_ptr<sf::RenderWindow> window) override final {
 		sf::IntRect abilityBarIconRect = sf::IntRect{ {0,0},{64,64} };
 
@@ -39,7 +42,7 @@ public:
 
 private:
 	std::string className;
-
+	
 };
 
 

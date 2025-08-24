@@ -119,9 +119,10 @@ public:
 	/// </returns>
 	std::shared_ptr<StatUpgrade> AddUpgrade(StatType type);
 	void RecalculateStats();
+	virtual void LoadInfoFromJson(const json& json);
 
 protected:
-	virtual const json& LoadInfoFromJson(std::string className);
+	
 private:
 	std::array< std::shared_ptr<StatUpgrade>,6>& statUpgrades;
 	MEvent<int> onMaxHealthChange{};
@@ -223,6 +224,29 @@ protected:
 		parent->getSprite()->setColor(sf::Color::White);
 		_isVulnrable = true;
 	}
+
+	const json& LoadInfoFromJson(std::string className) {
+		auto& json = GameData::getPlayerClass(className);
+
+		if (json.contains("spritePath") && json.contains("spriteSize")) {
+			auto rawSize = json["spriteSize"].get<std::vector<int>>();
+			sf::Vector2i size = { rawSize[0],rawSize[1] };
+			parent->setSprite(json["spritePath"], { {},size });
+			std::cerr << "\nsprite set";
+			parent->setOrigin(size.x / 2, size.y / 2);
+
+			if (json.contains("AnimationData")) {
+
+			}
+
+		}
+
+		stats->LoadInfoFromJson(json);
+
+
+		return json;
+	}
+
 
 private:
 	static inline bool _isVulnrable = true;
