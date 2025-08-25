@@ -37,9 +37,6 @@ namespace playerClasses {
 			//abilityHolder[2] = weaponR;
 		}
 
-	private:
-		std::string className;
-
 	};
 
 

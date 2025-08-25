@@ -4,7 +4,7 @@
 struct Animation
 {
 
-	int frameCount= 0;
+	int columns = 0;
 	bool loop = false;
 	float defaultSpeed = 1.0f;
 
@@ -20,10 +20,10 @@ struct Animation
 
 		if (json.contains("default speed"))
 			defaultSpeed = json["default speed"].get<float>();
-		else std::cout << "\nanimation default speed not found";
 		
-		if (json.contains("frame count"))
-			frameCount = json["frame count"];
+		// how many columns of frames there are.
+		if (json.contains("columns"))
+			columns = json["columns"];
 		else std::cerr << "\n Animation contains no frame count"; 
 
 		if (json.contains("loop"))
@@ -61,7 +61,7 @@ public:
 
 	Animator(Animation animation) :
 		animation(animation) {
-		columns = animation.frameCount;
+		columns =  animation.columns;
 		animationSpeed = animation.defaultSpeed;
 		frameDuration = animationFrameRate * (1.0f / animationSpeed);
 
@@ -73,7 +73,7 @@ public:
 		animation = newAnimation;
 		animationSpeed = animation.defaultSpeed;
 		frameDuration = animationFrameRate * (1 / animationSpeed);
-		columns = animation.frameCount;
+		columns = animation.columns;
 	}
 	void SetRectSize(sf::Vector2i newSize) {
 		frameSize = newSize;
@@ -115,7 +115,7 @@ public:
 				}
 				else { // otherwise, 
 					frameCounter = 0;
-					currentFrame = animation.frameCount - 1; // stop at last frame of animation.
+					currentFrame = animation.columns- 1; // stop at last frame of animation.
 					UpdateSprite();
 					isPlaying = false;
 				}
@@ -143,7 +143,7 @@ public:
 	void UpdateSprite() {
 		if (!sprite) { std::cerr << "\nTrying to animate null sprite"; return; }
 
-		sf::IntRect rect = { { (currentFrame % columns) * frameSize.x, 0 }, frameSize };
+		sf::IntRect rect = { { (currentFrame % columns) * frameSize.x, (currentFrame /columns)* frameSize.y}, frameSize};
 		sprite->setTextureRect(rect);
 
 	}

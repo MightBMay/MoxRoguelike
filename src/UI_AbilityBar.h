@@ -26,25 +26,37 @@ class WeaponBar {
 	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1824, 1016);
 	std::array<std::shared_ptr<GameObject>, 6> weaponCDSprites;
 	bool enabled = false;
+	static inline std::shared_ptr<sf::Texture> weaponSpriteTexture;
+	static constexpr int spriteSize = 64;
+	static inline int columns;
 public:
 
 	void Show();
 	void Hide();
 
-	void LinkWeapon(int index, std::shared_ptr<WeaponBase> wepBase, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
-		std::string spritePath = "../assets/sprites/cardboard.png");
+	void LinkWeapon(int index, int weaponIndex, std::shared_ptr<WeaponBase> wepBase);
+
+
+	WeaponBar() {
+		weaponSpriteTexture = TextureManager::getTexture("../assets/sprites/ui/weapon holder/weapon sprites.png");
+		columns = weaponSpriteTexture->getSize().x / spriteSize;
+	}
 };
 
 class StatUpgradeBar {
 	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1824, 1016);
 	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
 	bool enabled = false;
+	// since we just move the rect for this, we only gotta get the texture once.
+	static inline std::shared_ptr<sf::Texture> statUpgradeTexture;
 public:
 	void Show();
 	void Hide();
 
-	void LinkStat(std::shared_ptr<StatUpgrade> stat, sf::IntRect& rect = sf::IntRect({ {0,0}, {64,64} }),
-		std::string spritePath = "../assets/sprites/cardboard.png");
+	void LinkStat(std::shared_ptr<StatUpgrade> stat);
+	StatUpgradeBar() {
+		statUpgradeTexture = TextureManager::getTexture("../assets/sprites/UI/Weapon Holder/stat upgrade sprites.png");
+	}
 
 };
 

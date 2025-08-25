@@ -4,14 +4,13 @@ std::string StatUpgrade::GetStatString() {
 	static std::ostringstream oss; // static to avoid re creating.
 	oss.clear(); // clear and reset string to "".
 	oss.str("");
-	oss << "Grants + " << getFlat() << " | " << (getMult() - 1) * 100 << "%" << StatTypeToString[type];
+	oss << "Grants + " << getFlat() << " | " << (getMult() - 1) * 100 << "% " << StatTypeToString[type];
 	return oss.str();
 
 }
 
 void StatUpgrade::LoadFlat(std::string statType) {
 	auto& json = GameData::getStatUpgrade(statType);
-
 	if (json.contains("flat")) {
 		const auto& jsonArray = json["flat"];
 		if (jsonArray.is_array() && jsonArray.size() == flatStats.size()) {

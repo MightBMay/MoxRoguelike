@@ -4,9 +4,10 @@
 #include "EnemyManager.h"
 
 
+namespace Enemies {
+	class ScissorEnemy : public Enemy {
+	public:
+		ScissorEnemy(int level) : Enemy(level, "scissor enemy") {}
 
-class ScissorEnemy : public Enemy{
-public:
-	ScissorEnemy(int level): Enemy(level,"scissor enemy") {}
-
-};
+	};
+}

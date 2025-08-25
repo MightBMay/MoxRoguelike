@@ -53,7 +53,7 @@ void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
 
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re _damage already damaged enemies.
 
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 }

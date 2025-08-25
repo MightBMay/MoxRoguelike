@@ -34,8 +34,8 @@ void PlayerUI::UpdateHealthbar(int newHealth) {
 void PlayerUI::UI_AddStat(std::shared_ptr<StatUpgrade> stat) {
 	spriteBar->statBar->LinkStat(stat);
 }
-void PlayerUI::UI_AddWeapon(int slotIndex, std::shared_ptr<WeaponBase> weapon) {
-	spriteBar->weaponBar->LinkWeapon(slotIndex, weapon);
+void PlayerUI::UI_AddWeapon(int slotIndex, int weaponIndex, std::shared_ptr<WeaponBase> weapon) {
+	spriteBar->weaponBar->LinkWeapon(slotIndex, weaponIndex, weapon);
 }
 
 void PlayerUI::SetSpriteBarEnabled(int value) { spriteBar->EnableBarUI(value); }

@@ -27,7 +27,7 @@
       "animation data": {
         "default speed": 1,
         "loop": true,
-        "frame count": 10,
+        "columns": 9,
         "frame data": {
           "0": 0,
           "1": 1,
@@ -38,8 +38,6 @@
           "6": 6,
           "7": 7,
           "8": 8,
-          "9": 9,
-          "14": 8,
           "15": 7,
           "16": 6,
           "17": 5,

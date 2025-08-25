@@ -113,6 +113,51 @@ void PlayerStats::RecalculateStats() {
 }
 
 
+void PlayerStats::LoadInfoFromJson(const json& json) {
+	
+	if (json.contains("health")) {
+		maxHp = StatGroup(json["health"]);
+		curHp = maxHp.getBase();
+
+	}
+	else { maxHp = StatGroup(); std::cerr << "\nHealth value not found"; }
+
+	if (json.contains("defence")) {
+		defence = StatGroup(json["defence"]);
+	}
+	else {
+		defence = StatGroup(); std::cerr << "\nDefence value not found";
+	}
+
+	if (json.contains("healthRegen")) {
+		healthRegen = StatGroup(json["healthRegen"]);
+	}
+	else {
+		healthRegen = StatGroup(); std::cerr << "\nHealth Regen value not found";
+	}
+
+	if (json.contains("speed")) {
+		speed = StatGroup(json["speed"]);
+	}
+	else {
+		speed = StatGroup(); std::cerr << "\nSpeed value not found";
+	}
+
+	if (json.contains("xp")) {
+		xp = StatGroup(0, 0, json["xp"]);
+	}
+	else { xp = StatGroup(); }
+
+	if (json.contains("attackSpeed")) {
+		attackSpeed = StatGroup(0, 0, json["attackSpeed"]);
+	}
+	else { attackSpeed = StatGroup(); }
+
+
+
+}
+
+
 Player::Player(std::string className) :className(className), hitFlickerTimer(hitFlickerDuration) {
 
 }
@@ -144,7 +189,7 @@ void Player::init() {
 
 
 	//// DEBUG
-	//AddWeapon(0, 0);
+	AddWeapon(0, 0);
 	//AddWeapon(1, 1);
 	//AddWeapon(2, 2);
 
@@ -266,7 +311,7 @@ void Player::AddWeapon(int weaponIndex) {
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
 	weaponHolder[firstEmpty] = weapon;
 	weaponIndices[firstEmpty] = weaponIndex;
-	playerUI->UI_AddWeapon(firstEmpty, weapon);
+	playerUI->UI_AddWeapon(firstEmpty, weaponIndex, weapon);
 	
 }
 /// <summary>
@@ -288,7 +333,7 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
-	playerUI->UI_AddWeapon(slotIndex, weapon);
+	playerUI->UI_AddWeapon(slotIndex, weaponIndex, weapon);
 }
 
 void Player::AddStat(StatType type)
@@ -332,47 +377,6 @@ int Player::hasStat(StatType type) {
 const void Player::AddXP(int baseXp) {
 	int levelsGained = stats->AddXp(baseXp);
 	UI_LevelUpSelection::numRemainingLevels = levelsGained;
-
-
-}
-
-void PlayerStats::LoadInfoFromJson(const json& json) {
-
-	if (json.contains("health")) {
-		maxHp = StatGroup(json["health"]);
-		curHp = maxHp.getBase();
-		
-	}
-	else { maxHp = StatGroup(); std::cerr << "\nHealth value not found"; }
-
-	if (json.contains("defence")) {
-		defence = StatGroup(json["defence"]);
-	}
-	else { defence = StatGroup(); std::cerr << "\Defence value not found";
-	}
-
-	if (json.contains("healthRegen")) {
-		healthRegen = StatGroup(json["healthRegen"]);
-	}
-	else { healthRegen = StatGroup(); std::cerr << "\nHealth Regen value not found";
-	}
-
-	if (json.contains("speed")) {
-		speed = StatGroup(json["speed"]);
-	}
-	else { speed = StatGroup(); std::cerr << "\Speed value not found";
-	}
-
-	if (json.contains("xp")) {
-		xp = StatGroup(0,0,json["xp"]);
-	}
-	else { xp = StatGroup(); }
-
-	if (json.contains("attackSpeed")) {
-		attackSpeed = StatGroup(0,0,json["attackSpeed"]);
-	}
-	else { attackSpeed = StatGroup(); }
-
 
 
 }

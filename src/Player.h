@@ -52,8 +52,6 @@ public:
 
 	PlayerStats( std::string className, std::array<std::shared_ptr<StatUpgrade>,6>& upgradeArray)
 		:statUpgrades(upgradeArray) {
-
-		LoadInfoFromJson(className);
 	}
 
 	int& getMaxHp() { return maxHp.getBase(); }
@@ -226,7 +224,9 @@ protected:
 	}
 
 	virtual const json& LoadInfoFromJson(std::string className) {
-		auto& json = GameData::getPlayerClass(className);
+		const auto& json = GameData::getPlayerClass(className);
+
+		stats->LoadInfoFromJson(json);
 
 		if (json.contains("spritePath") && json.contains("spriteSize")) {
 			auto rawSize = json["spriteSize"].get<std::vector<int>>();
@@ -243,8 +243,8 @@ protected:
 		}
 		else { std::cerr << "\nsprite not loaded for: " << className; }
 
-		stats->LoadInfoFromJson(json);
-
+		
+		
 
 		return json;
 	}

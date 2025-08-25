@@ -1,11 +1,13 @@
 #pragma once
 #include "Enemy.h"
 
-class TestEnemy : public Enemy {
+namespace Enemies {
+	class TestEnemy : public Enemy {
 
-public:
-	TestEnemy(int level) :Enemy(level, "test enemy") {
+	public:
+		TestEnemy(int level) :Enemy(level, "test enemy") {
 
-	}
+		}
 
-};
+	};
+}

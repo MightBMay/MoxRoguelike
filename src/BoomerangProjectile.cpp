@@ -37,7 +37,7 @@ void BoomerangProjectile::CheckEnemies(sf::Vector2f curPos) {
 // iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
-		enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 }

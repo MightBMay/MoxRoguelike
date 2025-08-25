@@ -8,8 +8,8 @@
 
 const map<int, function<void(shared_ptr<GameObject>, int)>> EnemyManager::EnemyList 
 {
-    {0,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<TestEnemy>(level); }},
-    {1,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<ScissorEnemy>(level); }}
+    {0,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<Enemies::TestEnemy>(level); }},
+    {1,[](shared_ptr<GameObject> obj, int level) {obj->addComponent<Enemies::ScissorEnemy>(level); }}
 };
 
 
@@ -20,7 +20,7 @@ EnemyManager& EnemyManager::getInstance() {
 
 
 void EnemyManager::SpawnEnemy(int index) {
-    GameObject* player = Enemy::GetPlayer();
+    GameObject* player = Enemies::Enemy::GetPlayer();
     std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
 
     auto it = EnemyList.find(index); // search map for index
@@ -34,7 +34,7 @@ void EnemyManager::SpawnEnemy(int index) {
     );
 }
 void EnemyManager::SpawnEnemy(int index, int quantity) {
-    GameObject* player = Enemy::GetPlayer();
+    GameObject* player = Enemies::Enemy::GetPlayer();
     int level = GetLevelFromTime();
     for (int i = 0; i < quantity; ++i) {
         std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
@@ -54,7 +54,7 @@ void EnemyManager::SpawnEnemy(int index, int quantity) {
 
 }
 void EnemyManager::SpawnEnemy(int index, int quantity, int level) {
-    GameObject* player = Enemy::GetPlayer();
+    GameObject* player = Enemies::Enemy::GetPlayer();
     for (int i = 0; i < quantity; ++i) {
 
         std::shared_ptr<GameObject> enemyObj = GameObject::Create(1);
@@ -142,7 +142,7 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 std::vector<std::shared_ptr<GameObject>> EnemyManager::getInRange(sf::Vector2f& position, float radius) {
     std::vector<std::shared_ptr<GameObject>> inRange;
     for (auto& enemy : enemyObjects_) {
-        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemy>()->_size)
+        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)
             inRange.push_back(enemy);
     }
     return inRange;
@@ -152,7 +152,7 @@ std::vector<std::shared_ptr<GameObject>> EnemyManager::getInRange(sf::Vector2f& 
 
 std::shared_ptr<GameObject> EnemyManager::getFirstInRange(sf::Vector2f& position, float radius) {
     for (auto& enemy : enemyObjects_) {
-        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemy>()->_size)
+        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)
             return enemy;
     }
     return nullptr;

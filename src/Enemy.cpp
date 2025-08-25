@@ -7,7 +7,7 @@
 
 
 
-void Enemy::init() {
+void Enemies::Enemy::init() {
 	LoadInfoFromJson(enemyType);
 	EnemyManager::getInstance().add(parent->shared_from_this());
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
@@ -23,19 +23,19 @@ void Enemy::init() {
 
 }
 
-void Enemy::Destroy() {
+void Enemies::Enemy::Destroy() {
 	auto& parentPTR = parent;
 	EnemyManager::getInstance().remove(parentPTR, true);
 	EnemyManager::removeHitboxVisual(parentPTR);
 
 }
 
-void Enemy::SetPlayer(GameObject* player) {
+void Enemies::Enemy::SetPlayer(GameObject* player) {
 	_playerObj = player; // called once near playerObj creation to assign a target.
 	_playerComponent = player->getDerivativesOfComponent<Player>().get();
 
 }
-void Enemy::update(float deltatime) {
+void Enemies::Enemy::update(float deltatime) {
 	static const sf::Vector2f* playerPos = &_playerObj->getPosition();
 	sf::Vector2f newDirection = (*playerPos - parent->getPosition());
 	float newSqrMag = newDirection.lengthSquared();
@@ -56,7 +56,7 @@ void Enemy::update(float deltatime) {
 
 }
 
-void Enemy::Attack(float deltaTime, GameObject* playerObj) {
+void Enemies::Enemy::Attack(float deltaTime, GameObject* playerObj) {
 	if (attackTimer >= 0){ // if attack isn't ready, decrement timer and return;
 		attackTimer -= deltaTime;
 		return;
@@ -90,7 +90,7 @@ void Enemy::Attack(float deltaTime, GameObject* playerObj) {
 
 }
 
-bool Enemy::takeDamage(int _damage) {
+bool Enemies::Enemy::takeDamage(int _damage) {
 	int finalDamage = Player::getStats()->Damage(_damage);
 	_curHp -= finalDamage;
 	
@@ -106,17 +106,17 @@ bool Enemy::takeDamage(int _damage) {
 
 }
 
-void Enemy::OnDeath() {
+void Enemies::Enemy::OnDeath() {
 	_playerComponent->AddXP(xpValue);
 }
 
 
-void Enemy::ResetHitFlicker() {
+void Enemies::Enemy::ResetHitFlicker() {
 	parent->getSprite()->setColor(sf::Color::White);
 }
 
 
-void Enemy::LoadInfoFromJson(std::string enemyType) {
+void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	auto& json = GameData::getEnemy(enemyType);
 
 	if (json.contains("hp")) {
@@ -194,7 +194,7 @@ void Enemy::LoadInfoFromJson(std::string enemyType) {
 
 }
 
-void Enemy::UpdateFacingDirection() {
+void Enemies::Enemy::UpdateFacingDirection() {
 	if (direction.x == 0) return; // dont flip if input released.
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
 	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.

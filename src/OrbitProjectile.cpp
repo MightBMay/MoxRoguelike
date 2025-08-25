@@ -49,7 +49,7 @@ void OrbitProjectile::CheckEnemies(sf::Vector2f curPos) {
         auto it = enemyCooldowns.find(enemy); // try to find enemy in map of cooldowns
         if (it != enemyCooldowns.end() && it->second > 0) continue; // if enemy is found, and cd has not finished, continue.
 
-        enemy->getDerivativesOfComponent<Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+        enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
         enemyCooldowns[enemy] = hitCooldown;
         
         --pierceCount; // decrement and check pierce.

@@ -30,7 +30,7 @@ void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& man
 
 
 	Projectile::player = playerObj;
-	Enemy::SetPlayer(playerObj.get());
+	Enemies::Enemy::SetPlayer(playerObj.get());
 
 
 

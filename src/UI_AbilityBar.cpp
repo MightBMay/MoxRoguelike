@@ -4,6 +4,7 @@
 #include "UI_CooldownSprite.h"
 #include "UI_Button.h"
 #include "Player.h"
+#include "StatUpgrade.h"
 
 
 
@@ -57,14 +58,19 @@ void WeaponBar::Hide() {
 		}
 }
 
-void WeaponBar::LinkWeapon(int index, std::shared_ptr<WeaponBase> wepBase, sf::IntRect& rect,
-	std::string spritePath) {
-
+void WeaponBar::LinkWeapon(int index, int weaponIndex, std::shared_ptr<WeaponBase> wepBase) {
+	
 	if (index > 5 || index < 0) return; // keep in bounds of array.
 	// calculate offset based off how many abilities
 	const sf::Vector2f offsetPerSprite = sf::Vector2f(32 - (66 * index), 32);
 	// make gameobject with desired sprite and rect.
-	auto& weaponSprite = GameObject::Create(spritePath, rect, 110);
+	auto& weaponSprite = GameObject::Create();
+	int rectPosX = (weaponIndex % columns) * spriteSize;
+	int rectPosY = (weaponIndex / columns) * spriteSize;
+
+	sf::IntRect rect = { {rectPosX, rectPosY},{64,64} };
+	weaponSprite->setSprite(*weaponSpriteTexture, rect);
+	GameObjectManager::getInstance().add(weaponSprite,110);
 	weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
 	weaponSprite->setOrigin(32, 32); // center icon.
 	weaponSprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
@@ -99,15 +105,18 @@ void StatUpgradeBar::Hide() {
 		}
 }
 
-void StatUpgradeBar::LinkStat(std::shared_ptr<StatUpgrade> stat, sf::IntRect& rect,
-	std::string spritePath) {
+void StatUpgradeBar::LinkStat(std::shared_ptr<StatUpgrade> stat) {
+	static constexpr int spriteWidth = 64;
 	for (int index = 0; index < 6; ++index) {
 		if (statCDSprites[index]) continue; // continue until you find a non null one.
 		// calculate offset based off how many abilities
 		const sf::Vector2f offsetPerSprite = sf::Vector2f(32 - (66 * index), 32);
 		// make gameobject with desired sprite and rect.
-		auto& statSprite = GameObject::Create(spritePath, rect, 110);
-		statSprite->getSprite()->setColor(sf::Color::Red);
+		sf::IntRect rect = { {static_cast<int>(stat->type)* spriteWidth,0},{spriteWidth,spriteWidth} };
+		auto& statSprite = GameObject::Create();
+		statSprite->setSprite(*statUpgradeTexture, rect);
+		GameObjectManager::getInstance().add(statSprite, 110);
+		//statSprite->getSprite()->setColor(sf::Color::Red);
 		statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly
 		statSprite->setOrigin(32, 32); // center icon.
 		statSprite->addComponent<UI_StatUpgradeSprite>(window, stat); // create cd sprite (layer will be set to base object's layer +1)
