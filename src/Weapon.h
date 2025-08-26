@@ -1,7 +1,5 @@
 #pragma once
 #include "Projectile.h"
-#include "JsonLoader.h"
-
 class Component;
 class PlayerStats;
 
@@ -10,8 +8,6 @@ class PlayerStats;
 class WeaponBase : public Component {
 
 private:
-	// Despite class abilities being programmed as weapons, 
-	// they should always be added manually in player::createweapons()
 
 	/// <summary>
 	/// List containing construction methods for weapons *NOT ABILITIES*
@@ -65,8 +61,12 @@ public:
 	MEvent<float>& getCooldownEvent() { return cooldownTickEvent; }
 
 	virtual void update(float deltaTime)override {
+		if (attackTimer <= 0) {
+			Fire();
+			attackTimer = attackSpeed;
+		}
 		attackTimer -= deltaTime;
-		if (attackTimer < -0.1) return;
+
 		cooldownTickEvent.invoke(attackTimer);
 	}
 
@@ -149,11 +149,29 @@ class AbilityBase : public WeaponBase {
 
 public:
 	AbilityBase(std::string abilityName):WeaponBase(abilityName){}
+
+	/// <summary>
+	/// Gets the ability id. Ability id is used as an index to get the ability sprite from the texture.
+	/// </summary>
+	/// <returns></returns>
+	int getAbilityID() const { return abilityId; }
 protected:
 
+	int abilityId = -1;
+
+	virtual const json& LoadInfoFromJson() override {
+		const auto& json = WeaponBase::LoadInfoFromJson();
+		if (json.contains("ability id")) abilityId = json["ability id"];
+		else std::cerr << "\nAbility id not defined in json for :" << name;
+			
+		return json;
+	}
 	//Ability base class lets me override this. this allows me to keep the index system 
 	virtual void UpdateStats() override {}
 	virtual const json& GetJsonData() override {  return GameData::getAbility(name); }
+
+
+	
 };
 
 

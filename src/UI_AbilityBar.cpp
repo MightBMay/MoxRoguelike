@@ -5,6 +5,7 @@
 #include "UI_Button.h"
 #include "Player.h"
 #include "StatUpgrade.h"
+#include "Weapon.h"
 
 
 
@@ -25,16 +26,27 @@ void AbilityBar::Hide() {
 		}
 }
 
-void AbilityBar::LinkAbility(int index, sf::IntRect& rect, std::shared_ptr<WeaponBase> wepBase,
-	std::string path) {
+void AbilityBar::LinkAbility(int index, std::shared_ptr<AbilityBase> abilityBase) {
 	if (index > 3 || index < 0) return; // keep in bounds of array.
 	// calculate offset based off how many abilities
-	const sf::Vector2f offsetPerSprite = sf::Vector2f((68 * index)+24, 32);
+	const sf::Vector2f offsetPerSprite = sf::Vector2f(32-(66 * index), 32);
 	// make gameobject with desired sprite and rect.
-	auto& abilitySprite = GameObject::Create(path, rect, 110);
+	int abilityIndex = abilityBase->getAbilityID();
+	if (abilityIndex < 0) {
+		std::cerr << "\nAbility id was not found or not set. cannot create ability cooldown sprite.";
+		return;
+	}
+	int rectPosX = (abilityIndex % columns) * spriteSize;
+	int rectPosY = (abilityIndex / columns) * spriteSize;
+	sf::IntRect rect = { {rectPosX,rectPosY},{spriteSize,spriteSize} };
+
+
+	auto& abilitySprite = GameObject::Create();
+	abilitySprite->setSprite(abilitySpriteTexture,rect);
+	GameObjectManager::getInstance().add(abilitySprite, 110);
 	abilitySprite->setPosition(abilityBarPosition + offsetPerSprite); // set position accordingly
 	abilitySprite->setOrigin(32, 32); // center icon.
-	abilitySprite->addComponent<UI_CooldownSprite>(window, wepBase, rect); // create cd sprite (layer will be set to base object's layer +1)
+	abilitySprite->addComponent<UI_CooldownSprite>(window, abilityBase, rect); // create cd sprite (layer will be set to base object's layer +1)
 
 	abilityCDSprites[index] = abilitySprite; // store sprite
 
@@ -69,7 +81,7 @@ void WeaponBar::LinkWeapon(int index, int weaponIndex, std::shared_ptr<WeaponBas
 	int rectPosY = (weaponIndex / columns) * spriteSize;
 
 	sf::IntRect rect = { {rectPosX, rectPosY},{64,64} };
-	weaponSprite->setSprite(*weaponSpriteTexture, rect);
+	weaponSprite->setSprite(weaponSpriteTexture, rect);
 	GameObjectManager::getInstance().add(weaponSprite,110);
 	weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
 	weaponSprite->setOrigin(32, 32); // center icon.
@@ -114,7 +126,7 @@ void StatUpgradeBar::LinkStat(std::shared_ptr<StatUpgrade> stat) {
 		// make gameobject with desired sprite and rect.
 		sf::IntRect rect = { {static_cast<int>(stat->type)* spriteWidth,0},{spriteWidth,spriteWidth} };
 		auto& statSprite = GameObject::Create();
-		statSprite->setSprite(*statUpgradeTexture, rect);
+		statSprite->setSprite(statUpgradeTexture, rect);
 		GameObjectManager::getInstance().add(statSprite, 110);
 		//statSprite->getSprite()->setColor(sf::Color::Red);
 		statSprite->setPosition(statBarPosition + offsetPerSprite); // set position accordingly

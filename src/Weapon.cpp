@@ -1,13 +1,12 @@
 #include "pch.h"
-#include "Weapon.h"
 #include "GameObject.h"
+#include "Player.h"
+
+#include "Weapon.h"
 #include "AutoWeapon.h"
 #include "OrbitWeapon.h"
 #include "BoomerangWeapon.h"
-#include "AoeProjectile.h"
-#include "OrbitProjectile.h"
-#include "BoomerangProjectile.h"
-#include "Player.h"
+#include "SpiralWeapon.h"
 
 WeaponBase::WeaponBase(std::string& weaponName) :name(weaponName) {
 	// technically re assigns this every time we make a weapon, but wtv
@@ -17,13 +16,19 @@ WeaponBase::WeaponBase(std::string& weaponName) :name(weaponName) {
 const float& WeaponBase::getAttackSpeed() const { return playerStats->AttackSpeed(attackSpeed); }
 
 
-const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> WeaponBase::weaponList
+
+using weaponConstructor = std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>;
+using obj = const std::shared_ptr<GameObject>;
+
+const std::map<int, weaponConstructor> WeaponBase::weaponList
 {
-	{0,[](const shared_ptr<GameObject> obj) { return obj->addComponent<AutoWeapon>(std::string("Auto Weapon")); }},
+	{0,[](obj player) { return player->addComponent<AutoWeapon>(std::string("Auto Weapon")); }},
 
-	{1,[](const shared_ptr<GameObject> obj) { return obj->addComponent<BoomerangWeapon>(); } },
+	{1,[](obj player) { return player->addComponent<BoomerangWeapon>(); } },
 
-	{2,[](const shared_ptr<GameObject> obj) { return obj->addComponent<OrbitWeapon>(); } },
+	{2,[](obj player) { return player->addComponent<OrbitWeapon>(); } },
+	
+	{3,[](obj  player) {return player->addComponent<SpiralWeapon >(std::string("Spiral Weapon") ); }},
 
 };
 					   

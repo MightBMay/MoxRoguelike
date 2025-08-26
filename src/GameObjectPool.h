@@ -34,7 +34,8 @@ public:
 			);
 
 		if (next_available >= _pool.size()) {
-			if (!expandable) return nullptr;
+			if (!expandable)
+				return nullptr;
 			// can be toggled here to allow expansion.
 			auto& obj = GameObject::Create(renderLayer);
 			obj->setPoolIndex(_pool.size() - 1);
@@ -56,19 +57,16 @@ public:
 		obj->setActive(false);
 		GameObjectManager::getInstance().remove(obj);
 		obj->removeSprite();
-		
-
 
 		int index = obj->getPoolIndex();
 		if (index >= next_available) return; // already inactive
-		// Swap it with the last active object
-		auto lastActive = _pool[next_available - 1];
 
-		std::swap(_pool[index], _pool[next_available - 1]);
-
-		// Update their indices
-		_pool[index]->setPoolIndex(index);
-		lastActive->setPoolIndex(next_available - 1);
+		// Swap and update indices in one go
+		if (index != next_available - 1) { // Only swap if not already the last active
+			std::swap(_pool[index], _pool[next_available - 1]);
+			_pool[index]->setPoolIndex(index);
+			_pool[next_available - 1]->setPoolIndex(next_available - 1);
+		}
 
 		next_available--;
 	}

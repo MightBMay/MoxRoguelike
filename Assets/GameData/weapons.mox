@@ -3,7 +3,8 @@
   "weapon indices": {
     "0": "Auto Weapon",
     "1": "Boomerang Weapon",
-    "2": "Orbit Weapon"
+    "2": "Orbit Weapon",
+    "3": "Spiral Weapon"
   },
 
   "weapons": {
@@ -32,15 +33,25 @@
       "speed": 900,
       "range": 1000,
       "attackSpeed": 3
+    },
+    "Spiral Weapon": {
+      "description": "Fires projectiles in a spiral around the player.",
+      "damage": 3,
+      "speed": 900,
+      "range": 1000,
+      "attackSpeed": 10
+ 
     }
 
 
   },
 
 
+
   "abilities": {
 
     "Papyrmancer Sow": {
+      "ability id": 0,
       "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
       "speed": 3000,
@@ -49,6 +60,7 @@
     },
 
     "Papyrmancer Reap": {
+      "ability id": 1,
       "description": "Creates a projectile at all\nenemies marked with Sow,\nrecalling them towards the\nplayer dealing damage to all\nenemies along the path.",
       "damage": 3,
       "speed": 900,

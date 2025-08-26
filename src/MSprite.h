@@ -1,10 +1,5 @@
 #pragma once
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <memory>
-#include <string>
-#include "TextureManager.h"
+#include "pch.h"
 
 /// <summary>
 /// Custom sprite class to cache loaded textures, avoiding duplicates in memory.
@@ -29,7 +24,9 @@ public:
     }
     MSprite(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rect = sf::IntRect() ):
     sf::Sprite(*texture), textureRef(texture), texturePath("") {
-
+        if (rect != sf::IntRect()) {
+            setTextureRect(rect);
+        }
     }
 
     MSprite(const sf::Texture& texture, const sf::IntRect& rect = sf::IntRect()) : sf::Sprite(texture) {

@@ -78,6 +78,13 @@ void GameObject::setSprite(const std::string& path, const sf::IntRect& rect) {
    
  
 }
+void GameObject::setSprite(const std::shared_ptr<sf::Texture>& texture, const sf::IntRect& rect) {
+    sprite = std::make_shared<MSprite>(texture, rect);
+    sprite->setPosition(position);
+    sprite->setRotation(sf::degrees(rotation));
+    sprite->setScale(scale);
+    renderable->drawable = sprite;
+}
 void GameObject::setSprite(const sf::Texture& texture, const sf::IntRect& rect) {
     sprite = std::make_shared<MSprite>(texture, rect);
     sprite->setPosition(position);

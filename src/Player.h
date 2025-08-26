@@ -203,16 +203,21 @@ protected:
 	std::shared_ptr<PlayerUI> playerUI;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
 
+	/// <summary>
+	/// used to be able to reference the current abilities.
+	/// </summary>
 	std::array<std::weak_ptr<WeaponBase>, 3> abilityHolder;
 
 
-	//picked up weapons
+	/// <summary>
+	/// used to be able to reference the current weapons
+	/// </summary>
 	std::array<std::weak_ptr<WeaponBase>, 6> weaponHolder{};
-	std::array<int, 6> weaponIndices = { -1,-1,-1,-1,-1,-1 }; // used to track what weapon the player has
+	// better way to track what specific weapons the player has.
+	std::array<int, 6> weaponIndices = { -1,-1,-1,-1,-1,-1 }; 
 
 
-	//stat upgrades
-
+	// actually OWNS the stat upgrades for the player.
 	std::array<std::shared_ptr<StatUpgrade>, 6> statUpgradeHolder{};
 
 
@@ -223,31 +228,7 @@ protected:
 		_isVulnrable = true;
 	}
 
-	virtual const json& LoadInfoFromJson(std::string className) {
-		const auto& json = GameData::getPlayerClass(className);
-
-		stats->LoadInfoFromJson(json);
-
-		if (json.contains("spritePath") && json.contains("spriteSize")) {
-			auto rawSize = json["spriteSize"].get<std::vector<int>>();
-			sf::Vector2i size = { rawSize[0],rawSize[1] };
-			
-			parent->setSprite(json["spritePath"], { {},size });
-			GameObjectManager::getInstance().add(parent,5);
-			parent->setOrigin(size.x / 2, size.y / 2);
-
-			if (json.contains("AnimationData")) {
-
-			}
-
-		}
-		else { std::cerr << "\nsprite not loaded for: " << className; }
-
-		
-		
-
-		return json;
-	}
+	virtual const json& LoadInfoFromJson(std::string className);
 
 
 private:

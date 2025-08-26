@@ -154,6 +154,7 @@ public:
 
     // Sprite management
     void setSprite(const std::string& path, const sf::IntRect& rect = sf::IntRect());
+    void setSprite(const std::shared_ptr<sf::Texture>& texture, const sf::IntRect& rect);
     void setSprite(const sf::Texture& texture, const sf::IntRect& rect);
     void removeSprite();
     bool hasSprite() const { return sprite != nullptr; }

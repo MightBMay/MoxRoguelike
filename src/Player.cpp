@@ -189,7 +189,7 @@ void Player::init() {
 
 
 	//// DEBUG
-	AddWeapon(0, 0);
+	AddWeapon(0, 3);
 	//AddWeapon(1, 1);
 	//AddWeapon(2, 2);
 
@@ -379,4 +379,31 @@ const void Player::AddXP(int baseXp) {
 	UI_LevelUpSelection::numRemainingLevels = levelsGained;
 
 
+}
+
+
+const json& Player::LoadInfoFromJson(std::string className) {
+	const auto& json = GameData::getPlayerClass(className);
+
+	stats->LoadInfoFromJson(json);
+
+	if (json.contains("spritePath") && json.contains("spriteSize")) {
+		auto rawSize = json["spriteSize"].get<std::vector<int>>();
+		sf::Vector2i size = { rawSize[0],rawSize[1] };
+
+		parent->setSprite(json["spritePath"], { {},size });
+		GameObjectManager::getInstance().add(parent, 5);
+		parent->setOrigin(size.x / 2, size.y / 2);
+
+		if (json.contains("AnimationData")) {
+
+		}
+
+	}
+	else { std::cerr << "\nsprite not loaded for: " << className; }
+
+
+
+
+	return json;
 }

@@ -23,6 +23,7 @@ float vectorToAngle(const sf::Vector2f& movementVector) {
 }
 
 
+
 sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& playerView) {
     sf::Vector2i mousePixelPos = sf::Mouse::getPosition(window);
 
@@ -36,6 +37,16 @@ sf::Vector2f getMouseWorldPos(
     assert(window && "window is null in getMouseWorldPos!");
     assert(playerView && "view is null in getMouseWorldPos!");
     return getMouseWorldPos(*window, *playerView);
+}
+
+void rotateVectorByAngle(sf::Vector2f& vec, float angle) {
+    float cos = std::cos(angle);
+    float sin = std::sin(angle);
+    vec = {
+        vec.x * cos - vec.y * sin,
+        vec.x * sin + vec.y * cos
+    };
+
 }
 
 std::mt19937& rng::getEngine() {
