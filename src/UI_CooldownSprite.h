@@ -38,9 +38,7 @@ public:
 		}
 	}
 	virtual void OnClick(const int Button) {}
-	virtual void Destroy() override {
-		
-	}
+	virtual void Destroy() override {}
 	void CalculateScaleFromCooldown(float curTimer);
 
 	virtual void SetEnabled(bool value) override{

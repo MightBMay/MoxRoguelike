@@ -402,7 +402,7 @@ const json& Player::LoadInfoFromJson(std::string className) {
 		sf::Vector2i size = { rawSize[0],rawSize[1] };
 
 		parent->setSprite(json["spritePath"], { {},size });
-		GameObjectManager::getInstance().add(parent, 5);
+		GameObjectManager::getInstance().add(parent, 10);
 		parent->setOrigin(size.x / 2, size.y / 2);
 
 		if (json.contains("AnimationData")) {

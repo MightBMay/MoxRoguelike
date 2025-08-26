@@ -1,5 +1,6 @@
 #pragma once
 #include "Weapon.h"
+#include "Player.h"
 
 class SpiralWeapon: public WeaponBase{
 public:
@@ -9,8 +10,9 @@ public:
 			attackTimer = modifiedAttackSpeed;// modify attack speed based on how many streams there are to keep total number of projectiles the accurate.
 		}
 		attackTimer -= deltaTime;
-
-		cooldownTickEvent.invoke(attackTimer);
+									// since this expects the raw attack speed value to be max, we gotta do this.
+		cooldownTickEvent.invoke(attackTimer/numberOfStreams); // otherwise the cooldown sprite subscribed here 
+															// will grow too large.
 
 		
 		rotation += rotationSpeed * deltaTime;
@@ -19,13 +21,15 @@ public:
 	}
 
 	virtual void Fire() override {
+		static const sf::Color trailStartColour = sf::Color(192, 192, 192, 32);
 		for (int i = 0; i < numberOfStreams; ++i) {
 			
 			float centerOffset = -perStreamOffset * (numberOfStreams - 1) / 2.0f;
 			float finalRotation = rotation + (perStreamOffset * i);
 			sf::Vector2f direction{ 1,0 }; // start pointing straight right.
 			rotateVectorByAngle(direction, finalRotation); // rotate by current rotation value.
-			Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
+			auto temp = Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
+			temp->addComponent<TrailRenderer>(0.175f, 16, trailStartColour);
 		}
 		
 
@@ -46,10 +50,10 @@ public:
 	}
 private:
 	// how many radians to rotate per second.
-	static constexpr int rotationSpeed = 1;
+	static constexpr int rotationSpeed = 2;
 	float rotation = 0;
 	float modifiedAttackSpeed;
-	int numberOfStreams = 3;
+	int numberOfStreams = 2;
 	float perStreamOffset = 2.0f* PI / numberOfStreams;
 	int currentStream = 0;
 

@@ -39,7 +39,8 @@
       "damage": 3,
       "speed": 900,
       "range": 1000,
-      "attackSpeed": 10
+      "attackSpeed": 15,
+      "streamCount": 0
  
     }
 

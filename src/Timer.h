@@ -40,7 +40,7 @@ public:
     }
     inline bool inProgress() { return remainingDuration >= 0 && isStarted; }
     inline void setLooping(bool value) { isLooping = value; }
-    inline void cancel() { isStarted = false; remainingDuration = 0; }
+    inline void cancel() { isStarted = false; remainingDuration = duration; }
     inline void pause() {  isStarted = false; }
     inline void resume() {
         if (remainingDuration <= 0) return;

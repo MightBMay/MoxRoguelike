@@ -28,25 +28,22 @@ void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 	GameObjectManager::getInstance().clearAll();
 	EnemyManager::getInstance().Reset();
 	elapsed_seconds = 0;
+	second_Timer.cancel();// stops and resets timer
+	second_Timer.start(); // re start the timer.
 	InitializeGame(manager,fpsText);
 
-	playerView->setCenter({});
+
 
 }
 
 void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 
-	
+	playerView->setCenter({});
 	Projectile::projPool.init(512, 10);
-
-
 	player = Player::CreatePlayerClass(0); 
 	Enemies::Enemy::SetPlayer(player.get());
 
 #pragma region create background
-
-
-
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
@@ -99,17 +96,7 @@ int main() {
 	fpsText->setOutlineThickness(2);
 	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
 
-	InitializeGame(manager, fpsTextRenderable);
-	
-
-	
-#pragma region fps text stuff
-
-
-
-#pragma endregion
-
-	
+	InitializeGame(manager, fpsTextRenderable);	
 	
 #pragma endregion
 
