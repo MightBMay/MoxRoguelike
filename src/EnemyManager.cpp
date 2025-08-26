@@ -139,7 +139,7 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 /// <param name="position"></param>
 /// <param name="radius"></param>
 /// <returns></returns>
-std::vector<std::shared_ptr<GameObject>> EnemyManager::getInRange(sf::Vector2f& position, float radius) {
+std::vector<std::shared_ptr<GameObject>>& EnemyManager::getInRange(sf::Vector2f& position, float radius) {
     std::vector<std::shared_ptr<GameObject>> inRange;
     for (auto& enemy : enemyObjects_) {
         if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)

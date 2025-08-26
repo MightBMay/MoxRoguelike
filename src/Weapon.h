@@ -42,11 +42,10 @@ public:
 		if (!data.contains("weapons") || !data["weapons"].is_object()) { std::cerr << "\nError getting weapons data"; return json(); }
 		const json& weapons = data["weapons"]; // get list of weapons.
 
-		if (weaponNames.empty()) {// only iterate the first time.
+		if (weaponNames.empty()) {// only populate the first time.
 			for (auto it = weapons.begin(); it != weapons.end(); ++it) {
 				weaponNames.push_back(it.key());
 			}
-			std::cout << "Cached " << weaponNames.size() << " weapon names\n";
 		}
 
 		

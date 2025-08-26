@@ -58,7 +58,7 @@ public:
 		return enemyObjects_.size();
 	}
 
-	static std::vector<std::shared_ptr<GameObject>> getInRange(sf::Vector2f& position, float radius);
+	static std::vector<std::shared_ptr<GameObject>>& getInRange(sf::Vector2f& position, float radius);
 	static std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
 	static std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 
