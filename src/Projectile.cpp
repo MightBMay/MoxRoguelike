@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Player.h"
 #include "Projectile.h"
 #include "GameObject.h"
 #include "Enemy.h"
@@ -8,7 +9,8 @@
 
 
 Projectile::Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
-	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {}
+	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {
+}
 
 void Projectile::init() {
 	parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
@@ -38,7 +40,8 @@ void Projectile::update(float deltaTime) {
 }
 
 void Projectile::CheckEnemies(sf::Vector2f curPos) {
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
+	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
+	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
 // iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,

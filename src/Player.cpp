@@ -1,13 +1,9 @@
 #include "pch.h"
 
-#include "Player.h"
+#include "Enemy.h"
 #include "GameObject.h"
-
+#include "Player.h"
 #include "PlayerUI.h"
-#include "UI_CooldownSprite.h"
-#include "UI_LevelUpSelection.h"
-#include "UI_AbilityBar.h"
-
 #include "StatUpgrade.h"
 
 
@@ -226,6 +222,20 @@ void Player::HandleRegen(float deltatime) {
 
 }
 
+std::shared_ptr<GameObject> Player::CreatePlayerClass(int classIndex) {
+	auto it = playerClassList.find(classIndex); // search map for index
+		//if index not found, return and error log.
+	if (it == playerClassList.end()) {
+		std::cerr << "weapon index out of bounds / not found.";
+		return std::shared_ptr<GameObject>();
+	}
+	std::shared_ptr<GameObject> playerObj = GameObject::Create();
+	it->second(playerObj);// this actually calls the specific player constructor.
+	Projectile::player = playerObj;
+	Enemies::Enemy::SetPlayer(playerObj.get());
+
+	return playerObj; // calls function stored in enemylist which 
+}
 
 void Player::update(float deltatime) {
 

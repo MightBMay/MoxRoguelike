@@ -12,4 +12,7 @@ public:
 
 protected:
 	 float aoeSize;
+
+	 void DoAOE(sf::Vector2f pos, float radius);
+
 };

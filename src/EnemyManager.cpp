@@ -134,18 +134,14 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 
 
 /// <summary>
-/// Returns list of enemies within radius units^2 from position. REMEMBER RADIUS IS SQUARED
+/// populates given vector with enemies within radius units^2 from position. REMEMBER RADIUS IS SQUARED
 /// </summary>
-/// <param name="position"></param>
-/// <param name="radius"></param>
-/// <returns></returns>
-std::vector<std::shared_ptr<GameObject>>& EnemyManager::getInRange(sf::Vector2f& position, float radius) {
-    std::vector<std::shared_ptr<GameObject>> inRange;
+
+void EnemyManager::getInRange(sf::Vector2f& position, float radius, std::vector<std::shared_ptr<GameObject>>& vec) {
     for (auto& enemy : enemyObjects_) {
         if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)
-            inRange.push_back(enemy);
+            vec.push_back(enemy);
     }
-    return inRange;
 }
 
 

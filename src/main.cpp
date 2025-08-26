@@ -19,21 +19,51 @@ std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
-std::shared_ptr<GameObject> abilDesc;
-std::shared_ptr<UI_LevelUpSelection> levelUpUI;
-
-void CreatePlayer(std::shared_ptr<GameObject>& playerObj, GameObjectManager& manager) {
-	playerObj = GameObject::Create(5);
-	playerObj->setPosition(960, 540);
-	Player::CreatePlayerClass(0, playerObj);
 
 
+void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText);
 
-	Projectile::player = playerObj;
-	Enemies::Enemy::SetPlayer(playerObj.get());
+void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
+
+	GameObjectManager::getInstance().clearAll();
+	EnemyManager::getInstance().Reset();
+	elapsed_seconds = 0;
+	InitializeGame(manager,fpsText);
+
+	playerView->setCenter({});
+
+}
+
+void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
+
+	
+	Projectile::projPool.init(512, 10);
+
+
+	player = Player::CreatePlayerClass(0); 
+	Enemies::Enemy::SetPlayer(player.get());
+
+#pragma region create background
 
 
 
+	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
+		"../assets/sprites/cardboard.png",
+		sf::IntRect{ {0,0},{1920,1080} },
+		-110// move to layer -110 to stay behind things. 
+	);      //-100 because background is set to be UI so
+	// rendering will draw it using default sf::view . 
+
+	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
+	Background->addComponent<BackgroundImage>();
+#pragma endregion
+
+
+	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObj->addComponent<Vignette>();
+
+	
+	manager.addExternalRenderable(fpsText, 1000);
 }
 
 
@@ -41,6 +71,7 @@ int main() {
 #pragma region create window and initialize global.h variables
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
+	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
 	font.openFromFile("../assets/fonts/amazon ember.ttf");
@@ -60,47 +91,27 @@ int main() {
 #pragma endregion
 
 	GameData::loadAllData();
-
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
-	Projectile::projPool.init(512, 10);
 	Input::Initialize();
+
+
+	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
+	fpsText->setOutlineThickness(2);
+	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
+
+	InitializeGame(manager, fpsTextRenderable);
 	
 
 	
 #pragma region fps text stuff
 
-	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
-	fpsText->setOutlineThickness(2);
-	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
-	manager.addExternalRenderable(fpsTextRenderable, 1000);
+
 
 #pragma endregion
 
-	CreatePlayer(player, manager); // seperate method cuz it took a lot of space.
 	
-
-
-
-
-#pragma region make background
 	
-	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
-		"../assets/sprites/cardboard.png",
-		sf::IntRect{ {0,0},{1920,1080} },
-		-110// move to layer -110 to stay behind things. 
-	);      //-100 because background is set to be UI so
-	// rendering will draw it using default sf::view . 
-
-	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
-	Background->addComponent<BackgroundImage>();
-
-	
-
-	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
-	vignetteObj->addComponent<Vignette>();
-
 #pragma endregion
-
 
 	second_Timer.start();
 	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
@@ -119,6 +130,7 @@ int main() {
 			
 		}
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1);
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
 
 
 		// Update and render

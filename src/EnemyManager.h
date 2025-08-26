@@ -53,12 +53,15 @@ public:
 	static void removeHitboxVisual(std::shared_ptr<GameObject> obj) {
 		hitboxVisuals.release(obj);
 	}
-
+	void Reset() {
+		hitboxVisuals.init(512,0);
+		enemyObjects_.clear();
+	}
 	int count() {
 		return enemyObjects_.size();
 	}
 
-	static std::vector<std::shared_ptr<GameObject>>& getInRange(sf::Vector2f& position, float radius);
+	static void getInRange(sf::Vector2f& position, float radius, std::vector<std::shared_ptr<GameObject>>& vec);
 	static std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
 	static std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 

@@ -45,7 +45,8 @@ void Sow_Projectile::update(float deltaTime) {
 }
 
 void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
+	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
+	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
 			sowedEnemies.insert(enemy);

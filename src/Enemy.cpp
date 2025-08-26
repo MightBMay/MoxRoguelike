@@ -33,10 +33,10 @@ void Enemies::Enemy::Destroy() {
 void Enemies::Enemy::SetPlayer(GameObject* player) {
 	_playerObj = player; // called once near playerObj creation to assign a target.
 	_playerComponent = player->getDerivativesOfComponent<Player>().get();
+	playerPos = &_playerObj->getPosition();
 
 }
 void Enemies::Enemy::update(float deltatime) {
-	static const sf::Vector2f* playerPos = &_playerObj->getPosition();
 	sf::Vector2f newDirection = (*playerPos - parent->getPosition());
 	float newSqrMag = newDirection.lengthSquared();
 	if (newSqrMag <= halfSize) { direction = { 0,0 }; }

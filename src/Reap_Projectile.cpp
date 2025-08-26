@@ -30,8 +30,8 @@ void Reap_Projectile::update(float deltaTime) {
 	parent->setRotation(vectorToAngle(direction));
 	parent->move(direction * (*speed)* deltaTime);
 
-
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
+	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{}; 
+	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end()) return;
 		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.

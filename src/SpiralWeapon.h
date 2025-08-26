@@ -4,18 +4,9 @@
 class SpiralWeapon: public WeaponBase{
 public:
 	virtual void update(float deltaTime) override {
-
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Right)) { ++numberOfStreams; UpdateStats();
-		}
-		else if (Input::GetKeyDown(sf::Keyboard::Scan::Left)) {
-			if(numberOfStreams>1) --numberOfStreams; 
-			UpdateStats();
-		}
-
 		if (attackTimer <= 0) {
 			Fire();
-			// modify attack speed based on how many streams there are to keep total number of projectiles the accurate.
-			attackTimer = modifiedAttackSpeed;
+			attackTimer = modifiedAttackSpeed;// modify attack speed based on how many streams there are to keep total number of projectiles the accurate.
 		}
 		attackTimer -= deltaTime;
 

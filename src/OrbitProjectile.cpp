@@ -43,7 +43,8 @@ void OrbitProjectile::update(float deltaTime) {
 }
 
 void OrbitProjectile::CheckEnemies(sf::Vector2f curPos) {
-    auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
+    std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
+    EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
 // iterate over all enemies within range of projectile.
     for (auto& enemy : inRangeEnemies) {
         auto it = enemyCooldowns.find(enemy); // try to find enemy in map of cooldowns

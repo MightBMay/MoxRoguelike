@@ -16,6 +16,8 @@ public:
 
 	void init(size_t quantity, int layer) {
 		auto& manager = GameObjectManager::getInstance();
+		_pool.clear();
+		_pool.reserve(quantity);
 		for (int i = 0; i < quantity; ++i) {
 			auto obj = GameObject::Create(layer);
 			obj->setPoolIndex(i);

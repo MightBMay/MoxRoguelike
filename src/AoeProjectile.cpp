@@ -5,19 +5,24 @@
 #include "Weapon.h"
 
 
+void AOE_Projectile::DoAOE(sf::Vector2f pos, float radius) {
+
+	std::vector<std::shared_ptr<GameObject>> inAOE{};
+	inAOE.reserve(16); // reserve a few, as more than 1 enemy will be hit commonly.
+	EnemyManager::getInRange(pos, aoeSize, inAOE);
+	for (auto& enemy : inAOE) {
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage);
+	}
+	projPool.release(parent); // remove on first enemy since it explodes
+}
+
 void AOE_Projectile::update(float deltaTime) {
 	
 	parent->move(direction * (*speed) * deltaTime);
 	auto curPos = parent->getPosition();
 
 	if ((curPos - startPos).lengthSquared() >= *range) {
-
-		// also explode at the of range.
-		auto inAOE = EnemyManager::getInRange(curPos, aoeSize);
-		for (auto& enemy : inAOE) {
-			enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage);
-		}
-		projPool.release(parent);
+		DoAOE(curPos, aoeSize); // do aoe by default if out of range.
 	}
 
 	CheckEnemies(curPos);
@@ -26,20 +31,11 @@ void AOE_Projectile::update(float deltaTime) {
 }
 
 void AOE_Projectile::CheckEnemies(sf::Vector2f curPos) {
-	auto inRangeEnemies = EnemyManager::getInRange(curPos, *projSize);
-// iterate over all enemies within range of projectile.
-
-	for (auto& enemy : inRangeEnemies) {
-		// damage the enemy the projectile collides with twice.
-		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage);
-
-		auto inAOE = EnemyManager::getInRange(curPos, aoeSize);
-		for (auto& enemy : inAOE) {
-			enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage);
-		}
-
-		projPool.release(parent); // remove on first enemy since it explodes
-		break;
-
-	}
+	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
+	// cause to explode at first enemy hit. aoe == no piercing.
+	auto enemy = EnemyManager::getFirstInRange(curPos, *projSize);
+	// damage actual enemy hit twice.
+	enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage);
+	// iterate enemies for any within aoe radius to also damage.
+	DoAOE(enemy->getPosition(), aoeSize);
 }

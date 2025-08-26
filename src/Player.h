@@ -150,16 +150,7 @@ class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
 
 	static const std::map<int, std::function<std::weak_ptr<Player>(std::shared_ptr<GameObject>)>> playerClassList;
-	static std::weak_ptr<Player> CreatePlayerClass(int classIndex, std::shared_ptr<GameObject> playerObj) {
-		auto it = playerClassList.find(classIndex); // search map for index
-			//if index not found, return and error log.
-		if (it == playerClassList.end()) {
-			std::cerr << "weapon index out of bounds / not found.";
-			return std::weak_ptr<Player>();
-		}
-
-		return it->second(playerObj); // calls function stored in enemylist which 
-	}
+	static std::shared_ptr<GameObject> CreatePlayerClass(int classIndex);
 	static int PlayerClassListSize() { return playerClassList.size(); }
 
 	sf::Vector2f direction{ 0,0 };
