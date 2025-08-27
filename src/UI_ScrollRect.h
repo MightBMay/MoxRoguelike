@@ -2,18 +2,61 @@
 #include "pch.h"
 
 
+//  usage example.
+// 
+//	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
+//
+//	// make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
+//	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/square_128.png", { {},{800,128} }, 130);
+//  scrollContainerObj->setPosition(scrollContainerRect.position - sf::Vector2f(0,4)); // subtract a lil to offset the background from the content.
+//	// create scrollContainer
+//	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
+//		scrollContainerRect,
+//		sf::Vector2f{ 128, 128 } // set this to the size of the content's sprites.
+//	);
+// 
+//	auto scrollContainerSprite = scrollContainerObj->getSprite(); // set values for scroll container's sprite.
+//	scrollContainerSprite->SetRepeated(true);
+//	scrollContainerSprite->setColor(sf::Color::Black);
+//
+//
+//
+//	auto scrollRectShader = std::make_shared<sf::Shader>(); // shader needed to mask content.
+//	if (!scrollRectShader->loadFromFile("../assets/shaders/ScrollRectMask.frag", sf::Shader::Type::Fragment)) {
+//		std::cerr << "\nSpriteRectMask shader not found.";
+//	}
+// 
+// 
+//	sf::IntRect contentRect = { {},{128,128} }; // again, size of the content's sprite.
+// 
+//	auto scrollContainer_S = scrollContainer.lock();
+//	for (int i = 0; i < 32; ++i) {
+// 
+//		// create content object and do whatever you need to be done to it.
+//		auto& temp = GameObject::Create("../assets/sprites/shapes/square_128.png", contentRect, 131);
+// 
+//		temp->setShader(scrollRectShader);
+//		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe([i]() {std::cout << "\nclicked: " << i; });
+// 
+//		// set position accordingly
+//		temp->setPosition(scrollContainerRect.position.x + (contentRect.size.x * i), scrollContainerRect.position.y);
+// 
+//		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
+//	}
+
+
 class UI_ScrollContainer : public Component {
 private:
 
 	sf::FloatRect viewPortBounds;
 	sf::Vector2f contentPosition;
 	sf::Vector2f dragStartPos;
-	sf::Vector2f contentStartPos;
+	sf::Vector2f contentStartPos{};
 	sf::Vector2f contentSpacing{};
 	// size of content. (ideally all should be same sized)
 	sf::Vector2f contentSize;
-	bool isDragging;
-	bool enabled;
+	bool isDragging= false;
+	bool enabled = true;
 	bool _horizontal = true;
 	bool _vertical = false;
 	float elasticity = 1;
@@ -23,30 +66,13 @@ private:
 	std::vector<sf::Vector2f> originalPositions;
 
 public:
-	UI_ScrollContainer(const sf::FloatRect& viewportBounds, sf::Vector2f contentObjectSize)
+	UI_ScrollContainer(const sf::FloatRect& viewportBounds, sf::Vector2f contentObjectSize, sf::Vector2f contentSpacing = {32,0}, float fadeWidth = 16, float elasticity = 1)
 		: viewPortBounds(viewportBounds),
-		isDragging(false),
-		enabled(true),
-		elasticity(0.1f),
-		contentPosition(0, 0),
-		contentSize(contentObjectSize) {}
+		elasticity(elasticity),
+		contentSize(contentObjectSize),
+		contentSpacing(contentSpacing),
+		fadeWidth(fadeWidth){}
 
-	virtual void init() override {
-		//DEBUG remove this, objects should be created externally and just added with addcontent.
-		auto shader = std::make_shared<sf::Shader>();
-		if (!shader->loadFromFile("../assets/shaders/ScrollRectMask.frag", sf::Shader::Type::Fragment)) {
-			std::cerr << "\nSpriteRectMask shader not found."; return;
-		}
-
-		for (int i = 0; i < 32; ++i) {
-			auto& temp = GameObject::Create("../assets/sprites/shapes/square_64.png", { {},{64,64} }, 131);
-			temp->setShader(shader);
-			auto button = temp->addComponent<UI_Button>(window);
-			button.lock()->getOnClick().subscribe([i]() {std::cout << "\nclicked: " << i; });
-			temp->setPosition(viewPortBounds.position.x + (contentSize.x * i), viewPortBounds.position.y);
-			addContent(temp);
-		}
-	}
 	void Destroy() override {}
 
 	void addContent(std::shared_ptr<GameObject> gameObject) {
@@ -69,8 +95,8 @@ public:
 		if (contentObjects.empty()) return;
 
 		// Calculate total content width/height
-		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x) - contentSpacing.x;
-		float totalContentHeight = contentObjects.size() * (contentSize.y + contentSpacing.y) - contentSpacing.y;
+		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x); -contentSpacing.x;
+		float totalContentHeight = contentObjects.size() * (contentSize.y + contentSpacing.y); -contentSpacing.y;
 
 		// Store original content position before potentially modifying it
 		sf::Vector2f originalContentPos = contentPosition;
@@ -108,7 +134,7 @@ public:
 		for (size_t i = 0; i < contentObjects.size(); ++i) {
 			if (auto obj = contentObjects[i]) {
 				// Calculate new position based on original + scroll offset
-				sf::Vector2f newPos = originalPositions[i] + contentPosition;
+				sf::Vector2f newPos = originalPositions[i] + contentPosition + contentSpacing;
 				obj->setPosition(newPos);
 				if (!viewPortBounds.contains(newPos))
 					obj->setActive(false); // disable object when it leaves the rect.
@@ -131,8 +157,6 @@ public:
 			contentStartPos = contentPosition;
 			return; // Consume the event
 		}
-
-
 
 		else if (Input::GetMouseUp(0)) {
 			isDragging = false;
@@ -191,3 +215,6 @@ public:
 		viewPortBounds = bounds;
 	}
 };
+
+
+

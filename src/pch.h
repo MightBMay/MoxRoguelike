@@ -44,6 +44,7 @@
 #include "UI_Button.h"
 #include "UI_CooldownSprite.h"
 #include "UI_LevelUpSelection.h"
+#include "UI_ScrollRect.h"
 
 
 #include "Background.h"
