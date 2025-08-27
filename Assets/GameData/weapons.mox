@@ -29,7 +29,7 @@
 
     "Orbit Weapon": {
       "description": "Fires projectiles that \norbit the player.",
-      "damage": 3,
+      "damage": 1,
       "speed": 900,
       "range": 1000,
       "attackSpeed": 3

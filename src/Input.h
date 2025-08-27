@@ -60,6 +60,9 @@ public:
     static bool GetMouseDown(int button);
 
     static bool GetMouseUp(int button);
+
+    static inline bool MouseMoved;
+    static inline sf::Vector2i mousePos_Screen;
 #pragma endregion
 
     // Original key-based methods

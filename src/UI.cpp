@@ -5,14 +5,13 @@
 void UI_Element::init() {  }
 
 void UI_Element::onMouseClick() {
-
-	if (Input::GetMouseDown(0)) // lmb
+	if (Input::GetMouseUp(0)) // lmb
 		OnClick(0);
 
-	else if (Input::GetMouseDown(1)) //rmb
+	else if (Input::GetMouseUp(1)) //rmb
 		OnClick(1);
 
-	else if (Input::GetMouseDown(2)) //mmb
+	else if (Input::GetMouseUp(2)) //mmb
 			OnClick(2);
 
 }

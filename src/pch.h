@@ -21,6 +21,7 @@
 #include <cmath>
 #include <random>
 #include <unordered_set>
+#include <filesystem>
 
 
 #include "json.hpp"

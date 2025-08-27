@@ -178,6 +178,7 @@ const bool Input::SaveInputToFile() {
  }
 
  void Input::HandleEvent(const std::optional<sf::Event>& event) {
+
      if (const auto* keyEvent = event->getIf<sf::Event::KeyPressed>()) {
          bool isRepeat = (_keyStates[keyEvent->scancode] == KeyState::Pressed ||
              _keyStates[keyEvent->scancode] == KeyState::JustPressed);
@@ -224,5 +225,11 @@ const bool Input::SaveInputToFile() {
              _mouseStates[button] = KeyState::JustReleased;
          }
      }
+
+     if(const auto* mouseEvent = event->getIf<sf::Event::MouseMoved>()){
+         mousePos_Screen = mouseEvent->position;
+         MouseMoved = true;
+     }
+     else { MouseMoved = false; }
 
  }

@@ -6,7 +6,7 @@
 class Papyrmancer_Sow : public AbilityBase {
 public:
 	static inline int count = 0;
-	static inline Animation animation{};
+	static inline SpriteAnimation animation{};
 	Papyrmancer_Sow() :
 		AbilityBase(std::string("Papyrmancer Sow")) {
 		auto& projData = GameData::getProjectile("Papyrmancer Sow");
@@ -22,7 +22,7 @@ public:
 		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
 		
 		
-		auto animator = projectile->addComponent<Animator>(animation);
+		auto animator = projectile->addComponent<SpriteAnimator>(animation);
 		animator.lock()->SetRectSize({ 48,48 });
 		
 

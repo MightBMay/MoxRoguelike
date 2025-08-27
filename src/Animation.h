@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-struct Animation
+struct SpriteAnimation
 {
 
 	int columns = 0;
@@ -41,13 +41,13 @@ struct Animation
 };
 
 
-class Animator : public Component {
+class SpriteAnimator : public Component {
 private:
 	static constexpr float animationFrameRate = 1 / 60.0f;
 	std::shared_ptr<MSprite> sprite;
 
 
-	Animation animation;
+	SpriteAnimation animation;
 	sf::Vector2i frameSize;
 	float elapsedTime = 0;
 	float animationSpeed = 1;
@@ -59,7 +59,7 @@ private:
 
 public:
 
-	Animator(Animation animation) :
+	SpriteAnimator(SpriteAnimation animation) :
 		animation(animation) {
 		columns =  animation.columns;
 		animationSpeed = animation.defaultSpeed;
@@ -69,7 +69,7 @@ public:
 
 
 
-	void SetAnimation(Animation& newAnimation) {
+	void SetAnimation(SpriteAnimation& newAnimation) {
 		animation = newAnimation;
 		animationSpeed = animation.defaultSpeed;
 		frameDuration = animationFrameRate * (1 / animationSpeed);

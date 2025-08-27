@@ -5,14 +5,12 @@
 #include "EnemyManager.h"
 #include "Projectile.h"
 #include "Weapon.h"
-#include "ProgressBar.h"
 #include "Player.h"
 #include "Enemy.h"
-#include "UI_Button.h"
-#include "UI_CooldownSprite.h"
-#include "UI_AbilityBar.h"
-#include "UI_LevelUpSelection.h"
 #include "StatUpgrade.h"
+#include "UI_ScrollRect.h"
+
+
 
 
 std::shared_ptr<sf::RenderWindow> window;
@@ -64,6 +62,10 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 }
 
 
+void TempMakePuddle() {
+
+}
+
 int main() {
 #pragma region create window and initialize global.h variables
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
@@ -92,6 +94,13 @@ int main() {
 	Input::Initialize();
 
 
+	auto temp = GameObject::Create("../assets/sprites/shapes/square_64.png", { {500,300},{800,64} }, 130);
+	temp->setPosition(500, 300);
+	auto tempSprite = temp->getSprite();
+	tempSprite->SetRepeated(true);
+	tempSprite->setColor(sf::Color::Black);
+	temp->addComponent<UI_ScrollContainer>(sf::FloatRect{ {500,300}, {800,64} }, sf::Vector2f {64, 64});
+
 	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
 	fpsText->setOutlineThickness(2);
 	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
@@ -109,13 +118,10 @@ int main() {
 		float deltaTime = Delta_Timer.asSeconds() * timeScale;
 		// handle sfml events and update input.
 		while (const std::optional event = window->pollEvent()) {
-
 			Input::HandleEvent(event);
-			
-			if (event->is<sf::Event::Closed>()) 
-				window->close();
-			
+			if (event->is<sf::Event::Closed>()) window->close();			
 		}
+
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
 

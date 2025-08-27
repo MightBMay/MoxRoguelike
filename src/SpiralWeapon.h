@@ -21,7 +21,6 @@ public:
 	}
 
 	virtual void Fire() override {
-		static const sf::Color trailStartColour = sf::Color(192, 192, 192, 32);
 		for (int i = 0; i < numberOfStreams; ++i) {
 			
 			float centerOffset = -perStreamOffset * (numberOfStreams - 1) / 2.0f;
@@ -29,7 +28,6 @@ public:
 			sf::Vector2f direction{ 1,0 }; // start pointing straight right.
 			rotateVectorByAngle(direction, finalRotation); // rotate by current rotation value.
 			auto temp = Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
-			temp->addComponent<TrailRenderer>(0.175f, 16, trailStartColour);
 		}
 		
 

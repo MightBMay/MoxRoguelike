@@ -185,9 +185,9 @@ void Player::init() {
 
 
 	//// DEBUG
-	AddWeapon(0, 3);
+	//AddWeapon(0, 3);
 	//AddWeapon(1, 1);
-	//AddWeapon(2, 2);
+	AddWeapon(2, 2);
 
 	//auto& tempWep = weaponHolder[0].lock();
 	//for (int i = 0; i < 10; ++i) {
