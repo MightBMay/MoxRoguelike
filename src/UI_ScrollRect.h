@@ -52,7 +52,7 @@ private:
 	sf::Vector2f contentPosition;
 	sf::Vector2f dragStartPos;
 	sf::Vector2f contentStartPos{};
-	sf::Vector2f contentSpacing{};
+	sf::Vector2f contentSpacing;
 	// size of content. (ideally all should be same sized)
 	sf::Vector2f contentSize;
 	bool isDragging= false;
@@ -61,6 +61,8 @@ private:
 	bool _vertical = false;
 	float elasticity = 1;
 	float fadeWidth = 32;
+	sf::Vector2i contentThatCanFitInView;
+
 
 	std::vector<std::shared_ptr<GameObject>> contentObjects;
 	std::vector<sf::Vector2f> originalPositions;
@@ -71,13 +73,19 @@ public:
 		elasticity(elasticity),
 		contentSize(contentObjectSize),
 		contentSpacing(contentSpacing),
-		fadeWidth(fadeWidth){}
+		fadeWidth(fadeWidth){
+		int h = viewportBounds.size.x / contentObjectSize.x;
+		int v = viewportBounds.size.y / contentObjectSize.y;
+		contentThatCanFitInView = { h,v };
+	}
 
 	void Destroy() override {}
 
 	void addContent(std::shared_ptr<GameObject> gameObject) {
 		contentObjects.push_back(gameObject);
 		originalPositions.push_back(gameObject->getPosition());
+
+		applyBoundsConstraints();
 		updateContentBounds();
 	}
 
@@ -95,39 +103,54 @@ public:
 		if (contentObjects.empty()) return;
 
 		// Calculate total content width/height
-		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x); -contentSpacing.x;
-		float totalContentHeight = contentObjects.size() * (contentSize.y + contentSpacing.y); -contentSpacing.y;
+		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x);// -contentSpacing.x;
+		float totalContentHeight = contentObjects.size() * (contentSize.y + contentSpacing.y);// -contentSpacing.y;
 
 		// Store original content position before potentially modifying it
 		sf::Vector2f originalContentPos = contentPosition;
 
-		// Horizontal constraints
+		// Determine which indices to use for bounds checking
+		size_t firstIndex = 0;
+		size_t lastIndex = contentObjects.size() - 1;
 
-		auto firstPos = originalPositions.front() + contentPosition;
-		auto lastPos = originalPositions.back() + contentPosition;
+		// Use contentThatCanFitInView.x to determine the visible range for horizontal constraints
+		size_t rightVisibleIndex = std::min(firstIndex + contentThatCanFitInView.x - 1, lastIndex);
+		size_t leftVisibleIndex = (contentThatCanFitInView.x >= contentObjects.size()) ?
+			firstIndex : lastIndex - contentThatCanFitInView.x + 1;
 
-		if (firstPos.x + contentSize.x > viewPortBounds.position.x + viewPortBounds.size.x) {
-			// Too far right
-			contentPosition.x = (viewPortBounds.position.x + viewPortBounds.size.x - contentSize.x) - originalPositions.front().x;
-		}
-		else if (lastPos.x < viewPortBounds.position.x) {
-			// Too far left
-			contentPosition.x = viewPortBounds.position.x - originalPositions.back().x;
-		}
-
-
-
-	// Vertical constraints
-
-		if (lastPos.y + contentSize.y > viewPortBounds.position.y + viewPortBounds.size.y) {
-			// Too far down
-			contentPosition.y = (viewPortBounds.position.y + viewPortBounds.size.y - contentSize.y) - originalPositions.back().y;
-		}
-		else if (firstPos.y < viewPortBounds.position.y) {
-			// Too far up
-			contentPosition.y = viewPortBounds.position.y - originalPositions.front().y;
+// Horizontal constraints - using the rightmost visible element
+		auto rightVisiblePos = originalPositions[rightVisibleIndex] + contentPosition;
+		const float contentSizeOffset = (1.5 * contentSize.x);
+		if (rightVisiblePos.x + contentSizeOffset> viewPortBounds.position.x + viewPortBounds.size.x) {
+			// Too far right - adjust so rightmost visible element fits
+			contentPosition.x = (viewPortBounds.position.x + viewPortBounds.size.x - contentSizeOffset) - originalPositions[rightVisibleIndex].x;
 		}
 
+		// Horizontal constraints - using the leftmost visible element
+		auto leftVisiblePos = originalPositions[leftVisibleIndex] + contentPosition;
+		if (leftVisiblePos.x -contentSize.x < viewPortBounds.position.x) {
+			// Too far left - adjust so leftmost visible element fits
+			contentPosition.x = viewPortBounds.position.x - originalPositions[leftVisibleIndex].x;
+		}
+
+		// Use contentThatCanFitInView.y to determine the visible range for vertical constraints
+		size_t bottomVisibleIndex = std::min(firstIndex + contentThatCanFitInView.y - 1, lastIndex);
+		size_t topVisibleIndex = (contentThatCanFitInView.y >= contentObjects.size()) ?
+			firstIndex : lastIndex - contentThatCanFitInView.y + 1;
+
+// Vertical constraints - using the bottommost visible element
+		auto bottomVisiblePos = originalPositions[bottomVisibleIndex] + contentPosition;
+		if (bottomVisiblePos.y + contentSize.y > viewPortBounds.position.y + viewPortBounds.size.y) {
+			// Too far down - adjust so bottommost visible element fits
+			contentPosition.y = (viewPortBounds.position.y + viewPortBounds.size.y - contentSize.y) - originalPositions[bottomVisibleIndex].y;
+		}
+
+		// Vertical constraints - using the topmost visible element
+		auto topVisiblePos = originalPositions[topVisibleIndex] + contentPosition;
+		if (topVisiblePos.y < viewPortBounds.position.y) {
+			// Too far up - adjust so topmost visible element fits
+			contentPosition.y = viewPortBounds.position.y - originalPositions[topVisibleIndex].y;
+		}
 	}
 
 	void updateContentPositions() {

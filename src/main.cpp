@@ -62,9 +62,7 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 }
 
 
-void TempMakePuddle() {
 
-}
 
 int main() {
 #pragma region create window and initialize global.h variables
@@ -120,7 +118,7 @@ int main() {
 		temp->setShader(scrollRectShader);
 		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe([i]() {std::cout << "\nclicked: " << i; });
 		// set position accordingly
-		temp->setPosition(scrollContainerRect.position.x + (contentRect.size.x * i), scrollContainerRect.position.y);
+		temp->setPosition(32+ scrollContainerRect.position.x + (contentRect.size.x * i), scrollContainerRect.position.y);
 		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
 	}
 
