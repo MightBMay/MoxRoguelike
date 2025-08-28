@@ -85,7 +85,7 @@ namespace Enemies {
 	private:
 		static inline const sf::Vector2f* playerPos;
 		static constexpr float hitFlickerDuration = 0.125f;
-		static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
+		static constexpr sf::Color hitColour = sf::Color(255, 64, 64, 255);
 
 
 		static inline GameObject* _playerObj = nullptr;

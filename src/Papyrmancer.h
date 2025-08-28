@@ -5,6 +5,7 @@
 #include "Weapon.h"
 #include "Papyrmancer_Sow.h"
 #include "Papyrmancer_Reap.h"
+#include "Papyrmancer_R.h"
 #include "Animation.h"
 
 
@@ -32,9 +33,9 @@ namespace playerClasses {
 			playerUI->spriteBar->abilityBar->LinkAbility(1, weaponE.lock());
 
 
-		   //auto weaponR = parent->addComponent<>();
-		   //abilityHolder[2] = weaponR;
-		   //playerUI->spriteBar->abilityBar->LinkAbility(0, weaponR.lock());
+		   auto weaponR = parent->addComponent<Papyrmancer_R>();
+		   abilityHolder[2] = weaponR;
+		   playerUI->spriteBar->abilityBar->LinkAbility(0, weaponR.lock());
 
 			
 			

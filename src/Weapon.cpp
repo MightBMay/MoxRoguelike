@@ -34,7 +34,7 @@ const std::map<int, weaponConstructor> WeaponBase::weaponList
 					   
 const json& WeaponBase::LoadInfoFromJson() {
 	auto& json = GetJsonData();
-	if (json.contains("damage")) // check if json defined a dmg.
+	if (json.contains("damage"))// check if json defined a dmg.
 		damage = json["damage"]; // if so, get dmg
 	else {
 		damage = 0; // if not, set a default value.

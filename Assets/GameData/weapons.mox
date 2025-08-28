@@ -66,6 +66,15 @@
       "damage": 3,
       "speed": 900,
       "attackSpeed": 0.4
+    },
+
+    "Papyrmancer R": {
+      "ability id": 2,
+      "description": "papyrmancer r description",
+      "damage": 0,
+      "speed": 0,
+      "attackSpeed": 0.2,
+      "aoeSize": 500
     }
 
   },

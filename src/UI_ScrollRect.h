@@ -113,17 +113,17 @@ public:
 		size_t firstIndex = 0;
 		size_t lastIndex = contentObjects.size() - 1;
 
-		// Use contentThatCanFitInView.x to determine the visible range for horizontal constraints
+		// contentThatCanFitInView.x used to determine the visible range for horizontal constraints
 		size_t rightVisibleIndex = std::min(firstIndex + contentThatCanFitInView.x - 1, lastIndex);
 		size_t leftVisibleIndex = (contentThatCanFitInView.x >= contentObjects.size()) ?
 			firstIndex : lastIndex - contentThatCanFitInView.x + 1;
 
-// Horizontal constraints - using the rightmost visible element
+		
 		auto rightVisiblePos = originalPositions[rightVisibleIndex] + contentPosition;
-		const float contentSizeOffset = (1.5 * contentSize.x);
-		if (rightVisiblePos.x + contentSizeOffset> viewPortBounds.position.x + viewPortBounds.size.x) {
+		if (rightVisiblePos.x + contentSize.x > viewPortBounds.position.x + viewPortBounds.size.x) {
 			// Too far right - adjust so rightmost visible element fits
-			contentPosition.x = (viewPortBounds.position.x + viewPortBounds.size.x - contentSizeOffset) - originalPositions[rightVisibleIndex].x;
+			
+			contentPosition.x = (viewPortBounds.position.x + viewPortBounds.size.x - contentSize.x) - originalPositions[rightVisibleIndex].x;
 		}
 
 		// Horizontal constraints - using the leftmost visible element
@@ -133,19 +133,17 @@ public:
 			contentPosition.x = viewPortBounds.position.x - originalPositions[leftVisibleIndex].x;
 		}
 
-		// Use contentThatCanFitInView.y to determine the visible range for vertical constraints
+		// contentThatCanFitInView.y used to determine the visible range for vertical constraints
 		size_t bottomVisibleIndex = std::min(firstIndex + contentThatCanFitInView.y - 1, lastIndex);
 		size_t topVisibleIndex = (contentThatCanFitInView.y >= contentObjects.size()) ?
 			firstIndex : lastIndex - contentThatCanFitInView.y + 1;
 
-// Vertical constraints - using the bottommost visible element
 		auto bottomVisiblePos = originalPositions[bottomVisibleIndex] + contentPosition;
 		if (bottomVisiblePos.y + contentSize.y > viewPortBounds.position.y + viewPortBounds.size.y) {
 			// Too far down - adjust so bottommost visible element fits
 			contentPosition.y = (viewPortBounds.position.y + viewPortBounds.size.y - contentSize.y) - originalPositions[bottomVisibleIndex].y;
 		}
 
-		// Vertical constraints - using the topmost visible element
 		auto topVisiblePos = originalPositions[topVisibleIndex] + contentPosition;
 		if (topVisiblePos.y < viewPortBounds.position.y) {
 			// Too far up - adjust so topmost visible element fits

@@ -284,6 +284,11 @@ void Player::update(float deltatime) {
 void Player::takeDamage(int _damage){
 	int& curHp = stats->getCurHp();
 	curHp -= _damage;
+	curHp = std::max(curHp, 0);
+	if(curHp <=0){
+		// player death here
+	}
+
 	_isVulnrable = false;
 	hitFlickerTimer.start();
 	parent->getSprite()->setColor(hitColour);

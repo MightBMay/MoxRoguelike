@@ -19,7 +19,7 @@ void Sow_Projectile::update(float deltaTime) {
 	static const float _speed = *speed; // avoids derefrencing projectile speed per update call.
 	static const int rotationSpeed = 720;
 	
-	sf::Vector2f mousePos = getMouseWorldPos(window, playerView);
+	sf::Vector2f mousePos = Input::mousePos_World;
 	const sf::Vector2f& curPos = parent->getPosition();
 	sf::Vector2f newDirection = mousePos - curPos ;
 	float distanceSqr = newDirection.lengthSquared();

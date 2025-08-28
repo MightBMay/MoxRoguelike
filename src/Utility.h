@@ -6,9 +6,6 @@ constexpr float PI = 3.14159265358979323846f;
 
 float vectorToAngle(const sf::Vector2f& movementVector);
 
-sf::Vector2f getMouseWorldPos(const sf::RenderWindow& window, const sf::View& playerView);
-sf::Vector2f getMouseWorldPos(const std::shared_ptr<sf::RenderWindow>& window, const std::shared_ptr < sf::View>& playerView);
-
 /// <summary>
 /// rotates the given vector by a given angle.
 /// </summary>

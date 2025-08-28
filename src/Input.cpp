@@ -73,6 +73,7 @@ const bool Input::SaveInputToFile() {
      BindKey("right", sf::Keyboard::Scan::D);
      BindKey("ability1", sf::Keyboard::Scan::Q);
      BindKey("ability2", sf::Keyboard::Scan::E);
+     BindKey("ability3", sf::Keyboard::Scan::R);
      if (saveToFile) SaveInputToFile();
 
  }
@@ -228,6 +229,7 @@ const bool Input::SaveInputToFile() {
 
      if(const auto* mouseEvent = event->getIf<sf::Event::MouseMoved>()){
          mousePos_Screen = mouseEvent->position;
+         mousePos_World = window->mapPixelToCoords(mouseEvent->position, *playerView);
          MouseMoved = true;
      }
      else { MouseMoved = false; }

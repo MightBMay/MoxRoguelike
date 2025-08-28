@@ -63,6 +63,7 @@ public:
 
     static inline bool MouseMoved;
     static inline sf::Vector2i mousePos_Screen;
+    static inline sf::Vector2f mousePos_World;
 #pragma endregion
 
     // Original key-based methods

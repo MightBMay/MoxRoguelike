@@ -5,10 +5,9 @@ uniform float fadeWidth;
 uniform sampler2D texture;
 void main()
 {
-    vec2 viewportScreenMin = viewportPosition;
     vec2 viewportScreenMax = viewportPosition + viewportSize;
     
-    float leftDist = gl_FragCoord.x - viewportScreenMin.x;
+    float leftDist = gl_FragCoord.x - viewportPosition.x;
     float rightDist = viewportScreenMax.x - gl_FragCoord.x;
     
     // Calculate fade from both edges
