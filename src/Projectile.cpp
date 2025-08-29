@@ -9,8 +9,7 @@
 
 
 Projectile::Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
-	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {
-}
+	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {}
 
 void Projectile::init() {
 	parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
@@ -23,8 +22,9 @@ void Projectile::init() {
 
 
 void Projectile::update(float deltaTime) {
-	parent->move(direction * (*speed)* deltaTime);
+	parent->move(direction * (*speed) * deltaTime);
 	auto curPos = parent->getPosition();
+	auto temp = (curPos - startPos).lengthSquared();
 
 	if ((curPos - startPos).lengthSquared() >= *range) {
 		projPool.release(parent);

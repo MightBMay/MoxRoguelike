@@ -104,7 +104,7 @@ public:
 
 protected:
 	
-	static constexpr int maxLevel = 9;
+	static constexpr unsigned char maxLevel = 9;
 	int level = 0;
 	//s.e
 	int damage=0;

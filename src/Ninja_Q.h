@@ -1,18 +1,20 @@
 #pragma once
 #include "Weapon.h"
+#include "BoomerangProjectile.h"
 
 class Ninja_Q : public AbilityBase {
 private:
 	// stores whether its 1st, 2nd, 3rd cast
+	const int maxRecasts = 20;
 	int recastNum = 1;
-	const float recastTimerMax = 8;
-	float recastTimer = 10;
-	static constexpr int spreadAngle = 30;
-	bool recastTimedOut = false;
+	const float recastTimerMax = 5;
+	float recastTimer = 0;
+	const float spreadAngle = 0.349066;// 20 degrees as radians.
+	bool recastTimedOut = true;
 public:
 	Ninja_Q():AbilityBase("Ninja Q"){}
 	void resetRecast() {
-		std::cout << "\nrecast timed out";
+		
 		recastNum = 1;
 		attackTimer = playerStats->AttackSpeed(attackSpeed);
 		recastTimer = 0;
@@ -20,25 +22,23 @@ public:
 	}
 
 	virtual void Fire() override final {
-		recastTimedOut = false;
+	
 		sf::Vector2f mousePos = Input::mousePos_World;
-		for (int i = 0; i < recastNum; ++i) {
-			sf::Vector2f direction = mousePos;
-			if (direction.lengthSquared() > 0) 	direction.normalized();
+		for (unsigned char i = 0; i < recastNum; ++i) {
+			sf::Vector2f direction =  mousePos - parent->getPosition();
+			if (direction.lengthSquared() > 0) 	direction = direction.normalized();
 
 			// Calculate the angle offset for this projectile
 			// For even number of projectiles, we want symmetric spread around the center
 			float angleOffset = spreadAngle * (i - (recastNum - 1) / 2.0f);
 
 			rotateVectorByAngle(direction, angleOffset);
-
-			auto& proj = Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
-			std::cout<<"\n"<<proj->getSprite()->getPath();
+			auto& proj = Projectile::projPool.make<Projectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
 		}
-
-		++recastNum;
-
-		if (recastNum > 3) { 
+		recastTimedOut = false;
+		recastTimer = recastTimerMax;
+		++recastNum; // advance to next cast
+		if (recastNum > maxRecasts) { // if final cast is cast, reset and start cooldown.
 			resetRecast();
 		}
 		
@@ -46,12 +46,17 @@ public:
 	}
 
 	virtual void update(float deltaTime) {
-		if (Input::GetActionDown("ability1"))// && (attackTimer <= 0 || recastTimer >0) ) 
+		if (
+			Input::GetActionDown("ability1") // ability was input
+			&& (attackTimer <= 0 || recastTimer > 0)) {// ability is off cooldown, or you are within the recast window.
 			Fire();
+		} 
+			
 		
 		recastTimer -= deltaTime;
-		//if (!recastTimedOut && recastTimer <= 0) 
-			//resetRecast();
+		if (!recastTimedOut && recastTimer <= 0)  // if you don't cast all 3 casts of the 
+			resetRecast();						  // ability, it will time out and go on cd.
+			
 		
 
 		attackTimer -= deltaTime;

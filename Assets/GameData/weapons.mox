@@ -81,8 +81,8 @@
       "ability id": 3,
       "description": "Ninja q description",
       "damage": 1,
-      "speed": 500,
-      "range": 1000,
+      "speed": 1250,
+      "range": 750,
       "attackSpeed": 0.2
     }
 
