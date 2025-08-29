@@ -38,7 +38,7 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 
 	playerView->setCenter({});
 	Projectile::projPool.init(512, 10);
-	player = Player::CreatePlayerClass(0); 
+	player = Player::CreatePlayerClass(1); 
 	Enemies::Enemy::SetPlayer(player.get());
 
 #pragma region create background

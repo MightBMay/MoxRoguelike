@@ -1,6 +1,7 @@
 {
   "IndexToClass": {
-    "0": "Papyrmancer"
+    "0": "Papyrmancer",
+    "1": "Ninja"
   },
 
 
@@ -13,11 +14,23 @@
       "defence": 0,
       "speed": 300,
       "spritePath": "../assets/sprites/gun.png",
-      "spriteSize": [128,128]
-      
+      "spriteSize": [ 128, 128 ]
 
-      }
+
+    },
+
+
+    "Ninja": {
+      "health": 80,
+      "healthRegen": 3,
+      "defence": 0,
+      "speed": 400,
+      "spritePath": "../assets/sprites/gun.png",
+      "spriteSize": [ 128, 128 ]
+
 
     }
+
+  }
 
 }

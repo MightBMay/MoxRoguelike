@@ -8,11 +8,14 @@
 
 
 #include "Papyrmancer.h"
+#include "Ninja.h"
 
-
-const std::map<int, std::function<std::weak_ptr<Player>(std::shared_ptr<GameObject>)>> Player::playerClassList
+using playerObj = const std::shared_ptr<GameObject>;
+const std::map<int, std::function<std::weak_ptr<Player>(playerObj)>> Player::playerClassList
 {
-	{0,[](const std::shared_ptr<GameObject> obj) {return obj->addComponent<playerClasses::Papyrmancer>(); }},
+	{0,[](playerObj obj) {return obj->addComponent<playerClasses::Papyrmancer>(); }},
+
+	{1,[](playerObj obj) {return obj->addComponent<playerClasses::Ninja>(); }},
 
 };
 
@@ -246,19 +249,23 @@ void Player::update(float deltatime) {
 	hitFlickerTimer.update(deltatime);
 	HandleRegen(deltatime);
 
+	MovePlayer(deltatime);
+}
+
+void Player::MovePlayer(float deltaTime) {
 	direction = { 0,0 };
-	if (Input::GetAction("up"))  
-		direction.y = -1; 
+	if (Input::GetAction("up"))
+		direction.y = -1;
 
-	else if (Input::GetAction("down"))  
-		direction.y = 1; 
+	else if (Input::GetAction("down"))
+		direction.y = 1;
 
-	if (Input::GetAction("left"))  
-		direction.x = -1; 
+	if (Input::GetAction("left"))
+		direction.x = -1;
 
-	else if (Input::GetAction("right"))  
-		direction.x = 1; 
-	
+	else if (Input::GetAction("right"))
+		direction.x = 1;
+
 	// edge case for holding opposites.
 	if (Input::GetActionUp("up") && Input::GetAction("down"))
 		direction.y = 1;
@@ -273,10 +280,10 @@ void Player::update(float deltatime) {
 		direction.x = -1;
 
 
-	
+
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	direction = direction.normalized();
-	parent->move( direction * stats->Speed() * deltatime );
+	parent->move(direction * stats->Speed() * deltaTime);
 	playerView->setCenter(parent->getPosition()); // set playerView center to player
 	UpdateFacingDirection();
 }

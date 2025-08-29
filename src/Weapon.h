@@ -165,7 +165,7 @@ protected:
 			
 		return json;
 	}
-	//Ability base class lets me override this. this allows me to keep the index system 
+	
 	virtual void UpdateStats() override {}
 	virtual const json& GetJsonData() override {  return GameData::getAbility(name); }
 

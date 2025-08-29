@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Weapon.h"
-
+#include "PlayerUI.h"
 
 
 class Component;
@@ -179,6 +179,9 @@ public:
 	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
+
+	virtual void MovePlayer(float deltaTime);
+
 	virtual void Destroy() override {}
 
 

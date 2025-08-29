@@ -65,7 +65,7 @@ const json& WeaponBase::LoadInfoFromJson() {
 		range *= range; // distance checks use sqr magnitude, so sqr range to counteract that.
 	}
 
-	else range = std::numeric_limits<int>::max(); // unlimited range by default. 
+	else range = std::numeric_limits<float>::max(); // unlimited range by default. 
 
 	if (json.contains("pierce"))
 		pierce = json["pierce"];

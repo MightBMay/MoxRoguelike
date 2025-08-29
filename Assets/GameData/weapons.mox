@@ -56,7 +56,6 @@
       "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
       "speed": 3000,
-      "range": 1000,
       "attackSpeed": 3
     },
 
@@ -75,7 +74,18 @@
       "speed": 0,
       "attackSpeed": 0.2,
       "aoeSize": 500
+    },
+
+
+    "Ninja Q": {
+      "ability id": 3,
+      "description": "Ninja q description",
+      "damage": 1,
+      "speed": 500,
+      "range": 1000,
+      "attackSpeed": 0.2
     }
+
 
   },
 
