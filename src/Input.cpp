@@ -176,6 +176,10 @@ const bool Input::SaveInputToFile() {
          if (state == KeyState::JustPressed) state = KeyState::Pressed;
          else if (state == KeyState::JustReleased) state = KeyState::Released;
      }
+
+     mousePos_Screen = sf::Mouse::getPosition(*window);
+     mousePos_World = window->mapPixelToCoords(mousePos_Screen, *playerView);
+
  }
 
  void Input::HandleEvent(const std::optional<sf::Event>& event) {
@@ -227,11 +231,9 @@ const bool Input::SaveInputToFile() {
          }
      }
 
-     if(const auto* mouseEvent = event->getIf<sf::Event::MouseMoved>()){
-         mousePos_Screen = mouseEvent->position;
-         mousePos_World = window->mapPixelToCoords(mouseEvent->position, *playerView);
+     if(const auto* mouseEvent = event->getIf<sf::Event::MouseMoved>())
          MouseMoved = true;
-     }
-     else { MouseMoved = false; }
+     else 
+         MouseMoved = false; 
 
  }

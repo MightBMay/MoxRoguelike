@@ -1,22 +1,29 @@
 #pragma once
+#include "pch.h"
 #include "Weapon.h"
-#include "BoomerangProjectile.h"
+#include "Ninja_QProjectile.h"
+#include "Animation.h"
 
 class Ninja_Q : public AbilityBase {
 private:
 	// stores whether its 1st, 2nd, 3rd cast
-	const int maxRecasts = 20;
+	const int maxRecasts = 3;
 	int recastNum = 1;
 	const float recastTimerMax = 5;
 	float recastTimer = 0;
-	const float spreadAngle = 0.349066;// 20 degrees as radians.
+	const float spreadAngle = 15 * (PI/180);// 20 degrees as radians.
 	bool recastTimedOut = true;
+	SpriteAnimation animation{};
 public:
-	Ninja_Q():AbilityBase("Ninja Q"){}
+	Ninja_Q():AbilityBase("Ninja Q"){
+		const json& projectileData = GameData::getProjectile("Ninja Q");
+		if (projectileData.contains("animation data"))		
+			animation.LoadFromJson(projectileData["animation data"]);
+	}
 	void resetRecast() {
 		
 		recastNum = 1;
-		attackTimer = playerStats->AttackSpeed(attackSpeed);
+		attackTimer = 0.5f;// playerStats->AttackSpeed(attackSpeed);
 		recastTimer = 0;
 		recastTimedOut = true;
 	}
@@ -33,7 +40,8 @@ public:
 			float angleOffset = spreadAngle * (i - (recastNum - 1) / 2.0f);
 
 			rotateVectorByAngle(direction, angleOffset);
-			auto& proj = Projectile::projPool.make<Projectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
+			auto& proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
+			proj->addComponent<SpriteAnimator>(animation);
 		}
 		recastTimedOut = false;
 		recastTimer = recastTimerMax;

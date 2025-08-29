@@ -52,15 +52,12 @@ bool UI_Element::isHovering() {
 		return false; // No sprite to hover over
 	}
 
-	// get mouse pos (world coordinates)
-	auto desktopPos = sf::Mouse::getPosition(*window);
-	auto mousePos = window->mapPixelToCoords(desktopPos, window->getDefaultView());
-
-
-
 	// Get the sprite's global bounds (includes transform)
 	sf::FloatRect spriteBounds = sprite->getGlobalBounds();
 
 	// Check if mouse position is within bounds
-	return spriteBounds.contains(mousePos);
+	return spriteBounds.contains( // since UI is rendered with default view, not player's current view (camera), 
+		window->mapPixelToCoords(Input::mousePos_Screen, window->getDefaultView()) // we need to map screenspace 
+													//coords to world space with the default view.
+	);
 }
