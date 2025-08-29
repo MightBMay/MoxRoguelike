@@ -23,7 +23,7 @@ public:
 	void resetRecast() {
 		
 		recastNum = 1;
-		attackTimer = 0.5f;// playerStats->AttackSpeed(attackSpeed);
+		attackTimer = playerStats->AttackSpeed(attackSpeed);
 		recastTimer = 0;
 		recastTimedOut = true;
 	}
@@ -40,7 +40,8 @@ public:
 			float angleOffset = spreadAngle * (i - (recastNum - 1) / 2.0f);
 
 			rotateVectorByAngle(direction, angleOffset);
-			auto& proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
+			auto proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
+			proj->scaleObject(1.5f);
 			proj->addComponent<SpriteAnimator>(animation);
 		}
 		recastTimedOut = false;

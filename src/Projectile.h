@@ -23,12 +23,11 @@ public:
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
     virtual void CheckEnemies(sf::Vector2f curPos);
-    virtual const std::string& getSpritePath() const {
-        return spritePath;
-    }
+  
+
 
 protected:
-    
+    static inline std::shared_ptr<sf::Texture> projectileAtlasTexture;
     const int* damage;
     const float* speed;
     const float* range;
@@ -38,8 +37,11 @@ protected:
     std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
     sf::Vector2f startPos = { 0,0 };
 
+    virtual sf::IntRect getSpriteRect() const {
+        return { {},{32,32} };
+    }
+
 private:
-    static inline const std::string spritePath = "../assets/sprites/projectiles/default.png";
 
 };
 

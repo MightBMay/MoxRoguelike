@@ -159,7 +159,7 @@ public:
     void removeSprite();
     bool hasSprite() const { return sprite != nullptr; }
 
-
+    void resetTransform();
     // Accessors
     const sf::Vector2f& getPosition() const { return position; }
     float getRotation() const { return rotation; }

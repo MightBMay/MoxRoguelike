@@ -104,6 +104,11 @@ void GameObject::setOrigin(const sf::Vector2f& origin) {
     sprite->setOrigin(origin);
 }
 
+void GameObject::resetTransform() {
+    setScale(1, 1);
+    setPosition(0, 0);
+    setRotation(0);
+}
 
 void GameObject::removeSprite() {
     if (sprite) {

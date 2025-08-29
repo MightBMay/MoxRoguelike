@@ -25,6 +25,7 @@ public:
 		rt->draw(*bgSprite);
 		rt->draw(*text);
 		rt->display();
+		rt->setSmooth(true);
 		sprite->setTexture(rt->getTexture());
 		sprite->setPosition(spritePosition);
 		renderable->drawable = sprite;

@@ -47,6 +47,7 @@ public:
 		}
 		auto obj = _pool[next_available++];
 		obj->setActive(true);
+		obj->resetTransform();
 		obj->removeAllComponents();
 		obj->addComponent<ComponentType>(std::forward<Args>(args)...);
 		GameObjectManager::getInstance().add(obj, renderLayer);

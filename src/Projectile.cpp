@@ -6,13 +6,18 @@
 #include "EnemyManager.h"
 #include "Weapon.h"
 
-
+static const std::string projectileAtlasPath = "../assets/sprites/projectiles/projectileatlas.png";
 
 Projectile::Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
-	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {}
+	damage(damage),speed(speed),range(range), projSize(projectileSize), pierceCount(pierce), direction(direction) {
+	if (!projectileAtlasTexture) {
+		projectileAtlasTexture = TextureManager::getTexture(projectileAtlasPath);
+	}
+
+}
 
 void Projectile::init() {
-	parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
+	parent->setSprite(projectileAtlasTexture, getSpriteRect()); // load the correct sprite for the projectile
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
 	parent->setOrigin(16, 16);
 	parent->setRotation(vectorToAngle(direction));

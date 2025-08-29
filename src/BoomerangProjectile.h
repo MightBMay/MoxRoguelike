@@ -11,4 +11,9 @@ public:
 	virtual void CheckEnemies(sf::Vector2f curPos) override;
 protected:
 	bool isReturning = false;
+
+	virtual const std::string& getSpritePath()const override {
+		static const std::string& path = "../assets/sprites/projectiles/boomerang.png";
+		return path;
+	}
 };

@@ -35,7 +35,7 @@ void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 }
 
 void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
-
+	std::cout <<"\nmaxSize: " << sf::Texture::getMaximumSize();
 	playerView->setCenter({});
 	Projectile::projPool.init(512, 10);
 	player = Player::CreatePlayerClass(1); 

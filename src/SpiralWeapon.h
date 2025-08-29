@@ -27,7 +27,7 @@ public:
 			float finalRotation = rotation + (perStreamOffset * i);
 			sf::Vector2f direction{ 1,0 }; // start pointing straight right.
 			rotateVectorByAngle(direction, finalRotation); // rotate by current rotation value.
-			auto temp = Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
+			Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
 		}
 		
 
@@ -51,7 +51,7 @@ private:
 	static constexpr int rotationSpeed = 2;
 	float rotation = 0;
 	float modifiedAttackSpeed;
-	int numberOfStreams = 2;
+	int numberOfStreams = 1;
 	float perStreamOffset = 2.0f* PI / numberOfStreams;
 	int currentStream = 0;
 

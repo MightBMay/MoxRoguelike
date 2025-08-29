@@ -188,9 +188,10 @@ void Player::init() {
 
 
 	//// DEBUG
-	//AddWeapon(0, 3);
-	//AddWeapon(1, 1);
-	AddWeapon(2, 2);
+	//AddWeapon(0, 0);
+	AddWeapon(1, 1);
+	//AddWeapon(2, 2);
+	//AddWeapon(3, 3);
 
 	//auto& tempWep = weaponHolder[0].lock();
 	//for (int i = 0; i < 10; ++i) {
@@ -206,38 +207,6 @@ void Player::init() {
 
 	
 
-}
-
-void Player::HandleRegen(float deltatime) {
-	healthRegenTimer -= deltatime;
-	if (healthRegenTimer <= 0) { // if timer is up,
-		healthRegenTimer = 1; // reset timer
-		int& curHp = stats->getCurHp(); // get cur and max hp
-		const int& maxHp = stats->MaxHp();
-		if (curHp < maxHp) { // if not at or above max hp,
-			curHp += stats->HealthRegen(); // heal player
-			if (curHp > maxHp) { // if heal went over max hp, set to max hp.
-				curHp = maxHp;
-			}
-			playerUI->UpdateHealthbar(curHp);
-		}
-	}
-
-}
-
-std::shared_ptr<GameObject> Player::CreatePlayerClass(int classIndex) {
-	auto it = playerClassList.find(classIndex); // search map for index
-		//if index not found, return and error log.
-	if (it == playerClassList.end()) {
-		std::cerr << "weapon index out of bounds / not found.";
-		return std::shared_ptr<GameObject>();
-	}
-	std::shared_ptr<GameObject> playerObj = GameObject::Create();
-	it->second(playerObj);// this actually calls the specific player constructor.
-	Projectile::player = playerObj;
-	Enemies::Enemy::SetPlayer(playerObj.get());
-
-	return playerObj; // calls function stored in enemylist which 
 }
 
 void Player::update(float deltatime) {
@@ -287,6 +256,42 @@ void Player::MovePlayer(float deltaTime) {
 	playerView->setCenter(parent->getPosition()); // set playerView center to player
 	UpdateFacingDirection();
 }
+
+void Player::HandleRegen(float deltatime) {
+	healthRegenTimer -= deltatime;
+	if (healthRegenTimer <= 0) { // if timer is up,
+		healthRegenTimer = 1; // reset timer
+		int& curHp = stats->getCurHp(); // get cur and max hp
+		const int& maxHp = stats->MaxHp();
+		if (curHp < maxHp) { // if not at or above max hp,
+			curHp += stats->HealthRegen(); // heal player
+			if (curHp > maxHp) { // if heal went over max hp, set to max hp.
+				curHp = maxHp;
+			}
+			playerUI->UpdateHealthbar(curHp);
+		}
+	}
+
+}
+
+std::shared_ptr<GameObject> Player::CreatePlayerClass(int classIndex) {
+	auto it = playerClassList.find(classIndex); // search map for index
+		//if index not found, return and error log.
+	if (it == playerClassList.end()) {
+		std::cerr << "weapon index out of bounds / not found.";
+		return std::shared_ptr<GameObject>();
+	}
+	std::shared_ptr<GameObject> playerObj = GameObject::Create();
+	it->second(playerObj);// this actually calls the specific player constructor.
+	Projectile::player = playerObj;
+	Enemies::Enemy::SetPlayer(playerObj.get());
+
+	return playerObj; // calls function stored in enemylist which 
+}
+
+
+
+
 
 void Player::takeDamage(int _damage){
 	int& curHp = stats->getCurHp();

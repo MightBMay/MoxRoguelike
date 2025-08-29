@@ -10,8 +10,8 @@
   "weapons": {
 
     "Auto Weapon": {
-      "description": "An automatically firing weapon\n",
-      "damage": 3,
+      "description": "Auto Weapon:\nAn automatically firing weapon\n",
+      "damage": 2,
       "speed": 500,
       "range": 650,
       "attackSpeed": 1.5,
@@ -20,28 +20,28 @@
     },
 
     "Boomerang Weapon": {
-      "description": "Fires projectile that upon \nreaching max range, returns \ntowards the player.",
+      "description": "Boomerang:\nFires projectile that upon \nreaching max range, returns \ntowards the player.",
       "damage": 3,
       "speed": 900,
-      "range": 1000,
-      "attackSpeed": 0.5
+      "range": 775,
+      "attackSpeed": 0.75
     },
 
     "Orbit Weapon": {
-      "description": "Fires projectiles that \norbit the player.",
-      "damage": 1,
+      "description": "Orbit:\nFires projectiles that \norbit the player.",
+      "damage": 2,
       "speed": 900,
       "range": 1000,
       "attackSpeed": 3
     },
     "Spiral Weapon": {
-      "description": "Fires projectiles in a spiral around the player.",
-      "damage": 3,
+      "description": "Spiral:\nFires projectiles in a spiral around the player.",
+      "damage": 1,
       "speed": 900,
       "range": 1000,
-      "attackSpeed": 15,
+      "attackSpeed": 7.5,
       "streamCount": 0
- 
+
     }
 
 
@@ -53,7 +53,7 @@
 
     "Papyrmancer Sow": {
       "ability id": 0,
-      "description": "Create a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
+      "description": "Sow:\nCreate a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
       "speed": 3000,
       "attackSpeed": 3
@@ -61,7 +61,7 @@
 
     "Papyrmancer Reap": {
       "ability id": 1,
-      "description": "Creates a projectile at all\nenemies marked with Sow,\nrecalling them towards the\nplayer dealing damage to all\nenemies along the path.",
+      "description": "Reap:\nCreates a projectile from all\nenemies marked with Sow,\nrecalling them towards the\nplayer dealing damage to all\nenemies along the path.",
       "damage": 3,
       "speed": 900,
       "attackSpeed": 0.4
@@ -69,7 +69,7 @@
 
     "Papyrmancer R": {
       "ability id": 2,
-      "description": "papyrmancer r description",
+      "description": "Papyrmancer R:\npapyrmancer r description",
       "damage": 0,
       "speed": 0,
       "attackSpeed": 0.2,
@@ -79,10 +79,11 @@
 
     "Ninja Q": {
       "ability id": 3,
-      "description": "Ninja q description",
+      "description": "Ninja Q:\nThrows out a shuriken.\nCan be recast up to 3 times,\neach increasing the number of\nshurikens thrown.",
       "damage": 1,
       "speed": 1250,
       "range": 750,
+      "projSize" : 100,
       "attackSpeed": 0.2
     }
 
@@ -93,16 +94,16 @@
   "projectiles": {
 
     "default": {
-      "spritePath": "../assets/sprites/projectiles/default.png",
-      "spriteSize": [ 32, 32 ]
+      "spriteSize": [ 0, 0 ]
     },
 
-
-    "Papyrmancer Sow": {
-      "spritePath": "../assets/sprites/projectiles/papyrmancer_sow.png",
+    "Boomerang": {
+      "spriteSize": [ 32, 32 ],
+      "textureStartPos": [ 0, 0 ],
       "animation data": {
         "loop": true,
-        "columns": 7,
+        "columns": 16,
+        "default speed": 1.25,
         "frame data": {
           "0": 0,
           "1": 1,
@@ -111,7 +112,37 @@
           "4": 4,
           "5": 5,
           "6": 6,
-          "7": 7
+          "7": 7,
+          "8": 8,
+          "9": 9,
+          "10": 10,
+          "11": 11,
+          "12": 12,
+          "13": 13,
+          "14": 14,
+          "15": 15
+        }
+
+      }
+    },
+
+
+    "Papyrmancer Sow": {
+      "textureStartPos": [0,64],
+      "spriteSize": [ 48,48],
+      "animation data": {
+        "loop": true,
+        "columns": 8,
+        "frame data": {
+          "0": 0,
+          "1": 1,
+          "2": 2,
+          "3": 3,
+          "4": 4,
+          "5": 5,
+          "6": 6,
+          "7": 7,
+          "8": 8
         }
 
       }
@@ -119,10 +150,11 @@
 
 
     "Ninja Q": {
-      "spritePath": "../assets/sprites/projectiles/ninja_q.png",
+      "textureStartPos": [ 0, 32 ],
+      "spriteSize": [32,32],
       "animation data": {
         "loop": true,
-        "columns": 7,
+        "columns": 8,
         "default speed": 5,
         "frame data": {
           "0": 0,
@@ -132,7 +164,8 @@
           "4": 4,
           "5": 5,
           "6": 6,
-          "7": 7
+          "7": 7,
+          "8": 8
 
         }
 

@@ -7,7 +7,7 @@ struct SpriteAnimation
 	int columns = 0;
 	bool loop = false;
 	float defaultSpeed = 1.0f;
-
+	sf::Vector2i textureStartPos;
 	/// <summary>
 	/// key = what frame to change sprite,
 	/// value = what sprite to change to.
@@ -31,10 +31,14 @@ struct SpriteAnimation
 		
 		if (json.contains("frame data"))
 			for (auto& [key, value] : json["frame data"].items())
-				frameData.insert({ std::stoi(key), value });
-
-		
+				frameData.insert({ std::stoi(key), value });		
 		else std::cerr << "\n Animation contains no frame data.";
+
+		if (json.contains("textureStartPos")) {
+			auto temp = json["textureStartPos"].get<std::vector<int>>();
+			textureStartPos = { temp[0],temp[1] };
+		}
+		else { std::cerr << "\nNo texture start position was found.\nthis animation WILL have improper sprites."; }
 	
 	}
 
@@ -46,7 +50,6 @@ private:
 	static constexpr float animationFrameRate = 1 / 60.0f;
 	std::shared_ptr<MSprite> sprite;
 
-
 	SpriteAnimation animation;
 	sf::Vector2i frameSize;
 	float elapsedTime = 0;
@@ -54,14 +57,12 @@ private:
 	float frameDuration = 0;
 	int currentFrame = 0;
 	int frameCounter = 0;
-	int columns;
 	bool isPlaying = true;
 
 public:
 
 	SpriteAnimator(SpriteAnimation animation) :
 		animation(animation) {
-		columns =  animation.columns;
 		animationSpeed = animation.defaultSpeed;
 		frameDuration = animationFrameRate * (1.0f / animationSpeed);
 
@@ -73,7 +74,6 @@ public:
 		animation = newAnimation;
 		animationSpeed = animation.defaultSpeed;
 		frameDuration = animationFrameRate * (1 / animationSpeed);
-		columns = animation.columns;
 	}
 	void SetRectSize(sf::Vector2i newSize) {
 		frameSize = newSize;
@@ -142,8 +142,13 @@ public:
 
 	void UpdateSprite() {
 		if (!sprite) { std::cerr << "\nTrying to animate null sprite"; return; }
-
-		sf::IntRect rect = { { (currentFrame % columns) * frameSize.x, (currentFrame /columns)* frameSize.y}, frameSize};
+		sf::IntRect rect = { 
+			{	// go to startPos and increment in frameSize.x for whtv frame we are at.
+				animation.textureStartPos.x + (currentFrame * frameSize.x),
+				animation.textureStartPos.y // dont need to change y rect, as all animations take up 1 row in the texture.
+			},
+			frameSize
+		};
 		sprite->setTextureRect(rect);
 
 	}
