@@ -12,10 +12,10 @@ public:
 	void Fire() override {
 		static const sf::Vector2f zero = { 0,0 };
 		ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
-		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, stats);
+		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, stats, projectileRect);
 		
 		
-		auto animator = projectile->addComponent<SpriteAnimator>(animation);
+		auto animator = projectile->addComponent<SpriteAnimator>(*animation);
 		animator.lock()->SetRectSize({ 48,48 });
 		
 

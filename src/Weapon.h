@@ -128,8 +128,7 @@ protected:
 	std::string description = "";
 	std::string name = "";
 
-	sf::Vector2i spriteSize;
-	sf::Vector2i textureStartPos;
+	sf::IntRect projectileRect;
 	std::shared_ptr<SpriteAnimation> animation;
 
 

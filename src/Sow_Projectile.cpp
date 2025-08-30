@@ -8,8 +8,8 @@
 
 
 
-Sow_Projectile::Sow_Projectile(sf::Vector2f direction, 	ProjectileStats stats):
-	Projectile(direction, stats) {
+Sow_Projectile::Sow_Projectile(sf::Vector2f direction, 	ProjectileStats stats, const sf::IntRect& textureRect):
+	Projectile(direction, stats, textureRect) {
 
 }
 

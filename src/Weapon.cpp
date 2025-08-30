@@ -29,7 +29,7 @@ const std::map<int, weaponConstructor> WeaponBase::weaponList
 
 	{2,[](obj player) { return player->addComponent<OrbitWeapon>(); } },
 	
-	{3,[](obj  player) {return player->addComponent<SpiralWeapon >(std::string("Spiral Weapon") ); }},
+	{3,[](obj  player) {return player->addComponent<SpiralWeapon>(std::string("Spiral Weapon") ); }},
 
 };
 					   
@@ -91,28 +91,28 @@ const json& WeaponBase::LoadInfoFromJson() {
 
 
 
-	if (json.contains("projectile data")) return json; // can return early if none defined.
+	if (!json.contains("projectile data")) return json; // can return early if none defined.
 	const auto& projData = json["projectile data"];
 
 	if (projData.contains("textureStartPos")) { // start position on the projectile atlas.
 		auto vec = projData["textureStartPos"].get<std::vector<int>>();
-		textureStartPos = { vec[0],vec[1] };
+		projectileRect.position = { vec[0],vec[1] };
 	}
 	else { 
-		textureStartPos = {};
+		projectileRect.position = {};
 		std::cerr << "\nNo texture start position was found for "<<name<<". using default sprite";
 	}
 
 	if (projData.contains("spriteSize")) { // dimensions of one frame of the animation/sprite.
 		auto vec = projData["spriteSize"].get < std::vector<int>>();
-		spriteSize = {vec[0],vec[1]};
+		projectileRect.size = {vec[0],vec[1]};
 	}
 	else {
-		spriteSize = { 32,32 };
+		projectileRect.size = { 32,32 };
 		std::cerr << "\n Sprite size not defined for " << name << "defaulting to 32x32";
 	}
 
-	animation = std::make_shared<SpriteAnimation>( textureStartPos, spriteSize );
+	animation = std::make_shared<SpriteAnimation>(projectileRect);
 
 	if (projData.contains("animation data")) {
 		animation->LoadFromJson(projData["animation data"]);

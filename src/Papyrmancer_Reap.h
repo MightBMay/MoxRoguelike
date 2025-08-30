@@ -17,7 +17,7 @@ public:
 		ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
 		for (auto& enemy : sowedEnemies) { // for all sowed enemies,
 			if (!enemy->isActive()) continue;
-			auto projectile = Projectile::projPool.make<Reap_Projectile>(5,zero, stats); 
+			auto projectile = Projectile::projPool.make<Reap_Projectile>(5,zero, stats, projectileRect);
 						if (!projectile) return;
 			// spawn projectile with no direction, with ptr to weapons stats.
 			projectile->setPosition(enemy->getPosition()); // set position to start from the enemy.

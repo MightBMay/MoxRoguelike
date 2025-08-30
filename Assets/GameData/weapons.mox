@@ -16,7 +16,7 @@
       "range": 650,
       "attackSpeed": 1.5,
       "projSize": 32,
-      "pierce": 10,
+      "pierce": 10
 
     },
 
@@ -28,7 +28,7 @@
       "attackSpeed": 0.75,
       "projectile data": {
         "spriteSize": [ 32, 32 ],
-        "textureStartPos": [ 0, 0 ],
+        "textureStartPos": [ 0, 32 ],
         "animation data": {
           "loop": true,
           "columns": 16,
@@ -87,7 +87,7 @@
       "speed": 3000,
       "attackSpeed": 3,
       "projectile data": {
-        "textureStartPos": [ 0, 64 ],
+        "textureStartPos": [ 0, 96 ],
         "spriteSize": [ 48, 48 ],
         "animation data": {
           "loop": true,
@@ -135,7 +135,7 @@
       "projSize": 100,
       "attackSpeed": 0.2,
       "projectile data": {
-        "textureStartPos": [ 0, 32 ],
+        "textureStartPos": [ 0, 64 ],
         "spriteSize": [ 32, 32 ],
         "animation data": {
           "loop": true,

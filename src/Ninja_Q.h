@@ -36,9 +36,9 @@ public:
 
 			rotateVectorByAngle(direction, angleOffset);
 			ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
-			auto proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, stats);
+			auto proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, stats, projectileRect);
 			proj->scaleObject(1.5f);
-			proj->addComponent<SpriteAnimator>(animation);
+			proj->addComponent<SpriteAnimator>(*animation);
 		}
 		recastTimedOut = false;
 		recastTimer = recastTimerMax;

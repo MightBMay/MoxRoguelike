@@ -7,7 +7,7 @@ class GameObject;
 class Sow_Projectile : public Projectile {
 	
 public:
-	Sow_Projectile(sf::Vector2f direction, ProjectileStats stats);
+	Sow_Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect);
 	static std::unordered_set<std::shared_ptr<GameObject>>& GetSowedEnemies() {
 		return sowedEnemies;
 	}

@@ -31,7 +31,7 @@ public:
     // projectile stats would also go here.
 
  
-    Projectile(sf::Vector2f direction, ProjectileStats stats);
+    Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect);
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
@@ -43,6 +43,7 @@ protected:
     static inline std::shared_ptr<sf::Texture> projectileAtlasTexture;
     ProjectileStats stats;
 
+    const sf::IntRect& textureRect;
 
     std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
     sf::Vector2f startPos = { 0,0 };

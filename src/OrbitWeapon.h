@@ -14,7 +14,8 @@ public:
 		static const sf::Vector2f zero(0, 0);
 		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), range);
 		if (!closestEnemy) return;
-		auto projectile = projPool.make<OrbitProjectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
+		ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
+		auto projectile = projPool.make<OrbitProjectile>(5, zero, stats, projectileRect);
 		projectile->addComponent<TrailRenderer>(.125f, 16);
 		attackTimer = playerStats->AttackSpeed(attackSpeed);
 

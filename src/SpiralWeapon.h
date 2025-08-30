@@ -28,7 +28,7 @@ public:
 			float finalRotation = rotation + (perStreamOffset * i);
 			sf::Vector2f direction{ 1,0 }; // start pointing straight right.
 			rotateVectorByAngle(direction, finalRotation); // rotate by current rotation value.
-			Projectile::projPool.make<Projectile>(5, direction, stats);
+			Projectile::projPool.make<Projectile>(5, direction, stats, projectileRect);
 		}
 		
 

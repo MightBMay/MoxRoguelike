@@ -8,8 +8,8 @@
 
 static const std::string projectileAtlasPath = "../assets/sprites/projectiles/projectileatlas.png";
 
-Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats) :
-	stats(stats), direction(direction) {
+Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect) :
+	stats(stats), direction(direction), textureRect(textureRect) {
 	if (!projectileAtlasTexture) {
 		projectileAtlasTexture = TextureManager::getTexture(projectileAtlasPath);
 	}
@@ -17,7 +17,7 @@ Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats) :
 }
 
 void Projectile::init() {
-	parent->setSprite(projectileAtlasTexture, getSpriteRect()); // load the correct sprite for the projectile
+	parent->setSprite(projectileAtlasTexture, textureRect); // load the correct sprite for the projectile
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
 	parent->setOrigin(16, 16);
 	parent->setRotation(vectorToAngle(direction));

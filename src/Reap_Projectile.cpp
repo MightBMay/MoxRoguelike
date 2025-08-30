@@ -8,8 +8,8 @@
 
 
 
-Reap_Projectile::Reap_Projectile(sf::Vector2f direction, ProjectileStats stats) :
-	Projectile(direction, stats) {
+Reap_Projectile::Reap_Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect) :
+	Projectile(direction, stats, textureRect) {
 
 }
 

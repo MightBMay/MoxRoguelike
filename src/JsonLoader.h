@@ -24,7 +24,7 @@ public:
 	static const json& getWeaponFromIndex(const int weaponIndex);
 	static const std::string getWeaponNameFromIndex(const int weaponIndex);
 
-	static const json& getProjectile(const std::string& projectileName);
+	//static const json& getProjectile(const std::string& projectileName);
 
 	static const json& getAbility(const std::string& abilityName);
 

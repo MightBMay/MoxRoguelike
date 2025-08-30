@@ -18,6 +18,8 @@ struct SpriteAnimation
 	SpriteAnimation(sf::Vector2i& texturePos, sf::Vector2i& spriteSize) 
 		:textureStartPos(texturePos), spriteSize(spriteSize){}
 
+	SpriteAnimation(sf::IntRect& rect) : textureStartPos(rect.position), spriteSize(rect.size){}
+
 	void LoadFromJson(const json& json){
 
 		if (json.contains("default speed"))
@@ -64,6 +66,7 @@ public:
 		frameDuration = animationFrameRate * (1.0f / animationSpeed);
 
 	}
+
 
 	void SetRectSize(sf::Vector2i newSize) {
 		frameSize = newSize;
