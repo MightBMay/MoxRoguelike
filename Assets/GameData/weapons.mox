@@ -16,7 +16,8 @@
       "range": 650,
       "attackSpeed": 1.5,
       "projSize": 32,
-      "pierce": 10
+      "pierce": 10,
+
     },
 
     "Boomerang Weapon": {
@@ -24,7 +25,35 @@
       "damage": 3,
       "speed": 900,
       "range": 775,
-      "attackSpeed": 0.75
+      "attackSpeed": 0.75,
+      "projectile data": {
+        "spriteSize": [ 32, 32 ],
+        "textureStartPos": [ 0, 0 ],
+        "animation data": {
+          "loop": true,
+          "columns": 16,
+          "default speed": 1.25,
+          "frame data": {
+            "0": 0,
+            "1": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "9": 9,
+            "10": 10,
+            "11": 11,
+            "12": 12,
+            "13": 13,
+            "14": 14,
+            "15": 15
+          }
+
+        }
+      }
     },
 
     "Orbit Weapon": {
@@ -56,7 +85,27 @@
       "description": "Sow:\nCreate a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 3,
       "speed": 3000,
-      "attackSpeed": 3
+      "attackSpeed": 3,
+      "projectile data": {
+        "textureStartPos": [ 0, 64 ],
+        "spriteSize": [ 48, 48 ],
+        "animation data": {
+          "loop": true,
+          "columns": 8,
+          "frame data": {
+            "0": 0,
+            "1": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8
+          }
+
+        }
+      }
     },
 
     "Papyrmancer Reap": {
@@ -83,95 +132,33 @@
       "damage": 1,
       "speed": 1250,
       "range": 750,
-      "projSize" : 100,
-      "attackSpeed": 0.2
-    }
+      "projSize": 100,
+      "attackSpeed": 0.2,
+      "projectile data": {
+        "textureStartPos": [ 0, 32 ],
+        "spriteSize": [ 32, 32 ],
+        "animation data": {
+          "loop": true,
+          "columns": 8,
+          "default speed": 5,
+          "frame data": {
+            "0": 0,
+            "1": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8
 
-
-  },
-
-
-  "projectiles": {
-
-    "default": {
-      "spriteSize": [ 0, 0 ]
-    },
-
-    "Boomerang": {
-      "spriteSize": [ 32, 32 ],
-      "textureStartPos": [ 0, 0 ],
-      "animation data": {
-        "loop": true,
-        "columns": 16,
-        "default speed": 1.25,
-        "frame data": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3,
-          "4": 4,
-          "5": 5,
-          "6": 6,
-          "7": 7,
-          "8": 8,
-          "9": 9,
-          "10": 10,
-          "11": 11,
-          "12": 12,
-          "13": 13,
-          "14": 14,
-          "15": 15
-        }
-
-      }
-    },
-
-
-    "Papyrmancer Sow": {
-      "textureStartPos": [0,64],
-      "spriteSize": [ 48,48],
-      "animation data": {
-        "loop": true,
-        "columns": 8,
-        "frame data": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3,
-          "4": 4,
-          "5": 5,
-          "6": 6,
-          "7": 7,
-          "8": 8
-        }
-
-      }
-    },
-
-
-    "Ninja Q": {
-      "textureStartPos": [ 0, 32 ],
-      "spriteSize": [32,32],
-      "animation data": {
-        "loop": true,
-        "columns": 8,
-        "default speed": 5,
-        "frame data": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3,
-          "4": 4,
-          "5": 5,
-          "6": 6,
-          "7": 7,
-          "8": 8
+          }
 
         }
-
       }
+
+
 
     }
   }
-
 }

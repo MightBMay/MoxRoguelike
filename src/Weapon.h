@@ -1,5 +1,6 @@
 #pragma once
 #include "Projectile.h"
+class SpriteAnimation;
 class Component;
 class PlayerStats;
 
@@ -17,7 +18,7 @@ private:
 	/// </summary>
 	static const std::map<int, std::function<std::weak_ptr<WeaponBase>(std::shared_ptr<GameObject>)>> weaponList;
 
-
+	
 
 public:
 	WeaponBase(std::string& weaponName);
@@ -126,6 +127,11 @@ protected:
 
 	std::string description = "";
 	std::string name = "";
+
+	sf::Vector2i spriteSize;
+	sf::Vector2i textureStartPos;
+	std::shared_ptr<SpriteAnimation> animation;
+
 
 	virtual const json& LoadInfoFromJson();
 	virtual const json& GetJsonData() {  return GameData::getWeapon(name); }

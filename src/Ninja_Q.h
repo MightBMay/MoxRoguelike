@@ -13,13 +13,8 @@ private:
 	float recastTimer = 0;
 	const float spreadAngle = 15 * (PI/180);// 20 degrees as radians.
 	bool recastTimedOut = true;
-	SpriteAnimation animation{};
 public:
-	Ninja_Q():AbilityBase("Ninja Q"){
-		const json& projectileData = GameData::getProjectile("Ninja Q");
-		if (projectileData.contains("animation data"))		
-			animation.LoadFromJson(projectileData["animation data"]);
-	}
+	Ninja_Q():AbilityBase("Ninja Q"){}
 	void resetRecast() {
 		
 		recastNum = 1;
@@ -40,7 +35,8 @@ public:
 			float angleOffset = spreadAngle * (i - (recastNum - 1) / 2.0f);
 
 			rotateVectorByAngle(direction, angleOffset);
-			auto proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, &damage, &speed, &range, &projRadius, pierce);
+			ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
+			auto proj = Projectile::projPool.make<Ninja_QProjectile>(10, direction, stats);
 			proj->scaleObject(1.5f);
 			proj->addComponent<SpriteAnimator>(animation);
 		}

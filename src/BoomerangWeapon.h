@@ -4,14 +4,8 @@
 #include "Animation.h"
 
 class BoomerangWeapon :public AutoWeapon {
-
-	SpriteAnimation animation{};
 public:
-	BoomerangWeapon() :AutoWeapon(std::string("Boomerang Weapon")) {
-		const json& projectileData = GameData::getProjectile("Boomerang");
-		if (projectileData.contains("animation data"))
-			animation.LoadFromJson(projectileData["animation data"]);
-	}
+	BoomerangWeapon() :AutoWeapon(std::string("Boomerang Weapon")) {}
 
 
 	virtual void Fire() override {
@@ -20,10 +14,10 @@ public:
 		auto closestEnemy = EnemyManager::getClosest(position, range);
 		if (!closestEnemy) return; // in case no enemy was in range.
 		sf::Vector2f direction = (closestEnemy->getPosition() - position);
-		if(direction.lengthSquared()!=0)direction = direction.normalized();
+		if(direction.lengthSquared()!=0) direction = direction.normalized();
 
 		auto projectile = projPool.make<BoomerangProjectile>(5,direction, &damage, &speed, &range, &projRadius, pierce);
-		projectile->addComponent<SpriteAnimator>(animation);
+		projectile->addComponent<SpriteAnimator>(*animation);
 		projectile->scaleObject(projectileScaleFactor);
 		attackTimer = playerStats->AttackSpeed(attackSpeed);
 

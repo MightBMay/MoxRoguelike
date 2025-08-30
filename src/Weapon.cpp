@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameObject.h"
 #include "Player.h"
+#include "Animation.h"
 
 #include "Weapon.h"
 #include "AutoWeapon.h"
@@ -33,7 +34,11 @@ const std::map<int, weaponConstructor> WeaponBase::weaponList
 };
 					   
 const json& WeaponBase::LoadInfoFromJson() {
-	auto& json = GetJsonData();
+	const auto& json = GetJsonData();
+#pragma region Load projectile stats and info
+
+
+
 	if (json.contains("damage"))// check if json defined a dmg.
 		damage = json["damage"]; // if so, get dmg
 	else {
@@ -80,7 +85,41 @@ const json& WeaponBase::LoadInfoFromJson() {
 	if (json.contains("description")) 
 		description = json["description"];
 	else { description = "DESCRIPTION FOR WEAPON "+ name +"NOT FOUND"; }
-	
+#pragma endregion
+
+#pragma region Load sprite/animation data
+
+
+
+	if (json.contains("projectile data")) return json; // can return early if none defined.
+	const auto& projData = json["projectile data"];
+
+	if (projData.contains("textureStartPos")) { // start position on the projectile atlas.
+		auto vec = projData["textureStartPos"].get<std::vector<int>>();
+		textureStartPos = { vec[0],vec[1] };
+	}
+	else { 
+		textureStartPos = {};
+		std::cerr << "\nNo texture start position was found for "<<name<<". using default sprite";
+	}
+
+	if (projData.contains("spriteSize")) { // dimensions of one frame of the animation/sprite.
+		auto vec = projData["spriteSize"].get < std::vector<int>>();
+		spriteSize = {vec[0],vec[1]};
+	}
+	else {
+		spriteSize = { 32,32 };
+		std::cerr << "\n Sprite size not defined for " << name << "defaulting to 32x32";
+	}
+
+	animation = std::make_shared<SpriteAnimation>( textureStartPos, spriteSize );
+
+	if (projData.contains("animation data")) {
+		animation->LoadFromJson(projData["animation data"]);
+	}
+
+#pragma endregion
+
 
 	return json;
 }

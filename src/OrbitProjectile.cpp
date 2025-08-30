@@ -7,7 +7,7 @@
 
 void OrbitProjectile::init() {
     player_s = player.lock();
-    parent->setSprite(getSpritePath(), { {0,0}, {32,32} }); // load the correct sprite for the projectile
+    parent->setSprite(projectileAtlasTexture, { {0,0}, {32,32} }); // load the correct sprite for the projectile
     parent->setOrigin(16, 16);
 }       // Called when component is added
 void OrbitProjectile::update(float deltaTime) {
@@ -44,13 +44,13 @@ void OrbitProjectile::update(float deltaTime) {
 
 void OrbitProjectile::CheckEnemies(sf::Vector2f curPos) {
     std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
-    EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
+    EnemyManager::getInRange(curPos, *stats.projectileSize, inRangeEnemies);
 // iterate over all enemies within range of projectile.
     for (auto& enemy : inRangeEnemies) {
         auto it = enemyCooldowns.find(enemy); // try to find enemy in map of cooldowns
         if (it != enemyCooldowns.end() && it->second > 0) continue; // if enemy is found, and cd has not finished, continue.
 
-        enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+        enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
         enemyCooldowns[enemy] = hitCooldown;
         
         --pierceCount; // decrement and check pierce.

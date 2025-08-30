@@ -21,13 +21,14 @@ public:
 	}
 
 	virtual void Fire() override {
+		ProjectileStats stats{ &damage, &speed, &range, &projRadius, pierce };
 		for (int i = 0; i < numberOfStreams; ++i) {
 			
 			float centerOffset = -perStreamOffset * (numberOfStreams - 1) / 2.0f;
 			float finalRotation = rotation + (perStreamOffset * i);
 			sf::Vector2f direction{ 1,0 }; // start pointing straight right.
 			rotateVectorByAngle(direction, finalRotation); // rotate by current rotation value.
-			Projectile::projPool.make<Projectile>(5, direction, &damage, &speed, &range, &projRadius, pierce);
+			Projectile::projPool.make<Projectile>(5, direction, stats);
 		}
 		
 

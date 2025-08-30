@@ -177,7 +177,7 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 		);
 
 		if (json.contains("animation data")) {
-			SpriteAnimation animation{};
+			SpriteAnimation animation{ sf::Vector2i{}, sf::Vector2i{} };
 			animation.LoadFromJson(json["animation data"]);
 			parent->addComponent<SpriteAnimator>(animation);
 		}

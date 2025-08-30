@@ -7,14 +7,16 @@ struct SpriteAnimation
 	int columns = 0;
 	bool loop = false;
 	float defaultSpeed = 1.0f;
-	sf::Vector2i textureStartPos;
+	sf::Vector2i& textureStartPos;
+	sf::Vector2i& spriteSize;
 	/// <summary>
 	/// key = what frame to change sprite,
 	/// value = what sprite to change to.
 	/// </summary>
 	std::map<int, int> frameData{};
 
-
+	SpriteAnimation(sf::Vector2i& texturePos, sf::Vector2i& spriteSize) 
+		:textureStartPos(texturePos), spriteSize(spriteSize){}
 
 	void LoadFromJson(const json& json){
 
@@ -34,12 +36,7 @@ struct SpriteAnimation
 				frameData.insert({ std::stoi(key), value });		
 		else std::cerr << "\n Animation contains no frame data.";
 
-		if (json.contains("textureStartPos")) {
-			auto temp = json["textureStartPos"].get<std::vector<int>>();
-			textureStartPos = { temp[0],temp[1] };
-		}
-		else { std::cerr << "\nNo texture start position was found.\nthis animation WILL have improper sprites."; }
-	
+
 	}
 
 };
@@ -68,13 +65,6 @@ public:
 
 	}
 
-
-
-	void SetAnimation(SpriteAnimation& newAnimation) {
-		animation = newAnimation;
-		animationSpeed = animation.defaultSpeed;
-		frameDuration = animationFrameRate * (1 / animationSpeed);
-	}
 	void SetRectSize(sf::Vector2i newSize) {
 		frameSize = newSize;
 	}

@@ -8,15 +8,14 @@
 
 
 
-Sow_Projectile::Sow_Projectile(sf::Vector2f direction, 
-	int* damage, float* speed, float* range, int* projectileSize, int pierce):
-	Projectile(direction, damage, speed, range, projectileSize, pierce) {
+Sow_Projectile::Sow_Projectile(sf::Vector2f direction, 	ProjectileStats stats):
+	Projectile(direction, stats) {
 
 }
 
 void Sow_Projectile::update(float deltaTime) {
 	static const int minMoveDistance = 100; // snaps projectile to mouse if within this range (squared range)
-	static const float _speed = *speed; // avoids derefrencing projectile speed per update call.
+	static const float _speed = *stats.speed; // avoids derefrencing projectile speed per update call.
 	static const int rotationSpeed = 720;
 	
 	sf::Vector2f mousePos = Input::mousePos_World;
@@ -46,7 +45,7 @@ void Sow_Projectile::update(float deltaTime) {
 
 void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
 	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
-	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
+	EnemyManager::getInRange(curPos, *stats.projectileSize, inRangeEnemies);
 	for (auto& enemy : inRangeEnemies) {
 		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
 			sowedEnemies.insert(enemy);
@@ -54,14 +53,14 @@ void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
 
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re _damage already damaged enemies.
 
-		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 }
 
 void Sow_Projectile::init() {
 	parent->setSprite(
-		getSpritePath(),
+		projectileAtlasTexture,
 		{ {0,0},{32,32} }
 	); // load the correct sprite for the projectile
 

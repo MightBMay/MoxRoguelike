@@ -7,7 +7,7 @@ class GameObject;
 class Sow_Projectile : public Projectile {
 	
 public:
-	Sow_Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce);
+	Sow_Projectile(sf::Vector2f direction, ProjectileStats stats);
 	static std::unordered_set<std::shared_ptr<GameObject>>& GetSowedEnemies() {
 		return sowedEnemies;
 	}
@@ -15,9 +15,6 @@ public:
 		sowedEnemies.clear();
 	}
 	void update(float deltaTime) override final;
-	const std::string& getSpritePath() const final{
-		return spritePath;
-	}
 
 	void CheckEnemies(sf::Vector2f curPos) override;
 	void init() override final;

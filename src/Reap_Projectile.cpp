@@ -8,8 +8,8 @@
 
 
 
-Reap_Projectile::Reap_Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce) :
-	Projectile(direction, damage,speed,range,projectileSize,pierce) {
+Reap_Projectile::Reap_Projectile(sf::Vector2f direction, ProjectileStats stats) :
+	Projectile(direction, stats) {
 
 }
 
@@ -28,13 +28,13 @@ void Reap_Projectile::update(float deltaTime) {
 	}
 	direction = newDirection.normalized();
 	parent->setRotation(vectorToAngle(direction));
-	parent->move(direction * (*speed)* deltaTime);
+	parent->move(direction * (*stats.speed)* deltaTime);
 
 	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{}; 
-	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
+	EnemyManager::getInRange(curPos, *stats.projectileSize, inRangeEnemies);
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end()) return;
-		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 
@@ -43,7 +43,7 @@ void Reap_Projectile::update(float deltaTime) {
 
 void Reap_Projectile::init() {
 	parent->setSprite(
-		getSpritePath(),
+		projectileAtlasTexture,
 		{ {0,0},{32,32} }
 	); // load the correct sprite for the projectile
 

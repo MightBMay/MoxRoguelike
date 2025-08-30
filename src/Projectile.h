@@ -7,6 +7,19 @@ class GameObject;
 
 constexpr size_t MAX_PROJECTILES = 512;
 
+struct ProjectileStats
+{
+    int* damage;
+    float* speed;
+    float* range;
+    int* projectileSize;
+    int pierce;
+
+    ProjectileStats(int* damage, float* speed, float* range, int* projectileSize, int pierce)
+        :damage(damage), speed(speed), range(range), projectileSize(projectileSize), pierce(pierce) {}
+
+};
+
 class Projectile : public Component {
     friend class ProjectilePool;
 public:
@@ -18,7 +31,7 @@ public:
     // projectile stats would also go here.
 
  
-    Projectile(sf::Vector2f direction, int* damage, float* speed, float* range, int* projectileSize, int pierce);
+    Projectile(sf::Vector2f direction, ProjectileStats stats);
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;
@@ -28,18 +41,11 @@ public:
 
 protected:
     static inline std::shared_ptr<sf::Texture> projectileAtlasTexture;
-    const int* damage;
-    const float* speed;
-    const float* range;
-    const int* projSize;
+    ProjectileStats stats;
 
 
     std::unordered_set<std::shared_ptr<GameObject>> hitEnemies;
     sf::Vector2f startPos = { 0,0 };
-
-    virtual sf::IntRect getSpriteRect() const {
-        return { {},{32,32} };
-    }
 
 private:
 

@@ -14,8 +14,8 @@ public:
 		if (!closestEnemy) return;
 		sf::Vector2f direction =  closestEnemy->getPosition() - playerPos;
 		if (direction.lengthSquared() > 0) direction = direction.normalized(); // avoid normalizing 0 vector.
-
-		auto projectile = projPool.make<Projectile>(5, direction, &damage,&speed,&range,&projRadius, pierce);
+		ProjectileStats stats{ &damage,&speed,&range,&projRadius, pierce };
+		auto projectile = projPool.make<Projectile>(5, direction,stats );
 		attackTimer = playerStats->AttackSpeed(attackSpeed);
 	}
 	virtual void update(float deltaTime) override{

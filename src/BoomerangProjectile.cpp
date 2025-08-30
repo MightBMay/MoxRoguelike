@@ -19,13 +19,13 @@ void BoomerangProjectile::update(float deltaTime) {
 		direction = temp.normalized();
 		parent->setRotation(vectorToAngle(direction));
 	}
-	else if ((curPos - startPos).lengthSquared() >= *range) {
+	else if ((curPos - startPos).lengthSquared() >= *stats.range) {
 		isReturning = true; // set to start returning.
 		hitEnemies.clear(); // clear hit enemies so we can hit on the way back.
 	}
 
 
-	parent->move(direction * (*speed)* deltaTime);
+	parent->move(direction * (*stats.speed)* deltaTime);
 
 	CheckEnemies(curPos);
 
@@ -34,11 +34,11 @@ void BoomerangProjectile::update(float deltaTime) {
 
 void BoomerangProjectile::CheckEnemies(sf::Vector2f curPos) {
 	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
-	EnemyManager::getInRange(curPos, *projSize, inRangeEnemies);
+	EnemyManager::getInRange(curPos, *stats.projectileSize, inRangeEnemies);
 // iterate over all enemies within range of projectile.
 	for (auto& enemy : inRangeEnemies) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
-		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 }

@@ -6,20 +6,13 @@
 class Papyrmancer_Sow : public AbilityBase {
 public:
 	static inline int count = 0;
-	static inline SpriteAnimation animation{};
-	Papyrmancer_Sow() :
-		AbilityBase(std::string("Papyrmancer Sow")) {
-		auto& projData = GameData::getProjectile("Papyrmancer Sow");
-		if (projData.contains("animation data")) {
-			animation.LoadFromJson(projData["animation data"]);
-		}
-		
-	
-	}
+
+	Papyrmancer_Sow() :	AbilityBase(std::string("Papyrmancer Sow")) {}
 
 	void Fire() override {
 		static const sf::Vector2f zero = { 0,0 };
-		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, &damage,&speed,&range,&projRadius,pierce);
+		ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
+		auto projectile = Projectile::projPool.make<Sow_Projectile>(5, zero, stats);
 		
 		
 		auto animator = projectile->addComponent<SpriteAnimator>(animation);

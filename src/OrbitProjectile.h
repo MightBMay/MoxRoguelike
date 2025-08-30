@@ -8,9 +8,8 @@ class Enemy;
 class OrbitProjectile : public Projectile {
    
 public:
-    OrbitProjectile(sf::Vector2f direction, 
-        int* damage, float* speed, float* range, int* projectileSize, int pierce)
-        :Projectile(direction, damage, speed, range, projectileSize, pierce) {}
+    OrbitProjectile(sf::Vector2f direction, ProjectileStats stats)
+        :Projectile(direction, stats) {}
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;

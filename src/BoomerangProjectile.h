@@ -4,16 +4,11 @@
 class BoomerangProjectile :public Projectile {
 public:
 	BoomerangProjectile(sf::Vector2f direction,
-		int* damage, float* speed, float* range, int* projectileSize, int pierce) :
-		Projectile(direction, damage, speed, range, projectileSize, pierce) {}
+		ProjectileStats stats) :
+		Projectile(direction, stats) {}
 
 	virtual void update(float deltaTime) override;
 	virtual void CheckEnemies(sf::Vector2f curPos) override;
 protected:
 	bool isReturning = false;
-
-	virtual const std::string& getSpritePath()const override {
-		static const std::string& path = "../assets/sprites/projectiles/boomerang.png";
-		return path;
-	}
 };
