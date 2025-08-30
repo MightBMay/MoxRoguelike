@@ -71,6 +71,11 @@ namespace Enemies {
 
 
 	protected:
+		// this is super inefficient, but also simple and functional.
+		// ideally, we would store one sprite rect and one 
+		// SpriteAnimation per enemy subclass, and only load from json one time
+		// right now we have a rect PER CLASS and load from json PER ENEMY. ideally fix this.
+		sf::IntRect spriteRect{};
 		std::string enemyType = "";
 		inline void ResetHitFlicker();
 
@@ -88,7 +93,5 @@ namespace Enemies {
 		static inline GameObject* _playerObj = nullptr;
 		static inline Player* _playerComponent = nullptr;
 		void UpdateFacingDirection();
-
-
 	};
 }

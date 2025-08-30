@@ -87,7 +87,7 @@
       "speed": 3000,
       "attackSpeed": 3,
       "projectile data": {
-        "textureStartPos": [ 0, 96 ],
+        "textureStartPos": [ 0, 64 ],
         "spriteSize": [ 48, 48 ],
         "animation data": {
           "loop": true,
@@ -125,7 +125,6 @@
       "aoeSize": 500
     },
 
-
     "Ninja Q": {
       "ability id": 3,
       "description": "Ninja Q:\nThrows out a shuriken.\nCan be recast up to 3 times,\neach increasing the number of\nshurikens thrown.",
@@ -135,7 +134,7 @@
       "projSize": 100,
       "attackSpeed": 0.2,
       "projectile data": {
-        "textureStartPos": [ 0, 64 ],
+        "textureStartPos": [ 32, 0],
         "spriteSize": [ 32, 32 ],
         "animation data": {
           "loop": true,

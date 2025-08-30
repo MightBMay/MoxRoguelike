@@ -165,7 +165,7 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	}
 	else { std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
 
-	sf::IntRect rect{};
+	
 	if (json.contains("sprite data")) {
 		const auto& spriteData = json["sprite data"];
 		// if sprite data is defined, sprite size and text position MUST also be there.
@@ -178,11 +178,11 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 		// issue is that i'd need a different rect variable per enemy class, that way i can:
 		// keep reference alive
 		// only load sprite data once.
-		rect = { pos ,size };
-		parent->setSprite(enemyAtlasTexture,rect); 
+		spriteRect = { pos ,size };
+		parent->setSprite(enemyAtlasTexture,spriteRect); 
 
 		if (spriteData.contains("animation data")) {
-			SpriteAnimation animation{ rect };
+			SpriteAnimation animation{ spriteRect };
 			animation.LoadFromJson(spriteData["animation data"]);
 			parent->addComponent<SpriteAnimator>(animation);
 		}
@@ -194,7 +194,7 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 		std::cerr << "\nSprite path not defined for enemy: " << enemyType;
 		parent->setSprite("../assets/sprites/twig.png");
 	}
-	parent->setOrigin(rect.size.x / 2.0f, rect.size.y / 2.0f);
+	parent->setOrigin(spriteRect.size.x / 2.0f, spriteRect.size.y / 2.0f);
 
 
 }
