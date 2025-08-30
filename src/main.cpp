@@ -68,8 +68,8 @@ int main() {
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
 	playerView->setCenter({});// center to 0,0
-	//window->setFramerateLimit(144); // cap fps
-	//window->setVerticalSyncEnabled(true);
+	window->setFramerateLimit(144); // cap fps
+	window->setVerticalSyncEnabled(true);
 	font.openFromFile("../assets/fonts/amazon ember.ttf");
 #pragma endregion
 	
@@ -129,7 +129,6 @@ int main() {
 	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
 
 	InitializeGame(manager, fpsTextRenderable);	
-	EnemyManager::SpawnEnemy(1, 1000);
 #pragma endregion
 
 	second_Timer.start();

@@ -25,6 +25,8 @@ protected:
 	
 private:
 	static inline const float duration = 7.5f;
+	static inline const float redamageInterval = 0.5f;
+	float remainingRedamageDuration = 0;
 	float remainingDuration = duration;
 	static inline std::unordered_set<std::shared_ptr<GameObject>> sowedEnemies;
 	static inline std::string spritePath = "../assets/sprites/projectiles/papyrmancer_sow.png";

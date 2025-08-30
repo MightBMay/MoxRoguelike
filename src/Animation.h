@@ -7,8 +7,8 @@ struct SpriteAnimation
 	int columns = 0;
 	bool loop = false;
 	float defaultSpeed = 1.0f;
-	sf::Vector2i& textureStartPos;
-	sf::Vector2i& spriteSize;
+	const sf::Vector2i& textureStartPos;
+	const sf::Vector2i& spriteSize;
 	/// <summary>
 	/// key = what frame to change sprite,
 	/// value = what sprite to change to.
@@ -19,7 +19,7 @@ struct SpriteAnimation
 		:textureStartPos(texturePos), spriteSize(spriteSize){}
 
 	SpriteAnimation(sf::IntRect& rect) : textureStartPos(rect.position), spriteSize(rect.size){}
-
+	SpriteAnimation(const sf::IntRect& rect) : textureStartPos(rect.position), spriteSize(rect.size) {}
 	void LoadFromJson(const json& json){
 
 		if (json.contains("default speed"))

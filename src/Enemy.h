@@ -71,11 +71,18 @@ namespace Enemies {
 
 
 	protected:
-		// this is super inefficient, but also simple and functional.
+		// this is inefficient, but also simple and functional.
 		// ideally, we would store one sprite rect and one 
-		// SpriteAnimation per enemy subclass, and only load from json one time
+		// SpriteAnimation per enemy subclass, then we could load from json only one time.
 		// right now we have a rect PER CLASS and load from json PER ENEMY. ideally fix this.
+			//^^
+			// I guess since rn enemies also load their stats per enemy, we don't really lose too 
+			// much time to loading sprite data per enemy. ideally we load both stats and 
+			// sprite data once per subclass though.
 		sf::IntRect spriteRect{};
+
+
+
 		std::string enemyType = "";
 		inline void ResetHitFlicker();
 

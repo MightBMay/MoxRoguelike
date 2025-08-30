@@ -175,9 +175,6 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 		std::vector<int> rawTextCoords = spriteData["textureStartPos"].get<std::vector<int>>();
 		sf::Vector2i pos = { rawTextCoords[0],rawTextCoords[1] };
 		
-		// issue is that i'd need a different rect variable per enemy class, that way i can:
-		// keep reference alive
-		// only load sprite data once.
 		spriteRect = { pos ,size };
 		parent->setSprite(enemyAtlasTexture,spriteRect); 
 

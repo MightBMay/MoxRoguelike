@@ -10,6 +10,8 @@
 
 Sow_Projectile::Sow_Projectile(sf::Vector2f direction, 	ProjectileStats stats, const sf::IntRect& textureRect):
 	Projectile(direction, stats, textureRect) {
+	hitEnemies.reserve(128);// since sow is VERY likely to hit many more enemies then the average projectile,
+	// reserve space to save a bit of time.
 
 }
 
@@ -38,6 +40,8 @@ void Sow_Projectile::update(float deltaTime) {
 		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 												// it looping the last trail until new proj made.
 	}
+	remainingRedamageDuration -= deltaTime; // when redamage interval is up, clear hit enemies 
+	if (remainingRedamageDuration <= 0) hitEnemies.clear();//to allow re hitting the same enemy.
 
 	CheckEnemies(curPos);
 
@@ -47,13 +51,13 @@ void Sow_Projectile::CheckEnemies(sf::Vector2f curPos) {
 	std::vector<std::shared_ptr<GameObject>> inRangeEnemies{};
 	EnemyManager::getInRange(curPos, *stats.projectileSize, inRangeEnemies);
 	for (auto& enemy : inRangeEnemies) {
-		if (sowedEnemies.find(enemy) == sowedEnemies.end()) {// only sow enemy if not already sowed.
-			sowedEnemies.insert(enemy);
-		}
+		// only sow enemy if not already sowed.
+		if (sowedEnemies.find(enemy) == sowedEnemies.end()) sowedEnemies.insert(enemy);
 
-		if (hitEnemies.find(enemy) != hitEnemies.end())return; // dont re _damage already damaged enemies.
+		if (hitEnemies.find(enemy) != hitEnemies.end()) return; // dont re _damage already damaged enemies.
+		if (remainingRedamageDuration <= 0) remainingRedamageDuration = redamageInterval; // if the redamage interval isn't set, set it.
 
-		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
+		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
 	}
 }
