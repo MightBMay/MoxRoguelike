@@ -10,8 +10,11 @@
       "speed": 175,
       "xp": 1,
       "size": 86,
-      "spritePath": "../assets/sprites/twig.png",
-      "spriteSize": [ 128, 150 ]
+      "sprite data": {
+        "textureStartPos": [0,128],
+        "spriteSize": [ 128, 150 ]
+      }
+      
     },
 
     "scissor enemy": {
@@ -22,36 +25,40 @@
       "speed": 175,
       "xp": 1,
       "size": 86,
-      "spritePath": "../assets/sprites/enemies/scissorenemy.png",
-      "spriteSize": [ 128, 150 ],
-      "animation data": {
-        "default speed": 1,
-        "loop": true,
-        "columns": 9,
-        "frame data": {
-          "0": 0,
-          "1": 1,
-          "2": 2,
-          "3": 3,
-          "4": 4,
-          "5": 5,
-          "6": 6,
-          "7": 7,
-          "8": 8,
-          "15": 7,
-          "16": 6,
-          "17": 5,
-          "18": 4,
-          "19": 3,
-          "20": 2,
-          "21": 1,
-          "22": 0,
-          "28": 0
+      "sprite data": {
+        "textureStartPos": [ 0, 0 ],
+        "spriteSize": [ 128, 128 ],
+        "animation data": {
+          "default speed": 1,
+          "loop": true,
+          "columns": 9,
+          "frame data": {
+            "0": 0,
+            "1": 1,
+            "2": 2,
+            "3": 3,
+            "4": 4,
+            "5": 5,
+            "6": 6,
+            "7": 7,
+            "8": 8,
+            "15": 7,
+            "16": 6,
+            "17": 5,
+            "18": 4,
+            "19": 3,
+            "20": 2,
+            "21": 1,
+            "22": 0,
+            "28": 0
 
 
 
 
+          }
         }
+
+
 
       }
 

@@ -189,7 +189,7 @@ void Player::init() {
 
 	//// DEBUG
 	//AddWeapon(0, 0);
-	AddWeapon(1, 1);
+	//AddWeapon(1, 1);
 	//AddWeapon(2, 2);
 	//AddWeapon(3, 3);
 

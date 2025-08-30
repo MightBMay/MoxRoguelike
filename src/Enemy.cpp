@@ -5,7 +5,14 @@
 #include "Player.h"
 #include "Animation.h"
 
+static const std::string& enemyAtlasPath = "../assets/sprites/atlases/enemyatlas.png";
 
+Enemies::Enemy::Enemy(int level, std::string enemyType) :level(level), enemyType(enemyType) {
+	if (!atlasLoaded) {
+		enemyAtlasTexture = TextureManager::getTexture(enemyAtlasPath);
+		atlasLoaded = true;
+	}
+}
 
 void Enemies::Enemy::init() {
 	LoadInfoFromJson(enemyType);
@@ -158,27 +165,25 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	}
 	else { std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
 
-	sf::IntRect rect;
-	if (json.contains("spritePath")) {
-		
-		if (json.contains("spriteSize")) {
-		std::vector<int> rawSize= json["spriteSize"].get<std::vector<int>>();
+	sf::IntRect rect{};
+	if (json.contains("sprite data")) {
+		const auto& spriteData = json["sprite data"];
+		// if sprite data is defined, sprite size and text position MUST also be there.
+		std::vector<int> rawSize= spriteData["spriteSize"].get<std::vector<int>>();
 		sf::Vector2i size = { rawSize[0],rawSize[1] };
-			rect = { {},size };
-		}
-		else {
-			std::cout << "\Sprite rect not defined for enemy: " << enemyType;
-			rect = { {},{128,128} };
-		}
 		
-		parent->setSprite(
-			json["spritePath"],
-			rect
-		);
+		std::vector<int> rawTextCoords = spriteData["textureStartPos"].get<std::vector<int>>();
+		sf::Vector2i pos = { rawTextCoords[0],rawTextCoords[1] };
+		
+		// issue is that i'd need a different rect variable per enemy class, that way i can:
+		// keep reference alive
+		// only load sprite data once.
+		rect = { pos ,size };
+		parent->setSprite(enemyAtlasTexture,rect); 
 
-		if (json.contains("animation data")) {
-			SpriteAnimation animation{ sf::Vector2i{}, sf::Vector2i{} };
-			animation.LoadFromJson(json["animation data"]);
+		if (spriteData.contains("animation data")) {
+			SpriteAnimation animation{ rect };
+			animation.LoadFromJson(spriteData["animation data"]);
 			parent->addComponent<SpriteAnimator>(animation);
 		}
 

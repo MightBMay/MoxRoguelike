@@ -36,9 +36,7 @@ namespace Enemies {
 		/// <summary>
 		/// base enemy constructor
 		/// </summary>
-		Enemy(int level, std::string enemyType) :level(level), enemyType(enemyType) {
-
-		}
+		Enemy(int level, std::string enemyType);
 
 
 		float getSpeed() {
@@ -79,14 +77,13 @@ namespace Enemies {
 		Timer hitFlickerTimer{ hitFlickerDuration, false };
 
 		virtual void LoadInfoFromJson(std::string enemyType);
-
-
+		static inline  std::shared_ptr<sf::Texture> enemyAtlasTexture;
+		static inline bool atlasLoaded;
 
 	private:
 		static inline const sf::Vector2f* playerPos;
 		static constexpr float hitFlickerDuration = 0.125f;
 		static constexpr sf::Color hitColour = sf::Color(255, 64, 64, 255);
-
 
 		static inline GameObject* _playerObj = nullptr;
 		static inline Player* _playerComponent = nullptr;

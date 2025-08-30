@@ -6,7 +6,7 @@
 #include "EnemyManager.h"
 #include "Weapon.h"
 
-static const std::string projectileAtlasPath = "../assets/sprites/projectiles/projectileatlas.png";
+static const std::string projectileAtlasPath = "../assets/sprites/atlases/projectileatlas.png";
 
 Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect) :
 	stats(stats), direction(direction), textureRect(textureRect) {
