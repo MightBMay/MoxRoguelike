@@ -219,7 +219,7 @@ protected:
 	float healthRegenTimer = 1;
 
 	void ResetHitFlicker() {
-		parent->getSprite()->setColor(sf::Color::White);
+		parent.lock()->getSprite()->setColor(sf::Color::White);
 		_isVulnrable = true;
 	}
 

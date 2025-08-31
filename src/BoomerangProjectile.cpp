@@ -5,7 +5,7 @@
 #include "EnemyManager.h"
 
 void BoomerangProjectile::update(float deltaTime) {
-	auto curPos = parent->getPosition();
+	auto curPos = parent.lock()->getPosition();
 
 
 	if (isReturning) {
@@ -17,7 +17,7 @@ void BoomerangProjectile::update(float deltaTime) {
 		}
 		// only set direction after release would occour to skip unneeded normalize
 		direction = temp.normalized();
-		parent->setRotation(vectorToAngle(direction));
+		parent.lock()->setRotation(vectorToAngle(direction));
 	}
 	else if ((curPos - startPos).lengthSquared() >= *stats.range) {
 		isReturning = true; // set to start returning.
@@ -25,7 +25,7 @@ void BoomerangProjectile::update(float deltaTime) {
 	}
 
 
-	parent->move(direction * (*stats.speed)* deltaTime);
+	parent.lock()->move(direction * (*stats.speed)* deltaTime);
 
 	CheckEnemies(curPos);
 

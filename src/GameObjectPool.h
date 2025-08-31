@@ -13,11 +13,14 @@ public:
 	GameObjectPool(bool expandable = false) : expandable(expandable){
 
 	}
-
+	void reset(int quantity = 0) {
+		_pool.clear();
+		_pool.shrink_to_fit();
+		if(quantity > 0) _pool.reserve(quantity);
+	}
 	void init(size_t quantity, int layer) {
 		auto& manager = GameObjectManager::getInstance();
-		_pool.clear();
-		_pool.reserve(quantity);
+		reset(quantity);
 		for (int i = 0; i < quantity; ++i) {
 			auto obj = GameObject::Create(layer);
 			obj->setPoolIndex(i);
@@ -56,9 +59,10 @@ public:
 
 	}
 
-	void release(std::shared_ptr<GameObject> obj) {
+	void release(std::weak_ptr<GameObject> objW) {
+		auto obj = objW.lock();
 		obj->setActive(false);
-		GameObjectManager::getInstance().remove(obj);
+		GameObjectManager::getInstance().remove(objW);
 		obj->removeSprite();
 
 		int index = obj->getPoolIndex();

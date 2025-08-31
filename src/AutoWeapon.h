@@ -9,7 +9,7 @@ public:
 	AutoWeapon(std::string& weaponName) :WeaponBase(weaponName) {}
 
 	virtual void Fire() override {
-		auto playerPos = parent->getPosition();
+		auto playerPos = parent.lock()->getPosition();
 		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(playerPos, range);
 		if (!closestEnemy) return;
 		sf::Vector2f direction =  closestEnemy->getPosition() - playerPos;

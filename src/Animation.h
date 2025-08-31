@@ -147,7 +147,7 @@ public:
 	}
 
 	void init()override {
-		sprite = parent->getSprite();
+		sprite = parent.lock()->getSprite();
 		frameSize = sprite->getTextureRect().size;
 	}
 

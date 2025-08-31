@@ -38,7 +38,7 @@ public:
         auto component = std::make_shared<T>(std::forward<Args>(args)...);
 
         // Set parent
-        component->parent = shared_from_this();
+        component->parent = weak_from_this();
 
         // Store in container and type map
         components.push_back(component);

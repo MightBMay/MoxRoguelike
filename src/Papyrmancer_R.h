@@ -14,7 +14,7 @@ private:
 	const float pullDuration = 0.5f;
 	float remainingPullDuration = 0;
 	static inline sf::Vector2f pullPosition{};
-	static inline std::vector<std::shared_ptr<GameObject>> enemiesToPull;
+	static inline std::vector<std::weak_ptr<GameObject>> enemiesToPull;
 
 public:
 	Papyrmancer_R() :AbilityBase("Papyrmancer R") {
@@ -28,7 +28,7 @@ public:
 
 		EnemyManager::getInRange(pullPosition, aoeSize, enemiesToPull);
 		for (auto& enemy : enemiesToPull) {
-			enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(damage);
+			enemy.lock()->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(damage);
 		}
 
 		attackTimer = attackSpeed;
@@ -44,8 +44,9 @@ public:
 
 		if (remainingPullDuration > 0 && !enemiesToPull.empty()) {
 			for (auto& enemy : enemiesToPull) {
-				sf::Vector2f direction = pullPosition - enemy->getPosition();
-				enemy->move(direction * pullSpeed * deltaTime);
+				auto enemyS = enemy.lock();
+				sf::Vector2f direction = pullPosition - enemyS->getPosition();
+				enemyS->move(direction * pullSpeed * deltaTime);
 			}
 			// decrement remainintPullDuration and compare.
 			if ((remainingPullDuration -= deltaTime) <= 0) {

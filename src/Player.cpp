@@ -224,6 +224,8 @@ void Player::update(float deltatime) {
 }
 
 void Player::MovePlayer(float deltaTime) {
+	auto parentS = parent.lock();
+
 	direction = { 0,0 };
 	if (Input::GetAction("up"))
 		direction.y = -1;
@@ -254,8 +256,8 @@ void Player::MovePlayer(float deltaTime) {
 
 	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
 	direction = direction.normalized();
-	parent->move(direction * stats->Speed() * deltaTime);
-	playerView->setCenter(parent->getPosition()); // set playerView center to player
+	parentS->move(direction * stats->Speed() * deltaTime);
+	playerView->setCenter(parentS->getPosition()); // set playerView center to player
 	UpdateFacingDirection();
 }
 
@@ -305,7 +307,7 @@ void Player::takeDamage(int _damage) {
 
 	_isVulnrable = false;
 	hitFlickerTimer.start();
-	parent->getSprite()->setColor(hitColour);
+	parent.lock()->getSprite()->setColor(hitColour);
 	playerUI->UpdateHealthbar(curHp);
 }
 
@@ -316,7 +318,7 @@ void Player::UpdateFacingDirection() {
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
 	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
 		facingDirection = newFacingDirection; // store new facing direction
-		parent->scaleObject(-1, 1); // flip player.
+		parent.lock()->scaleObject(-1, 1); // flip player.
 	}
 }
 
@@ -337,7 +339,7 @@ void Player::AddWeapon(int weaponIndex) {
 		}
 	}
 	if (firstEmpty == -1) { std::cerr << "\nTried to add weapon with full weaponHolder"; return; }
-	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
+	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent.lock()).lock();
 	weaponHolder[firstEmpty] = weapon;
 	weaponIndices[firstEmpty] = weaponIndex;
 	playerUI->UI_AddWeapon(firstEmpty, weaponIndex, weapon);
@@ -359,7 +361,7 @@ void Player::AddWeapon(int slotIndex, int weaponIndex) {
 		}
 
 
-	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
+	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent.lock()).lock();
 	weaponHolder[slotIndex] = weapon;
 	weaponIndices[slotIndex] = weaponIndex;
 	playerUI->UI_AddWeapon(slotIndex, weaponIndex, weapon);
@@ -413,7 +415,7 @@ const void Player::AddXP(int baseXp) {
 
 const json& Player::LoadInfoFromJson(std::string className) {
 	const auto& json = GameData::getPlayerClass(className);
-
+	auto parentS = parent.lock();
 	stats->LoadInfoFromJson(json);
 	sf::Vector2i size;
 	sf::Vector2i pos;
@@ -432,9 +434,9 @@ const json& Player::LoadInfoFromJson(std::string className) {
 
 
 	sf::IntRect rect = { pos, size };
-	parent->setSprite(playerAtlasTexture, rect);
+	parentS->setSprite(playerAtlasTexture, rect);
 	GameObjectManager::getInstance().add(parent, 10);
-	parent->setOrigin(size.x / 2.0f, size.y / 2.0f);
+	parentS->setOrigin(size.x / 2.0f, size.y / 2.0f);
 
 	if (json.contains("AnimationData")) {
 		// add this if we ever end up animating the player.

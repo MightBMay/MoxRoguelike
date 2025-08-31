@@ -90,8 +90,8 @@ void EnemyManager::add(std::shared_ptr<GameObject> obj) {
     enemyObjects_.push_back(obj);  // Store as weak_ptr (implicit conversion)
 }
 
-void EnemyManager::remove(std::shared_ptr<GameObject>& obj) {
-    if (!obj) return;
+void EnemyManager::remove(std::weak_ptr<GameObject>& obj) {
+    if (!obj.lock()) return;
 
     // Remove from main list
     enemyObjects_.erase(
@@ -100,7 +100,7 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj) {
             enemyObjects_.end(),
             [&obj](const std::weak_ptr<GameObject>& weakObj) {// Lambda that converts weak pointer 
                 auto sharedObj = weakObj.lock();            // to shared
-                return !sharedObj || sharedObj == obj; 
+                return !sharedObj || sharedObj == obj.lock(); 
             }
         ),
         enemyObjects_.end()
@@ -110,8 +110,8 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj) {
 
 }
 
-void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) {
-    if (!obj) return;
+void EnemyManager::remove(std::weak_ptr<GameObject>& obj, bool DestroyObject) {
+    if (!obj.lock()) return;
 
     // Remove from main list
     enemyObjects_.erase(
@@ -120,7 +120,7 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
             enemyObjects_.end(),
             [&obj](const std::weak_ptr<GameObject>& weakObj) { // Lambda that converts weak pointer 
                 auto sharedObj = weakObj.lock();              // to shared
-                return !sharedObj || sharedObj == obj; 
+                return !sharedObj || sharedObj == obj.lock(); 
             }
         ),
         enemyObjects_.end()
@@ -138,6 +138,13 @@ void EnemyManager::remove(std::shared_ptr<GameObject>& obj, bool DestroyObject) 
 /// </summary>
 
 void EnemyManager::getInRange(sf::Vector2f& position, float radius, std::vector<std::shared_ptr<GameObject>>& vec) {
+    for (auto& enemy : enemyObjects_) {
+        if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)
+            vec.push_back(enemy);
+    }
+}
+
+void EnemyManager::getInRange(sf::Vector2f& position, float radius, std::vector<std::weak_ptr<GameObject>>& vec) {
     for (auto& enemy : enemyObjects_) {
         if ((position - enemy->getPosition()).lengthSquared() < radius + enemy->getDerivativesOfComponent<Enemies::Enemy>()->_size)
             vec.push_back(enemy);

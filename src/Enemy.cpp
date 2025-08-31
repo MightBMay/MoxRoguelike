@@ -16,7 +16,7 @@ Enemies::Enemy::Enemy(int level, std::string enemyType) :level(level), enemyType
 
 void Enemies::Enemy::init() {
 	LoadInfoFromJson(enemyType);
-	EnemyManager::getInstance().add(parent->shared_from_this());
+	EnemyManager::getInstance().add(parent.lock()->shared_from_this());
 	hitFlickerTimer.getEndEvent().subscribe(shared_from_this(), &Enemy::ResetHitFlicker);
 	// upon adding enemymovement, this gameobject becomes an enemy.
 	// since GameobjectManager only uses raw pointers, and is only meant to handle drawing and updating gameobjects
@@ -25,7 +25,7 @@ void Enemies::Enemy::init() {
 
 	// have to manually add, since enemy object was created with no sprite, 
 	// it isn't added to renderlayers_ due to invalid drawable ptr.
-	GameObjectManager::getInstance().addExternalRenderable(parent->getRenderable(), 1);
+	GameObjectManager::getInstance().addExternalRenderable(parent.lock()->getRenderable(), 1);
 
 
 }
@@ -44,13 +44,14 @@ void Enemies::Enemy::SetPlayer(GameObject* player) {
 
 }
 void Enemies::Enemy::update(float deltatime) {
-	sf::Vector2f newDirection = (*playerPos - parent->getPosition());
+	auto parentS = parent.lock();
+	sf::Vector2f newDirection = (*playerPos - parentS->getPosition());
 	float newSqrMag = newDirection.lengthSquared();
 	if (newSqrMag <= halfSize) { direction = { 0,0 }; }
 	else if (newSqrMag > 0) {// avoids normalizing zero vector, which crashes.
 		direction = newDirection.normalized();
 		// "knockback" is handled in getspeed().
-		parent->move(direction * getSpeed() * deltatime);
+		parentS->move(direction * getSpeed() * deltatime);
 	}
 
 	// checks attack timer and range check on playerObj, and deals _damage if it should. 
@@ -70,16 +71,18 @@ void Enemies::Enemy::Attack(float deltaTime, GameObject* playerObj) {
 	}
 	//otherwise, attack.
 
+	auto parentS = parent.lock();
+
 	// 32 is the radius of the playerObj hitbox. 
 	constexpr int playerSize = 32 * 32; // squared playerObj size, because we use sqr magnitude.
-	if ((playerObj->getPosition() - parent->getPosition()).lengthSquared() - playerSize <= _size) {
+	if ((playerObj->getPosition() - parentS->getPosition()).lengthSquared() - playerSize <= _size) {
 
 #pragma region make hitbox sprite
 		auto hitbox = EnemyManager::getHitboxPool().make<TimedDestroy>(0,0.125f);
 		if (hitbox) {
 			hitbox->setSprite("../assets/sprites/shapes/circle_32.png", sf::IntRect{ {0,0},{32,32} });
 			hitbox->getSprite()->setColor(sf::Color(192, 0, 0, 128));
-			hitbox->setPosition(parent->getPosition());
+			hitbox->setPosition(parentS->getPosition());
 			hitbox->setOrigin(16, 16);
 			hitbox->setScale(_attackSize, _attackSize);
 			GameObjectManager::getInstance().add(hitbox, 0);
@@ -108,7 +111,7 @@ bool Enemies::Enemy::takeDamage(int _damage) {
 	}
 
 	hitFlickerTimer.start(true);
-	parent->getSprite()->setColor(hitColour);
+	parent.lock()->getSprite()->setColor(hitColour);
 	return false;
 
 }
@@ -119,13 +122,13 @@ void Enemies::Enemy::OnDeath() {
 
 
 void Enemies::Enemy::ResetHitFlicker() {
-	parent->getSprite()->setColor(sf::Color::White);
+	parent.lock()->getSprite()->setColor(sf::Color::White);
 }
 
 
 void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	auto& json = GameData::getEnemy(enemyType);
-
+	auto parentS = parent.lock();
 	if (json.contains("hp")) {
 		_maxHp = json["hp"];
 		_curHp = _maxHp;
@@ -176,12 +179,12 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 		sf::Vector2i pos = { rawTextCoords[0],rawTextCoords[1] };
 		
 		spriteRect = { pos ,size };
-		parent->setSprite(enemyAtlasTexture,spriteRect); 
+		parentS->setSprite(enemyAtlasTexture,spriteRect); 
 
 		if (spriteData.contains("animation data")) {
 			SpriteAnimation animation{ spriteRect };
 			animation.LoadFromJson(spriteData["animation data"]);
-			parent->addComponent<SpriteAnimator>(animation);
+			parentS->addComponent<SpriteAnimator>(animation);
 		}
 
 
@@ -189,9 +192,9 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	}
 	else {
 		std::cerr << "\nSprite path not defined for enemy: " << enemyType;
-		parent->setSprite("../assets/sprites/twig.png");
+		parentS->setSprite("../assets/sprites/twig.png");
 	}
-	parent->setOrigin(spriteRect.size.x / 2.0f, spriteRect.size.y / 2.0f);
+	parentS->setOrigin(spriteRect.size.x / 2.0f, spriteRect.size.y / 2.0f);
 
 
 }
@@ -201,6 +204,6 @@ void Enemies::Enemy::UpdateFacingDirection() {
 	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
 	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
 		facingDirection = newFacingDirection; // store new facing direction
-		parent->scaleObject(-1, 1); // flip playerObj.
+		parent.lock()->scaleObject(-1, 1); // flip playerObj.
 	}
 }

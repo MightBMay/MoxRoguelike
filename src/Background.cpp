@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "GameObject.h"
 void BackgroundImage::init() {
-	sprite = parent->getSprite();
+	sprite = parent.lock()->getSprite();
 }
 void BackgroundImage::update(float deltaTime)  {
 	

@@ -16,9 +16,10 @@ ProgressBar::ProgressBar(
 
 
 void ProgressBar::init() {
-	startScale = parent->getScale();
+	auto parentS = parent.lock();
+	startScale = parentS->getScale();
 
-	sf::IntRect parentRect = parent->getSprite()->getTextureRect();
+	sf::IntRect parentRect = parentS->getSprite()->getTextureRect();
 	sf::IntRect fillRect = fillSprite->getTextureRect();
 
 	// Calculate size differences
@@ -29,9 +30,9 @@ void ProgressBar::init() {
 	sf::Vector2f offset(widthDifference / 2.0f, heightDifference / 2.0f);
 
 	// Apply the offset to the parent's position
-	fillSprite->setPosition(parent->getPosition() + offset);
+	fillSprite->setPosition(parentS->getPosition() + offset);
 	auto& manager = GameObjectManager::getInstance();
-	manager.addExternalRenderable(renderable, manager.getRenderLayer(parent)+1);
+	manager.addExternalRenderable(renderable, manager.getRenderLayer(parentS)+1);
 }
 
 void ProgressBar::updateBar(int value) {

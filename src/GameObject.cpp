@@ -247,6 +247,8 @@ void GameObjectManager::removeExternalRenderable(std::shared_ptr<Renderable> tar
 void GameObjectManager::clearAll() {
     gameObjects_.clear();
     renderLayers_.clear();
+    gameObjects_.shrink_to_fit();
+    renderLayers_ = std::map<int, std::vector<std::shared_ptr<Renderable>>> ();
 }
 
 void GameObjectManager::updateAll(float deltaTime) {

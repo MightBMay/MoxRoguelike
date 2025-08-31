@@ -25,8 +25,10 @@ void UI_CooldownSprite::init(){
 	auto shared = weapon.lock(); // lock weakPtr to weapon
 	if (!shared) return; // if lock fails, exit.
 
+	auto parentS = parent.lock();
+
 	weaponMaxCooldown = shared->getAttackSpeed(); // get attack speed
-	originalScale = parent->getScale(); // get original scale
+	originalScale = parentS->getScale(); // get original scale
 
 	auto cdSprite = cooldownObject->getSprite(); // get actual MSprite
 	cdSprite->setColor(sf::Color(192, 192, 192, 96)); // set translucent white, and repeating (in case base texture not big enough)
@@ -38,11 +40,11 @@ void UI_CooldownSprite::init(){
 																	// this covers the sprite, and scales the top edge downwards.
 
 	// set position to the base sprite's position, plus offset to keep it covering the base sprite.
-	cooldownObject->setPosition(parent->getPosition() + sf::Vector2f{ 0.0f,static_cast<float>(textureRect.y/2)});
+	cooldownObject->setPosition(parentS->getPosition() + sf::Vector2f{ 0.0f,static_cast<float>(textureRect.y/2)});
 	cooldownObject->setScale(originalScale.x, 0); // set y scale to 0, as it starts off cooldown.
 
 	auto& manager = GameObjectManager::getInstance();
-	manager.setRenderLayer(cooldownObject, manager.getRenderLayer(parent)+1 ); // set to layer above the parent object
+	manager.setRenderLayer(cooldownObject, manager.getRenderLayer(parentS)+1 ); // set to layer above the parent object
 
 	//subscribe checkCooldown method to the weapon's event.
 	shared->getCooldownEvent().subscribe(shared_from_this(), &UI_CooldownSprite::CalculateScaleFromCooldown);

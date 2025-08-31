@@ -18,6 +18,7 @@ std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
 std::shared_ptr<sf::Text> fpsText;
+std::shared_ptr<GameObject> Background;
 
 
 void CreateClassSelectionScreen() {
@@ -100,7 +101,7 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 	Projectile::projPool.init(512, 10);
 
 #pragma region create background and vignette
-	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
+	Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
 		-110// move to layer -110 to stay behind things. 
@@ -172,7 +173,10 @@ int main() {
 			if (event->is<sf::Event::Closed>()) window->close();			
 		}
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) {
+			EnemyManager::SpawnEnemy(1, 500);
+			//EnemyManager::getInstance().Reset();
+		}
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Down)) player->getDerivativesOfComponent<Player>()->takeDamage(5);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
 

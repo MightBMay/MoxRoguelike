@@ -17,23 +17,25 @@ Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::
 }
 
 void Projectile::init() {
-	parent->setSprite(projectileAtlasTexture, textureRect); // load the correct sprite for the projectile
+	auto parentS = parent.lock();
+	parentS->setSprite(projectileAtlasTexture, textureRect); // load the correct sprite for the projectile
 	startPos = player.lock()->getPosition(); // set start position to the players position at time of making proj.
-	parent->setOrigin(16, 16);
-	parent->setRotation(vectorToAngle(direction));
-	parent->setPosition(startPos); // actually move projectile to the player position as well.
+	parentS->setOrigin(16, 16);
+	parentS->setRotation(vectorToAngle(direction));
+	parentS->setPosition(startPos); // actually move projectile to the player position as well.
 }
 
 
 
 void Projectile::update(float deltaTime) {
-	parent->move(direction * (*stats.speed) * deltaTime);
-	auto curPos = parent->getPosition();
+	auto parentS = parent.lock();
+	parentS->move(direction * (*stats.speed) * deltaTime);
+	auto curPos = parentS->getPosition();
 	auto temp = (curPos - startPos).lengthSquared();
 
 	if ((curPos - startPos).lengthSquared() >= *stats.range) {
 		projPool.release(parent);
-		parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
+		parentS->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 		// it looping the last trail until new proj made.
 
 	}
@@ -55,7 +57,7 @@ void Projectile::CheckEnemies(sf::Vector2f curPos) {
 		--pierceCount; // decrement and check pierce.
 		if (pierceCount <= 0) {
 			projPool.release(parent); // if no more pierce, remove.
-			parent->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
+			parent.lock()->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 			// it looping the last trail until new proj made.
 			break;
 		}

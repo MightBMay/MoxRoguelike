@@ -3,12 +3,13 @@
 
 
 void Vignette::init() {
+	auto parentS = parent.lock();
 	vignetteShader = std::make_shared<sf::Shader>();
 	if (!vignetteShader->loadFromFile("../assets/shaders/vignette.frag", sf::Shader::Type::Fragment)) {
 		std::cerr << "vignette shader not found\n";
 	}
-	parent->setShader(vignetteShader);
-	GameObjectManager::getInstance().setRenderLayer(parent, 100);
+	parentS->setShader(vignetteShader);
+	GameObjectManager::getInstance().setRenderLayer(parentS, 100);
 
 
 }

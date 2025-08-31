@@ -47,21 +47,26 @@ public:
 	}
 
 	void add(std::shared_ptr<GameObject>);
-	void remove(std::shared_ptr<GameObject>&);
-	void remove(std::shared_ptr<GameObject>&, bool DestroyObject);
+	void remove(std::weak_ptr<GameObject>&);
+	void remove(std::weak_ptr<GameObject>&, bool DestroyObject);
 	static GameObjectPool<TimedDestroy>& getHitboxPool() { return hitboxVisuals; }
-	static void removeHitboxVisual(std::shared_ptr<GameObject> obj) {
+	static void removeHitboxVisual(std::weak_ptr<GameObject> obj) {
 		hitboxVisuals.release(obj);
 	}
 	void Reset() {
+		std::cout << "EM PRE:" << enemyObjects_.size() << ", " << enemyObjects_.capacity();
+
 		hitboxVisuals.init(512,0);
 		enemyObjects_.clear();
+		enemyObjects_.shrink_to_fit();
+		std::cout << "EM POST:" << enemyObjects_.size() << ", " << enemyObjects_.capacity();
 	}
 	int count() {
 		return enemyObjects_.size();
 	}
 
 	static void getInRange(sf::Vector2f& position, float radius, std::vector<std::shared_ptr<GameObject>>& vec);
+	static void getInRange(sf::Vector2f& position, float radius, std::vector<std::weak_ptr<GameObject>>& vec);
 	static std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
 	static std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 

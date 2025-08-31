@@ -27,7 +27,7 @@ public:
 	
 		sf::Vector2f mousePos = Input::mousePos_World;
 		for (unsigned char i = 0; i < recastNum; ++i) {
-			sf::Vector2f direction =  mousePos - parent->getPosition();
+			sf::Vector2f direction =  mousePos - parent.lock()->getPosition();
 			if (direction.lengthSquared() > 0) 	direction = direction.normalized();
 
 			// Calculate the angle offset for this projectile

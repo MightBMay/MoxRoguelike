@@ -11,7 +11,7 @@ public:
 
 	virtual void Fire() override {
 		const float projectileScaleFactor = 1.666f;
-		auto position = parent->getPosition();
+		auto position = parent.lock()->getPosition();
 		auto closestEnemy = EnemyManager::getClosest(position, range);
 		if (!closestEnemy) return; // in case no enemy was in range.
 		sf::Vector2f direction = (closestEnemy->getPosition() - position);

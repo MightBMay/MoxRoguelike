@@ -18,8 +18,8 @@ void AOE_Projectile::DoAOE(sf::Vector2f pos, float radius) {
 
 void AOE_Projectile::update(float deltaTime) {
 	
-	parent->move(direction * (*stats.speed) * deltaTime);
-	auto curPos = parent->getPosition();
+	parent.lock()->move(direction * (*stats.speed) * deltaTime);
+	auto curPos = parent.lock()->getPosition();
 
 	if ((curPos - startPos).lengthSquared() >= *stats.range) {
 		DoAOE(curPos, aoeSize); // do aoe by default if out of range.

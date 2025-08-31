@@ -17,7 +17,7 @@ void UI_Element::onMouseClick() {
 }
 
 void UI_Element::update(float deltaTime) {
-	if (!parent->hasSprite()) return;
+	if (!parent.lock()->hasSprite()) return;
 	bool currentlyHovering = isHovering();
 
 	// if you weren't hovering last update() and are now,
@@ -47,7 +47,7 @@ bool UI_Element::isHovering() {
 	if (!enabled) return false;
 
 	// get sprite from parent
-	auto sprite = parent->getSprite();
+	auto sprite = parent.lock()->getSprite();
 	if (!sprite) {
 		return false; // No sprite to hover over
 	}

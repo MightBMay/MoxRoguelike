@@ -7,8 +7,9 @@
 
 void OrbitProjectile::init() {
     player_s = player.lock();
-    parent->setSprite(projectileAtlasTexture, { {0,0}, {32,32} }); // load the correct sprite for the projectile
-    parent->setOrigin(16, 16);
+    auto parentS = parent.lock();
+    parentS->setSprite(projectileAtlasTexture, { {0,0}, {32,32} }); // load the correct sprite for the projectile
+    parentS->setOrigin(16, 16);
 }       // Called when component is added
 void OrbitProjectile::update(float deltaTime) {
 
@@ -18,18 +19,18 @@ void OrbitProjectile::update(float deltaTime) {
         projPool.release(parent);
         return;
     }
-
+    auto parentS = parent.lock();
     // Update orbital position
     currentOrbitAngle += orbitSpeed * deltaTime;
 
     // Calculate new position
     sf::Vector2 offset(std::cos(currentOrbitAngle.asRadians()), std::sin(currentOrbitAngle.asRadians()));
     sf::Vector2f newPos = player_s->getPosition() + (offset * orbitRadius);
-    parent->setPosition(newPos);
+    parentS->setPosition(newPos);
 
     // OPTIONAL: Set sprite rotation (tangent to orbit)
     sf::Vector2 tangent(-offset.y, offset.x);
-    parent->setRotation(vectorToAngle(tangent));
+    parentS->setRotation(vectorToAngle(tangent));
 
     // update cooldown per target.
     for (auto& [enemy, cooldown] : enemyCooldowns) {

@@ -12,7 +12,7 @@ public:
 
 	virtual void Fire() override {
 		static const sf::Vector2f zero(0, 0);
-		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent->getPosition(), range);
+		std::shared_ptr<GameObject> closestEnemy = EnemyManager::getClosest(parent.lock()->getPosition(), range);
 		if (!closestEnemy) return;
 		ProjectileStats stats{ &damage,&speed,&range,&projRadius,pierce };
 		auto projectile = projPool.make<OrbitProjectile>(5, zero, stats, projectileRect);

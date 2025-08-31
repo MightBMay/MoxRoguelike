@@ -14,7 +14,7 @@ void TrailRenderer::update(float deltaTime) {
 	auto now = std::chrono::steady_clock::now();
 	// Add new point
     if(points.size()<128)
-	    points.push_back({ parent->getPosition(), now });
+	    points.push_back({ parent.lock()->getPosition(), now});
 
 	// Remove expired points
 	auto it = points.begin();

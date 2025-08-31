@@ -90,13 +90,13 @@ public:
 	}
 
 	void Hide() {
-		parent->setActive(false, true);
+		parent.lock()->setActive(false, true);
 		for (auto& obj : contentObjects)
 			obj->setActive(false, true);
 	}
 
 	void Show() {
-		parent->setActive(true, true);
+		parent.lock()->setActive(true, true);
 		for (auto& obj : contentObjects)
 			obj->setActive(true, true);
 	}
