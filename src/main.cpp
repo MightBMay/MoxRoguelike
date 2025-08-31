@@ -118,6 +118,7 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 	manager.addExternalRenderable(fpsText, 1000); // since we don't recreate the fps text, gotta re add the renderable.
 
 	CreateClassSelectionScreen();
+
 }
 
 
@@ -170,12 +171,13 @@ int main() {
 			Input::HandleEvent(event);
 			if (event->is<sf::Event::Closed>()) window->close();			
 		}
-
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1);
+		//Debug
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Down)) player->getDerivativesOfComponent<Player>()->takeDamage(5);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
 
-
+		//end of debug
+		
 		// Update and render
 		
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
