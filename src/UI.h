@@ -38,9 +38,9 @@ protected:
 
 	bool enabled = true;
 
-
-private:
 	std::shared_ptr<sf::RenderWindow> window;
+private:
+	
 	bool wasHovering = false;
 
 

@@ -45,7 +45,7 @@
 //	}
 
 
-class UI_ScrollContainer : public Component {
+class UI_ScrollContainer : public UI_Element {
 private:
 
 	sf::FloatRect viewPortBounds;
@@ -63,13 +63,16 @@ private:
 	float fadeWidth = 32;
 	sf::Vector2i contentThatCanFitInView;
 
-
+	std::shared_ptr<MSprite> sprite;
 	std::vector<std::shared_ptr<GameObject>> contentObjects;
 	std::vector<sf::Vector2f> originalPositions;
 
 public:
-	UI_ScrollContainer(const sf::FloatRect& viewportBounds, sf::Vector2f contentObjectSize, sf::Vector2f contentSpacing = {32,0}, float fadeWidth = 16, float elasticity = 1)
-		: viewPortBounds(viewportBounds),
+	UI_ScrollContainer(std::shared_ptr<sf::RenderWindow> window,
+		const sf::FloatRect& viewportBounds, sf::Vector2f contentObjectSize,
+		sf::Vector2f contentSpacing = { 32,0 }, float fadeWidth = 16, float elasticity = 1)
+		: UI_Element(window),
+		viewPortBounds(viewportBounds),
 		elasticity(elasticity),
 		contentSize(contentObjectSize),
 		contentSpacing(contentSpacing),
@@ -77,6 +80,7 @@ public:
 		int h = viewportBounds.size.x / contentObjectSize.x;
 		int v = viewportBounds.size.y / contentObjectSize.y;
 		contentThatCanFitInView = { h,v };
+	
 	}
 
 	void Destroy() override {}
@@ -177,14 +181,15 @@ public:
 		}
 	}
 
-	void update(float deltaTime) {
+	virtual void update(float deltaTime) override {
+		UI_Element::update(deltaTime);
 		if (!enabled) return;
+		
 
 		auto mPosInt = Input::mousePos_Screen;
 		sf::Vector2f mousePos = { static_cast<float>(mPosInt.x) ,static_cast<float>(mPosInt.y) };
-
 		if (Input::GetMouseDown(0)) {
-			if (!viewPortBounds.contains(mousePos)) return;
+			if (!isHovering()) return;
 			isDragging = true;
 			dragStartPos = mousePos;
 			contentStartPos = contentPosition;
@@ -224,7 +229,7 @@ public:
 			auto& shader = item->getRenderable()->shader;
 			if (shader) {
 				shader->setUniform("viewportPosition", viewPortBounds.position);
-				shader->setUniform("viewportSize", viewPortBounds.size);
+				shader->setUniform("viewportSize", sprite->getGlobalBounds().size);
 				shader->setUniform("fadeWidth", fadeWidth);
 				shader->setUniform("texture", sf::Shader::CurrentTexture);
 			}
@@ -247,6 +252,17 @@ public:
 	void setViewportBounds(const sf::FloatRect& bounds) {
 		viewPortBounds = bounds;
 	}
+
+	virtual void init()override {
+		UI_Element::init();
+		sprite = parent.lock()->getSprite();
+	}
+
+	// not used, but we inherit UI_Element such that position is perserved when resizing window.
+	virtual void OnHover()override {}
+	virtual void OnHoverExit()override {}
+	virtual void OnClick(const int button)override {}
+
 };
 
 

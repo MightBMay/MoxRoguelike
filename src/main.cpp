@@ -24,10 +24,11 @@ std::shared_ptr<GameObject> Background;
 void CreateClassSelectionScreen() {
 	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
-	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/square_128.png", { {},{809,128} }, 130);
+	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{809,128} }, 130);
 	scrollContainerObj->setPosition(scrollContainerRect.position); // subtract a lil to offset the background from the content.
 	// create scrollContainer
 	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
+		window,
 		scrollContainerRect,
 		sf::Vector2f{ 128, 128 } // set this to the size of the content's sprites.
 	);
