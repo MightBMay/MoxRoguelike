@@ -24,7 +24,7 @@ public:
 protected:
 	
 private:
-	static inline const float duration = 7.5f;
+	static inline const float duration = 10;
 	static inline const float redamageInterval = 0.5f;
 	float remainingRedamageDuration = 0;
 	float remainingDuration = duration;

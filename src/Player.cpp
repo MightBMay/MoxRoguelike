@@ -193,11 +193,10 @@ void Player::init() {
 	//AddWeapon(2, 2);
 	//AddWeapon(3, 3);
 
-	//auto& tempWep = weaponHolder[0].lock();
-	//for (int i = 0; i < 10; ++i) {
-	// tempWep->UpdateStats();
-	//}
-	//std::cout << tempWep->isMaxLevel();
+	AddStat(Health);
+	AddStat(HealthRegen);
+	AddStat(Defence);
+	AddStat(Damage);
 
 	CreateAbilities(window);
 

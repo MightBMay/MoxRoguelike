@@ -6,10 +6,10 @@ enum StatType
 {
 	Empty,
 	Health,
+	HealthRegen,
 	Defence,
 	Damage,
 	Speed,
-	HealthRegen,
 	AttackSpeed,
 	Gold,
 	/// <summary>

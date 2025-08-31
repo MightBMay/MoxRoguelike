@@ -89,6 +89,18 @@ public:
 		updateContentBounds();
 	}
 
+	void Hide() {
+		parent->setActive(false);
+		for (auto& obj : contentObjects)
+			obj->setActive(false);
+	}
+
+	void Show() {
+		parent->setActive(true);
+		for (auto& obj : contentObjects)
+			obj->setActive(true);
+	}
+
 	void clearContent() {
 		contentObjects.clear();
 		originalPositions.clear();
@@ -227,7 +239,7 @@ public:
 		_vertical = vertical;
 	}
 	// Getters and setters
-	void setEnabled(bool enabled) { enabled = enabled; }
+	void setEnabled(bool value) { enabled = value; }
 	bool isEnabled() const { return enabled; }
 	sf::Vector2f getContentPosition() const { return contentPosition; }
 

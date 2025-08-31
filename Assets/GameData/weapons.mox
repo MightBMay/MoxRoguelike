@@ -85,7 +85,7 @@
       "description": "Sow:\nCreate a projectile that\nfollows the cursor, dealing\ndamage and marking any\nenemy hit with Sow",
       "damage": 1,
       "speed": 3000,
-      "attackSpeed": 3,
+      "attackSpeed": 0.2,
       "projectile data": {
         "textureStartPos": [ 0, 64 ],
         "spriteSize": [ 48, 48 ],
