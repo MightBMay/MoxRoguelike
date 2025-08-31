@@ -14,6 +14,7 @@ public:
 
 
 	static const json& getPlayerClass(const std::string& className);
+	static const json& getPlayerClassFromIndex(const int& index);
 
 	static const json& getEnemy(const std::string& enemyType);
 

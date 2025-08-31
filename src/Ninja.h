@@ -7,7 +7,7 @@
 namespace playerClasses {
 	class Ninja : public Player {
 	public:
-		Ninja() :Player("Papyrmancer") {
+		Ninja() :Player("Ninja") {
 
 		}
 

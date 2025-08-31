@@ -14,7 +14,7 @@ WeaponBase::WeaponBase(std::string& weaponName) :name(weaponName) {
 	playerStats = Player::getStats();
 };
 
-const float& WeaponBase::getAttackSpeed() const { return playerStats->AttackSpeed(attackSpeed); }
+const float WeaponBase::getAttackSpeed() const { return playerStats->AttackSpeed(attackSpeed); }
 
 
 

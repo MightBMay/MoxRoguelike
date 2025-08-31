@@ -150,6 +150,7 @@ class Player : public Component, public std::enable_shared_from_this<Player> {
 public:
 
 	static const std::map<int, std::function<std::weak_ptr<Player>(std::shared_ptr<GameObject>)>> const playerClassList;
+	static inline std::shared_ptr <sf::Texture> playerAtlasTexture;
 	static std::shared_ptr<GameObject> CreatePlayerClass(int classIndex);
 	static int PlayerClassListSize() { return playerClassList.size(); }
 

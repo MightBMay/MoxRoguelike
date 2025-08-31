@@ -44,6 +44,11 @@ bool GameData::loadAllData() {
 const json& GameData::getPlayerClass(const std::string& className) {
 	return (*s_player_classes)["player_classes"][className];
 }
+const json& GameData::getPlayerClassFromIndex(const int& index) {
+	return getPlayerClass( 
+		(*s_player_classes)["IndexToClass"][std::to_string(index)]
+	);
+}
 
 const json& GameData::getEnemy(const std::string& enemyType) {
 	return (*s_enemies)["enemies"][enemyType];

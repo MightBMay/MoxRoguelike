@@ -17,7 +17,64 @@ std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 
 std::shared_ptr<GameObject> player;
+std::shared_ptr<sf::Text> fpsText;
 
+
+void CreateClassSelectionScreen() {
+	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
+// make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
+	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/square_128.png", { {},{809,128} }, 130);
+	scrollContainerObj->setPosition(scrollContainerRect.position); // subtract a lil to offset the background from the content.
+	// create scrollContainer
+	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
+		scrollContainerRect,
+		sf::Vector2f{ 128, 128 } // set this to the size of the content's sprites.
+	);
+	auto scrollContainerSprite = scrollContainerObj->getSprite(); // set values for scroll container's sprite.
+	scrollContainerSprite->SetRepeated(true);
+	scrollContainerSprite->setColor(sf::Color(0, 0, 0, 64));
+
+
+	auto scrollRectShader = std::make_shared<sf::Shader>(); // shader needed to mask content.
+	if (!scrollRectShader->loadFromFile("../assets/shaders/ScrollRectMask.frag", sf::Shader::Type::Fragment)) {
+		std::cerr << "\nSpriteRectMask shader not found.";
+	}
+	sf::Vector2i playerSpriteSize{ 128,128 }; // again, size of the content's sprite.
+	auto scrollContainer_S = scrollContainer.lock();
+	int quantity = Player::playerClassList.size();
+	for (int i = 0; i < quantity; ++i) {
+		// create content object and do whatever you need to be done to it.
+		const json& classData = GameData::getPlayerClassFromIndex(i);
+		sf::Vector2i size;
+		sf::Vector2i pos;
+		if (classData.contains("spriteSize")) {
+			auto rawSize = classData["spriteSize"].get<std::vector<int>>();
+			size = { rawSize[0],rawSize[1] };
+		}
+
+
+		if (classData.contains("textureStartPos")) {
+			auto rawSize = classData["textureStartPos"].get<std::vector<int>>();
+			pos = { rawSize[0],rawSize[1] };
+		}
+
+
+		auto& temp = GameObject::Create("../assets/sprites/atlases/playerSprites.png", { pos, size }, 131);
+		temp->setShader(scrollRectShader);
+		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe(
+			[i, scrollContainerObj, scrollContainer]() {
+				player = Player::CreatePlayerClass(i);
+				scrollContainer.lock()->Hide();
+				scrollContainerObj->setActive(false, true);
+
+			}
+		);
+		// set position accordingly
+		temp->setPosition(scrollContainerRect.position.x + (playerSpriteSize.x * i), scrollContainerRect.position.y);
+		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
+	}
+
+}
 
 void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText);
 
@@ -28,17 +85,21 @@ void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 	elapsed_seconds = 0;
 	second_Timer.cancel();// stops and resets timer
 	second_Timer.start(); // re start the timer.
+
+	GameData::loadAllData();// technically allows hotreloading anything loaded from json
+	Input::Initialize();
 	InitializeGame(manager,fpsText);
+	
 
 
 
 }
 
 void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
-	playerView->setCenter({});
+	playerView->setCenter({}); // sets center to 0,0.
 	Projectile::projPool.init(512, 10);
 
-#pragma region create background
+#pragma region create background and vignette
 	std::shared_ptr<GameObject> Background = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
 		sf::IntRect{ {0,0},{1920,1080} },
@@ -48,14 +109,15 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
-#pragma endregion
-
 
 	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
 	vignetteObj->addComponent<Vignette>();
+#pragma endregion
 
 	
-	manager.addExternalRenderable(fpsText, 1000);
+	manager.addExternalRenderable(fpsText, 1000); // since we don't recreate the fps text, gotta re add the renderable.
+
+	CreateClassSelectionScreen();
 }
 
 
@@ -68,7 +130,9 @@ int main() {
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
-	font.openFromFile("../assets/fonts/amazon ember.ttf");
+	if (!font.openFromFile("../assets/fonts/amazon ember.ttf")) 
+		std::cerr << "font  file was not found";
+	
 #pragma endregion
 	
 #pragma region create delta time dt_clock
@@ -85,50 +149,9 @@ int main() {
 #pragma endregion
 
 	GameData::loadAllData();
-	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
 	Input::Initialize();
-
-
-	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
-	// make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
-	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/square_128.png", { {},{809,128} }, 130);
-	scrollContainerObj->setPosition(scrollContainerRect.position); // subtract a lil to offset the background from the content.
-	// create scrollContainer
-	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
-		scrollContainerRect,
-		sf::Vector2f{ 128, 128 } // set this to the size of the content's sprites.
-	);
-	auto scrollContainerSprite = scrollContainerObj->getSprite(); // set values for scroll container's sprite.
-	scrollContainerSprite->SetRepeated(true);
-	scrollContainerSprite->setColor(sf::Color(0,0,0,64));
-
-
-	auto scrollRectShader = std::make_shared<sf::Shader>(); // shader needed to mask content.
-	if (!scrollRectShader->loadFromFile("../assets/shaders/ScrollRectMask.frag", sf::Shader::Type::Fragment)) {
-		std::cerr << "\nSpriteRectMask shader not found.";
-	}
-	sf::IntRect contentRect = { {},{128,128} }; // again, size of the content's sprite.
-	auto scrollContainer_S = scrollContainer.lock();
-	int quantity = Player::playerClassList.size();
-	for (int i = 0; i < quantity; ++i) {
-		// create content object and do whatever you need to be done to it.
-		auto& temp = GameObject::Create("../assets/sprites/shapes/square_128.png", contentRect, 131);
-		temp->setShader(scrollRectShader);
-		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe(
-			[i, scrollContainer]() {
-			player = Player::CreatePlayerClass(i);
-			scrollContainer.lock()->Hide();
-			}
-		);
-		// set position accordingly
-		temp->setPosition(scrollContainerRect.position.x + (contentRect.size.x * i), scrollContainerRect.position.y);
-		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
-	}
-
-
-
-
-	std::shared_ptr<sf::Text> fpsText = std::make_shared<sf::Text>(font);
+	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
+	fpsText = std::make_shared<sf::Text>(font);
 	fpsText->setOutlineThickness(2);
 	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
 

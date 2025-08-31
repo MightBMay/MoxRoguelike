@@ -11,6 +11,9 @@
 #include "Ninja.h"
 
 using playerObj = const std::shared_ptr<GameObject>;
+
+static const std::string& playerAtlasPath = "../assets/sprites/atlases/playersprites.png";
+
 const std::map<int, std::function<std::weak_ptr<Player>(playerObj)>> Player::playerClassList
 {
 	{0,[](playerObj obj) {return obj->addComponent<playerClasses::Papyrmancer>(); }},
@@ -29,7 +32,7 @@ void StatGroup::UpdateValues(std::shared_ptr<StatUpgrade> upgrade) {
 
 
 /// <returns>Player's max HP modified by any upgrades to their stats.</returns>
-const int PlayerStats::MaxHp() const { 
+const int PlayerStats::MaxHp() const {
 	return maxHp.evaluate();
 }
 /// <returns>Player's health regen modified by any upgrades to their stats.</returns>
@@ -41,11 +44,11 @@ const int PlayerStats::Defence()const {
 	return defence.evaluate();
 }
 /// <returns>Player's speed modified by any upgrades to their stats.</returns>
-const float PlayerStats::Speed() const { 
+const float PlayerStats::Speed() const {
 	return speed.evaluate();
 }
 /// <returns> given damage amount, modified by any upgrades to their stats.</returns>
-const int PlayerStats::Damage(int originalDamage) const { 
+const int PlayerStats::Damage(int originalDamage) const {
 	return damage.evaluate(originalDamage);
 }
 /// <returns>given base attack speed, modified by any upgrades to their stats.</returns>
@@ -59,7 +62,7 @@ const int& PlayerStats::CurXP() const { return curXp; }
 
 std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 
-	for (auto& upgrade :statUpgrades) { // iterate upgrade array
+	for (auto& upgrade : statUpgrades) { // iterate upgrade array
 
 		if (!upgrade) { // if array element is null, fill with new upgrade, then exit.
 			upgrade = std::make_shared<StatUpgrade>(type);
@@ -75,7 +78,7 @@ std::shared_ptr<StatUpgrade> PlayerStats::AddUpgrade(StatType type) {
 
 	RecalculateStats();
 	return nullptr;
-	
+
 }
 
 void PlayerStats::RecalculateStats() {
@@ -83,7 +86,7 @@ void PlayerStats::RecalculateStats() {
 		if (!upgrade) return; // return early, as array is filled 
 							  //from lowest to highest index
 
-		switch (upgrade->type) { 
+		switch (upgrade->type) {
 			case StatType::Health:
 				maxHp.UpdateValues(upgrade);
 				onMaxHealthChange.invoke(maxHp.evaluate());
@@ -113,7 +116,7 @@ void PlayerStats::RecalculateStats() {
 
 
 void PlayerStats::LoadInfoFromJson(const json& json) {
-	
+
 	if (json.contains("health")) {
 		maxHp = StatGroup(json["health"]);
 		curHp = maxHp.getBase();
@@ -158,14 +161,14 @@ void PlayerStats::LoadInfoFromJson(const json& json) {
 
 
 Player::Player(std::string className) :className(className), hitFlickerTimer(hitFlickerDuration) {
-
+	playerAtlasTexture = TextureManager::getTexture(playerAtlasPath);
 }
 
 void Player::init() {
 	auto sharedThis = shared_from_this();
-	
+
 	playerUI = std::make_shared<PlayerUI>(sharedThis);
-	stats = std::make_shared<PlayerStats>(className,statUpgradeHolder);
+	stats = std::make_shared<PlayerStats>(className, statUpgradeHolder);
 	LoadInfoFromJson(className);
 	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
 
@@ -174,7 +177,7 @@ void Player::init() {
 	int maxHp = stats->MaxHp();
 	// have to set these in player because we need values from stats, and stats and playerUI need eachothers values.
 	playerUI->healthBar = playerUI->healtBarObj->addComponent<ProgressBar>(
-		sf::IntRect{{ 0,0 }, { 256,32 }},
+		sf::IntRect{ { 0,0 }, { 256,32 } },
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
 		0,
@@ -200,11 +203,11 @@ void Player::init() {
 
 	CreateAbilities(window);
 
-	
-	
-	
 
-	
+
+
+
+
 
 }
 
@@ -292,11 +295,11 @@ std::shared_ptr<GameObject> Player::CreatePlayerClass(int classIndex) {
 
 
 
-void Player::takeDamage(int _damage){
+void Player::takeDamage(int _damage) {
 	int& curHp = stats->getCurHp();
 	curHp -= _damage;
 	curHp = std::max(curHp, 0);
-	if(curHp <=0){
+	if (curHp <= 0) {
 		// player death here
 	}
 
@@ -323,10 +326,10 @@ void Player::UpdateFacingDirection() {
 /// <param name="weaponIndex"></param>
 void Player::AddWeapon(int weaponIndex) {
 	int firstEmpty = -1;
-	for (size_t i = 0; i < weaponIndices.size();i++)
+	for (size_t i = 0; i < weaponIndices.size(); i++)
 	{
 		if (weaponIndices[i] == weaponIndex) { // if already has weapon, level it up
-			weaponHolder[i].lock()->LevelUp(); 
+			weaponHolder[i].lock()->LevelUp();
 			return;
 		}
 		if (weaponIndices[i] == -1 && firstEmpty == -1) { // if this is the first empty slot, store it.
@@ -338,7 +341,7 @@ void Player::AddWeapon(int weaponIndex) {
 	weaponHolder[firstEmpty] = weapon;
 	weaponIndices[firstEmpty] = weaponIndex;
 	playerUI->UI_AddWeapon(firstEmpty, weaponIndex, weapon);
-	
+
 }
 /// <summary>
 /// manually adds a weapon to a slot. if you already have the weapon, instead levels the existing one up.
@@ -348,13 +351,13 @@ void Player::AddWeapon(int weaponIndex) {
 void Player::AddWeapon(int slotIndex, int weaponIndex) {
 	if (slotIndex > 6 || slotIndex < 0) return;// check slotIndex bounds
 
-	for (int i = 0; i < weaponIndices.size();++i) // if weapon already exists on player, level it up instead.
-		if (weaponIndices[i] == weaponIndex) { 
+	for (int i = 0; i < weaponIndices.size(); ++i) // if weapon already exists on player, level it up instead.
+		if (weaponIndices[i] == weaponIndex) {
 			weaponHolder[i].lock()->LevelUp();
-			
-			return; 
+
+			return;
 		}
-	
+
 
 	std::shared_ptr<WeaponBase> weapon = WeaponBase::CreateWeapon(weaponIndex, parent).lock();
 	weaponHolder[slotIndex] = weapon;
@@ -379,7 +382,7 @@ bool Player::isWeaponMaxLevel(int weaponIndex) {
 
 }
 int Player::hasWeapon(int weaponIndex) {
-	for (int i =0;i<weaponIndices.size();++i)
+	for (int i = 0; i < weaponIndices.size(); ++i)
 		if (weaponIndices[i] == weaponIndex) return i;
 	return -1;
 }
@@ -388,15 +391,15 @@ bool Player::isStatUpgradeMaxLevel(StatType type) {
 	int slotNumber = hasStat(type);
 	if (slotNumber < 0 || slotNumber >= statUpgradeHolder.size()) return false;
 
-	auto statS = statUpgradeHolder[slotNumber];
+	auto& statS = statUpgradeHolder[slotNumber];
 	if (!statS) return false;
 	return statS->isMaxLevel();
 }
 int Player::hasStat(StatType type) {
-	for (int i = 0; i<statUpgradeHolder.size(); ++i)
-		
+	for (int i = 0; i < statUpgradeHolder.size(); ++i)
+
 		if (statUpgradeHolder[i] && statUpgradeHolder[i]->type == type) return i;
-	
+
 	return -1;
 }
 
@@ -412,21 +415,32 @@ const json& Player::LoadInfoFromJson(std::string className) {
 	const auto& json = GameData::getPlayerClass(className);
 
 	stats->LoadInfoFromJson(json);
-
-	if (json.contains("spritePath") && json.contains("spriteSize")) {
+	sf::Vector2i size;
+	sf::Vector2i pos;
+	if (json.contains("spriteSize")) {
 		auto rawSize = json["spriteSize"].get<std::vector<int>>();
-		sf::Vector2i size = { rawSize[0],rawSize[1] };
-
-		parent->setSprite(json["spritePath"], { {},size });
-		GameObjectManager::getInstance().add(parent, 10);
-		parent->setOrigin(size.x / 2, size.y / 2);
-
-		if (json.contains("AnimationData")) {
-
-		}
-
+		size = { rawSize[0],rawSize[1] };
 	}
-	else { std::cerr << "\nsprite not loaded for: " << className; }
+	else std::cout << "\nspriteSize not defined for player class: " << className;
+
+
+	if (json.contains("textureStartPos")) {
+		auto rawSize = json["textureStartPos"].get<std::vector<int>>();
+		pos = { rawSize[0],rawSize[1] };
+	}
+	else std::cout << "\ntextureStartPos not defined for player class: " << className;
+
+
+	sf::IntRect rect = { pos, size };
+	parent->setSprite(playerAtlasTexture, rect);
+	GameObjectManager::getInstance().add(parent, 10);
+	parent->setOrigin(size.x / 2.0f, size.y / 2.0f);
+
+	if (json.contains("AnimationData")) {
+		// add this if we ever end up animating the player.
+	}
+
+
 
 
 

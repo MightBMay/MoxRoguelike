@@ -90,15 +90,15 @@ public:
 	}
 
 	void Hide() {
-		parent->setActive(false);
+		parent->setActive(false, true);
 		for (auto& obj : contentObjects)
-			obj->setActive(false);
+			obj->setActive(false, true);
 	}
 
 	void Show() {
-		parent->setActive(true);
+		parent->setActive(true, true);
 		for (auto& obj : contentObjects)
-			obj->setActive(true);
+			obj->setActive(true, true);
 	}
 
 	void clearContent() {
@@ -165,7 +165,7 @@ public:
 
 	void updateContentPositions() {
 		for (size_t i = 0; i < contentObjects.size(); ++i) {
-			if (auto obj = contentObjects[i]) {
+			if (auto& obj = contentObjects[i]) {
 				// Calculate new position based on original + scroll offset
 				sf::Vector2f newPos = originalPositions[i] + contentPosition + contentSpacing;
 				obj->setPosition(newPos);

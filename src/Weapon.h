@@ -76,7 +76,7 @@ public:
 	const float& getRange() const { return range; }
 	const float& getProjectileRadius() const { return projRadius; }
 	const float& getPierce() const { return pierce; }
-	const float& getAttackSpeed() const;
+	const float getAttackSpeed() const;
 	const float& getAttackTimer() const { return attackTimer; }
 
 
