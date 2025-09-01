@@ -8,7 +8,7 @@ extern std::shared_ptr<sf::RenderWindow> window;
 extern std::shared_ptr<sf::View> playerView;
 
 
-static inline sf::Font font;
-static inline Timer second_Timer{ 1,true };
-static inline int elapsed_seconds = 0;
-static inline float timeScale = 1.0f;
+extern  sf::Font font;
+extern  Timer second_Timer;
+extern  int elapsed_seconds;
+extern  float timeScale;

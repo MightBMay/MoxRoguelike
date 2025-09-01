@@ -1,7 +1,5 @@
 #pragma once
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Shader.hpp>
-#include <memory>
+#include "pch.h"
 struct Renderable {
 	std::weak_ptr<sf::Drawable> drawable;
 	std::shared_ptr<sf::Shader> shader;

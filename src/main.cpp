@@ -12,14 +12,24 @@
 
 
 
+#pragma region global.h extern definitions
 
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
+sf::Font font;
+Timer second_Timer{ 1,true };
+int elapsed_seconds = 0;
+float timeScale = 1.0f;
+
+
+#pragma endregion
+
 
 std::shared_ptr<GameObject> player;
-std::shared_ptr<sf::Text> fpsText;
 std::shared_ptr<GameObject> Background;
 std::shared_ptr<GameObject> vignetteObject;
+
+std::shared_ptr<FPS_Counter> fpsCounter;
 
 void CreateClassSelectionScreen() {
 	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
@@ -79,9 +89,9 @@ void CreateClassSelectionScreen() {
 
 }
 
-void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText);
+void InitializeGame(GameObjectManager& manager);
 
-void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
+void ResetAll(GameObjectManager& manager) {
 
 	GameObjectManager::getInstance().clearAll();
 	EnemyManager::getInstance().Reset();
@@ -90,14 +100,21 @@ void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 
 	GameData::loadAllData();// technically allows hotreloading anything loaded from json
 	Input::Initialize();
-	InitializeGame(manager,fpsText);
+	InitializeGame(manager);
 	
 
 
 
 }
 
-void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
+void InitializeGame(GameObjectManager& manager) {
+	GameData::loadAllData();
+	Input::Initialize();
+
+	if (!font.openFromFile("../assets/fonts/amazon ember.ttf"))
+		std::cerr << "font  file was not found";
+	fpsCounter = std::make_shared<FPS_Counter>(font, true);
+
 	playerView->setCenter({}); // sets center to 0,0.
 	Projectile::projPool.init(512, 10);
 
@@ -116,9 +133,6 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 	vignetteObject->addComponent<Vignette>();
 #pragma endregion
 
-	
-	manager.addExternalRenderable(fpsText, 1000); // since we don't recreate the fps text, gotta re add the renderable.
-
 	CreateClassSelectionScreen();
 
 }
@@ -133,8 +147,7 @@ int main() {
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
-	if (!font.openFromFile("../assets/fonts/amazon ember.ttf")) 
-		std::cerr << "font  file was not found";
+	
 	
 #pragma endregion
 	
@@ -144,26 +157,15 @@ int main() {
 
 #pragma endregion
 
-#pragma region FPS logging
-	sf::Clock fpsClock;// s.e
-	sf::Time timeSinceLastUpdate = sf::Time::Zero;
-	int frameCount = 0;
-	const sf::Time updateInterval = sf::seconds(0.25f);
-#pragma endregion
 
-	GameData::loadAllData();
-	Input::Initialize();
+
 	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
-	fpsText = std::make_shared<sf::Text>(font);
-	fpsText->setOutlineThickness(2);
-	std::shared_ptr<Renderable> fpsTextRenderable = std::make_shared<Renderable>(fpsText, nullptr);
-
-	InitializeGame(manager, fpsTextRenderable);	
+	InitializeGame(manager);	
 #pragma endregion
 
 	
 	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
-	std::ostringstream timer_stringStream;
+
 
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
@@ -174,12 +176,10 @@ int main() {
 			if (event->is<sf::Event::Closed>()) window->close();			
 		}
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) {
-			EnemyManager::SpawnEnemy(1, 500);
-			//EnemyManager::getInstance().Reset();
-		}
-
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Period)) fpsCounter->SetShowFps(true);
+		else if (Input::GetKeyDown(sf::Keyboard::Scancode::Comma)) fpsCounter->SetShowFps(false);
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
 		//end of debug
 		
@@ -189,64 +189,15 @@ int main() {
 		Input::Update();
 		//EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
+		
+		fpsCounter->Update();
 		window->clear();
-
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.
 
-#pragma region FPS logging
-		timeSinceLastUpdate += fpsClock.restart();
-		frameCount++;
-
-		if (timeSinceLastUpdate >= updateInterval) {
-			float fps = frameCount / timeSinceLastUpdate.asSeconds();
-			timer_stringStream.str("");// clear actual string
-			timer_stringStream << "FPS: " << std::fixed << std::setprecision(1) << fps<< "\n";
-
-
-			int hours = elapsed_seconds / 3600;
-			int minutes = (elapsed_seconds / 60) % 60;
-			int seconds = elapsed_seconds % 60;
-
-			if (hours > 0)
-				timer_stringStream << hours << ":";
-
-			timer_stringStream << std::setfill('0') << std::setw(2) << minutes << ":"
-				<< std::setfill('0') << std::setw(2) << seconds;
-
-
-
-			fpsText->setString(timer_stringStream.str());
-			frameCount = 0;
-			timeSinceLastUpdate = sf::Time::Zero;
-		}
-
-#pragma endregion
-
+	
+		
 		window->display(); // display drawn image.
 	}
 }
 
-
-/*
-*
-* destruction and re creation of playerObj example.
-
-					if (keyPressed->scancode == sf::Keyboard::Scancode::Backspace) {
-						if (playerObj) {
-							GameObject::Destroy(playerObj);
-							playerObj.reset(); // Clear the shared_ptr
-							p_move = nullptr;
-						}
-					}
-					else if (keyPressed->scancode == sf::Keyboard::Scancode::Enter) {
-						if (!playerObj) {
-							CreatePlayer(playerObj, p_move, manager);
-
-							std::cout << "no";
-						}std::cout << "yes";
-					}
-
-
-
-*/
 

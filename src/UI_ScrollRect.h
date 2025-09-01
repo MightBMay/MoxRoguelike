@@ -134,7 +134,6 @@ public:
 		size_t rightVisibleIndex = std::min(firstIndex + contentThatCanFitInView.x - 1, lastIndex);
 		size_t leftVisibleIndex = (contentThatCanFitInView.x >= contentObjects.size()) ?
 			lastIndex : lastIndex - contentThatCanFitInView.x;
-		std::cout << "\nlI: " << leftVisibleIndex;
 
 		
 		auto rightVisiblePos = originalPositions[rightVisibleIndex] + contentPosition;

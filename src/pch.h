@@ -24,6 +24,7 @@
 #include <filesystem>
 
 
+#include "FPS_Counter.h"
 #include "json.hpp"
 #include "JsonLoader.h"
 #include "Input.h"
@@ -45,6 +46,7 @@
 #include "UI_CooldownSprite.h"
 #include "UI_LevelUpSelection.h"
 #include "UI_ScrollRect.h"
+
 
 
 #include "Background.h"
