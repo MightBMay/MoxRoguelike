@@ -32,15 +32,22 @@ std::shared_ptr<GameObject> vignetteObject;
 std::shared_ptr<FPS_Counter> fpsCounter;
 
 void CreateClassSelectionScreen() {
-	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
+	sf::Vector2i rectSize = { 800,128 };
+	auto scrollContainerRect = sf::FloatRect{ {500,300}, static_cast<sf::Vector2f>(rectSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
-	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{809,128} }, 130);
+	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", 
+		{ {},rectSize + sf::Vector2i{8,4} },
+		130
+	);
+
 	scrollContainerObj->setPosition(scrollContainerRect.position); // subtract a lil to offset the background from the content.
 	// create scrollContainer
 	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
 		window,
 		scrollContainerRect,
-		sf::Vector2f{ 128, 128 } // set this to the size of the content's sprites.
+		sf::Vector2f{ 128, 128 },
+		128
+		// set this to the size of the content's sprites.
 	);
 	auto scrollContainerSprite = scrollContainerObj->getSprite(); // set values for scroll container's sprite.
 	scrollContainerSprite->SetRepeated(true);
@@ -72,6 +79,8 @@ void CreateClassSelectionScreen() {
 
 
 		auto& temp = GameObject::Create("../assets/sprites/atlases/playerSprites.png", { pos, size }, 131);
+		float halfHeight = size.y / 2.0f;
+		temp->setOrigin(size.x / 2.0f, halfHeight);
 		temp->setShader(scrollRectShader);
 		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe(
 			[i, scrollContainerObj, scrollContainer]() {
@@ -83,7 +92,7 @@ void CreateClassSelectionScreen() {
 			}
 		);
 		// set position accordingly
-		temp->setPosition(scrollContainerRect.position.x + (playerSpriteSize.x * i), scrollContainerRect.position.y);
+		temp->setPosition(scrollContainerRect.position.x + (playerSpriteSize.x * i), scrollContainerRect.position.y + halfHeight);
 		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
 	}
 
@@ -177,10 +186,8 @@ int main() {
 		}
 		//Debug
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Period)) fpsCounter->SetShowFps(true);
-		else if (Input::GetKeyDown(sf::Keyboard::Scancode::Comma)) fpsCounter->SetShowFps(false);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
-
+		if (Input::GetActionDown("togglefps")) fpsCounter->ToggleShowFps();
 		//end of debug
 		
 		// Update and render

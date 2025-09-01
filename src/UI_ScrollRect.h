@@ -70,7 +70,7 @@ private:
 public:
 	UI_ScrollContainer(std::shared_ptr<sf::RenderWindow> window,
 		const sf::FloatRect& viewportBounds, sf::Vector2f contentObjectSize,
-		sf::Vector2f contentSpacing = { 32,0 }, float fadeWidth = 16, float elasticity = 1)
+		float fadeWidth = 16, float elasticity = 1,sf::Vector2f contentSpacing = { 32,0 })
 		: UI_Element(window),
 		viewPortBounds(viewportBounds),
 		elasticity(elasticity),
@@ -87,10 +87,8 @@ public:
 
 	void addContent(std::shared_ptr<GameObject> gameObject) {
 		contentObjects.push_back(gameObject);
-		originalPositions.push_back(gameObject->getPosition());
-
-		applyBoundsConstraints();
-		updateContentBounds();
+		originalPositions.push_back(gameObject->getPosition()); 
+		applyBoundsConstraints();								
 	}
 
 	void Hide() {
@@ -110,10 +108,6 @@ public:
 		originalPositions.clear();
 	}
 
-	void updateContentBounds() {
-		// Optional: Calculate content bounds for constraints
-		// You might not need this if you want infinite scrolling
-	}
 
 	void applyBoundsConstraints() {
 		if (contentObjects.empty()) return;
@@ -172,7 +166,7 @@ public:
 		for (size_t i = 0; i < contentObjects.size(); ++i) {
 			if (auto& obj = contentObjects[i]) {
 				// Calculate new position based on original + scroll offset
-				sf::Vector2f newPos = originalPositions[i] + contentPosition + contentSpacing;
+				sf::Vector2f newPos = originalPositions[i] + obj->getOrigin() + contentPosition + contentSpacing;
 				obj->setPosition(newPos);
 				if (!viewPortBounds.contains(newPos))
 					obj->setActive(false); // disable object when it leaves the rect.

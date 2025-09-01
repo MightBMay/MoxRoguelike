@@ -74,6 +74,7 @@ const bool Input::SaveInputToFile() {
      BindKey("ability1", sf::Keyboard::Scan::Q);
      BindKey("ability2", sf::Keyboard::Scan::E);
      BindKey("ability3", sf::Keyboard::Scan::R);
+     BindKey("togglefps", sf::Keyboard::Scan::F10);
      if (saveToFile) SaveInputToFile();
 
  }

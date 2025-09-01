@@ -31,7 +31,7 @@ void TrailRenderer::update(float deltaTime) {
 
 void TrailRenderer::init() {
     std::shared_ptr<sf::Drawable> drawable = std::static_pointer_cast<sf::Drawable>(shared_from_this());
-    renderable = std::make_shared<Renderable>(drawable, nullptr);
+    renderable = std::make_shared<Renderable>(drawable);
 
    // LoadShader("../assets/sprites/cardboard.png");
 

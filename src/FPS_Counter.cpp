@@ -6,7 +6,7 @@ FPS_Counter::FPS_Counter(sf::Font& font, bool startWithFpsShown) {
 	text = std::make_shared<sf::Text>(font);
 	text->setOutlineThickness(2);
 	
-	renderable = std::make_shared<Renderable>(text, nullptr);
+	renderable = std::make_shared<Renderable>(text,text, nullptr);
 	GameObjectManager::getInstance().addExternalRenderable(renderable,1000);
 
 }

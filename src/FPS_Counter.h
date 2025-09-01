@@ -12,6 +12,9 @@ public:
 
 	void Update();
 
+	void ToggleShowFps() {
+		showFps = !showFps;
+	}
 	void SetShowFps(const bool value);
 
 private:

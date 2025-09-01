@@ -10,7 +10,7 @@ ProgressBar::ProgressBar(
 	isHorizontal(isHorizontal), minValue(min), maxValue(max) {
 	fillSprite = std::make_shared<MSprite>(fillSpritePath, rect);
 
-	renderable = std::make_shared<Renderable>(fillSprite);
+	renderable = std::make_shared<Renderable>(fillSprite,fillSprite);
 	
 }
 

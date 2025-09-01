@@ -146,6 +146,7 @@ public:
 
     void setOrigin(float x, float y) { setOrigin( { x, y } ); }
     void setOrigin(const sf::Vector2f& origin);
+    sf::Vector2f getOrigin();
 
     /// <summary>
     /// Sets the activity of a gameobject. Can set andRenderable to copy the original value to the renderables enabled state.
