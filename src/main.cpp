@@ -35,13 +35,12 @@ void CreateClassSelectionScreen() {
 	sf::Vector2i rectSize = { 800,128 };
 	auto scrollContainerRect = sf::FloatRect{ {500,300}, static_cast<sf::Vector2f>(rectSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
-	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", 
+	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
 		{ {},rectSize + sf::Vector2i{8,4} },
 		130
 	);
 
-	scrollContainerObj->setPosition(scrollContainerRect.position); // subtract a lil to offset the background from the content.
-	// create scrollContainer
+	scrollContainerObj->setPosition(scrollContainerRect.position);
 	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
 		window,
 		scrollContainerRect,
@@ -80,7 +79,7 @@ void CreateClassSelectionScreen() {
 
 		auto& temp = GameObject::Create("../assets/sprites/atlases/playerSprites.png", { pos, size }, 131);
 		float halfHeight = size.y / 2.0f;
-		temp->setOrigin(size.x / 2.0f, halfHeight);
+		temp->setOrigin(size.x/2.0f , halfHeight);
 		temp->setShader(scrollRectShader);
 		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe(
 			[i, scrollContainerObj, scrollContainer]() {
@@ -96,6 +95,7 @@ void CreateClassSelectionScreen() {
 		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
 	}
 
+
 }
 
 void InitializeGame(GameObjectManager& manager);
@@ -110,7 +110,7 @@ void ResetAll(GameObjectManager& manager) {
 	GameData::loadAllData();// technically allows hotreloading anything loaded from json
 	Input::Initialize();
 	InitializeGame(manager);
-	
+
 
 
 
@@ -156,24 +156,21 @@ int main() {
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
-	
-	
+
+
 #pragma endregion
-	
-#pragma region create delta time dt_clock
+
+#pragma region create delta time dt_clock	
 	sf::Clock dt_clock;
 	sf::Time Delta_Timer;
 
 #pragma endregion
+	// store reference so we dont gotta getinstance() multiple times.
+	auto& manager = GameObjectManager::getInstance(); 
+	InitializeGame(manager);
 
-
-
-	auto& manager = GameObjectManager::getInstance(); // manager allows access to all gameobjects at once.
-	InitializeGame(manager);	
-#pragma endregion
-
-	
-	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
+	// increment elapsed seconds with timer.
+	second_Timer.getLoopEvent().subscribe([]() {elapsed_seconds++; });
 
 
 	while (window->isOpen()) {
@@ -182,27 +179,32 @@ int main() {
 		// handle sfml events and update input.
 		while (const std::optional event = window->pollEvent()) {
 			Input::HandleEvent(event);
-			if (event->is<sf::Event::Closed>()) window->close();			
+			if (event->is<sf::Event::Closed>()) window->close();
 		}
+		// done in gameplay loop so we can show fps anywhere.
+		if (Input::GetActionDown("togglefps")) fpsCounter->ToggleShowFps();
+
+
 		//Debug
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
-		if (Input::GetActionDown("togglefps")) fpsCounter->ToggleShowFps();
+
 		//end of debug
-		
+
 		// Update and render
-		
+
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
-		Input::Update();
-		//EnemyManager::HandleSpawning(deltaTime);
+		Input::Update();// input updated for next frame.
+
+		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
-		
+
 		fpsCounter->Update();
 		window->clear();
 		manager.renderAll(*window); // draw all gameobjects with sprites to window.
 
-	
-		
+
+
 		window->display(); // display drawn image.
 	}
 }

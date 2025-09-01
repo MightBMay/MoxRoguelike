@@ -54,8 +54,8 @@ void OrbitProjectile::CheckEnemies(sf::Vector2f curPos) {
         enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
         enemyCooldowns[enemy] = hitCooldown;
         
-        --pierceCount; // decrement and check pierce.
-        if (pierceCount <= 0) {
+        --stats.pierce; // decrement and check pierce.
+        if (stats.pierce <= 0) {
             projPool.release(parent); // if no more pierce, remove.
             // it looping the last trail until new proj made.
             break;

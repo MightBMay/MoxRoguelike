@@ -2,7 +2,7 @@
 #include "EnemyManager.h"
 #include "Enemy.h"
 #include "ScissorEnemy.h"
-#include"TestEnemy.h"
+#include "TestEnemy.h"
 
 
 
@@ -71,6 +71,19 @@ void EnemyManager::SpawnEnemy(int index, int quantity, int level) {
     }
 }
 
+
+void EnemyManager::HandleSpawning(float deltaTime) {
+    static float delay = 0;
+    if (!playerInitialized) return;
+
+    if (delay <= 0) {
+        SpawnEnemy(0, rng::getInt(4, 10));
+        delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
+    }
+    else {
+        delay -= deltaTime;
+    }
+}
 
 void EnemyManager::add(std::shared_ptr<GameObject> obj) {
     if (!obj) return;

@@ -28,14 +28,14 @@ public:
 
     void onEnd() {
 
-        endEvent.invoke();
-
         if (isLooping) {
+            loopEvent.invoke();
             start(true);
         }
         else {
             isStarted = false;
             remainingDuration = 0;
+            endEvent.invoke();
         }
     }
     inline bool inProgress() { return remainingDuration >= 0 && isStarted; }
@@ -47,11 +47,22 @@ public:
         isStarted = true;
     }
 
+    /// <summary>
+    /// Gets the start event. Invoked any time the timer starts, including Looping timers.
+    /// </summary>
     inline MEvent<>& getStartEvent() { return startEvent; }
+    /// <summary>
+    /// Gets the loop event. Invoked when the timer ends, and looping is ON.
+    /// </summary>
+    inline MEvent<>& getLoopEvent() { return loopEvent; }
+    /// <summary>
+    /// gets the end event. only invoked when the timer ends and looping is OFF.
+    /// </summary>
     inline MEvent<>& getEndEvent() { return endEvent; }
 
 protected:
     MEvent<> startEvent{};
+    MEvent<> loopEvent{};
     MEvent<> endEvent{};
 
 private:

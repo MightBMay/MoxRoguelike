@@ -8,7 +8,7 @@
 
 static const std::string projectileAtlasPath = "../assets/sprites/atlases/projectileatlas.png";
 
-Projectile::Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect) :
+Projectile::Projectile(sf::Vector2f direction, ProjectileStats& stats, const sf::IntRect& textureRect) :
 	stats(stats), direction(direction), textureRect(textureRect) {
 	if (!projectileAtlasTexture) {
 		projectileAtlasTexture = TextureManager::getTexture(projectileAtlasPath);
@@ -54,8 +54,8 @@ void Projectile::CheckEnemies(sf::Vector2f curPos) {
 		if (hitEnemies.find(enemy) != hitEnemies.end())return; // if enemy wasn't already hit by this projectile,
 		enemy->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(*stats.damage); // get the base Enemy component and take _damage.
 		hitEnemies.insert(enemy); // add to hit enemies list
-		--pierceCount; // decrement and check pierce.
-		if (pierceCount <= 0) {
+		--stats.pierce; // decrement and check pierce.
+		if (stats.pierce <= 0) {
 			projPool.release(parent); // if no more pierce, remove.
 			parent.lock()->removeComponent<TrailRenderer>(); // manually remove trailrenderer to avoid
 			// it looping the last trail until new proj made.

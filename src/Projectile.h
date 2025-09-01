@@ -25,13 +25,12 @@ class Projectile : public Component {
 public:
     static inline GameObjectPool<Projectile> projPool{true};
     static inline std::weak_ptr<GameObject> player;
-    int pierceCount = 0;
 
     sf::Vector2f direction = { 0,0 };
     // projectile stats would also go here.
 
  
-    Projectile(sf::Vector2f direction, ProjectileStats stats, const sf::IntRect& textureRect);
+    Projectile(sf::Vector2f direction, ProjectileStats& stats, const sf::IntRect& textureRect);
     virtual void init() override;       // Called when component is added
     virtual void update(float deltaTime) override;
     virtual void Destroy()override;

@@ -88,7 +88,8 @@ public:
 	void addContent(std::shared_ptr<GameObject> gameObject) {
 		contentObjects.push_back(gameObject);
 		originalPositions.push_back(gameObject->getPosition()); 
-		applyBoundsConstraints();								
+		applyBoundsConstraints();					
+		updateContentPositions();
 	}
 
 	void Hide() {

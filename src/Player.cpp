@@ -289,6 +289,7 @@ std::shared_ptr<GameObject> Player::CreatePlayerClass(int classIndex) {
 	it->second(playerObj);// this actually calls the specific player constructor.
 	Projectile::player = playerObj;
 	Enemies::Enemy::SetPlayer(playerObj.get());
+	EnemyManager::SetPlayerAsInitialized();
 
 	return playerObj; // calls function stored in enemylist which 
 }

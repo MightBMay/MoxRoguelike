@@ -26,18 +26,7 @@ public:
 	
 
 
-	static void HandleSpawning(float deltaTime) {
-		static float delay = 0;
-
-
-		if (delay <= 0) {
-			SpawnEnemy(0, rng::getInt(4,10));
-			delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
-		}
-		else {
-			delay -= deltaTime;
-		}
-	}
+	static void HandleSpawning(float deltaTime);
 
 
 
@@ -45,6 +34,8 @@ public:
 		float t = (elapsed_seconds / 60.0f) + 2.0f;
 		return static_cast<int>(0.8f + 0.33f * t * t);
 	}
+
+	
 
 	void add(std::shared_ptr<GameObject>);
 	void remove(std::weak_ptr<GameObject>&);
@@ -57,6 +48,7 @@ public:
 		hitboxVisuals.init(512,0);
 		enemyObjects_.clear();
 		enemyObjects_.shrink_to_fit(); // actually reduces size of vector, in case many enemies were allocated before.
+		playerInitialized = false;
 	}
 	int count() {
 		return enemyObjects_.size();
@@ -67,13 +59,17 @@ public:
 	static std::shared_ptr<GameObject> getFirstInRange(sf::Vector2f& position, float radius);
 	static std::shared_ptr<GameObject> getClosest(const sf::Vector2f& position, const float cutoffRadiusSqr);
 
+	static void SetPlayerAsInitialized(bool value = true) {
+		playerInitialized = value;
+	}
+
 
 private:
 	
 
 	EnemyManager() { hitboxVisuals.init(512, 0); };
 	~EnemyManager() = default;
-
+	static inline bool playerInitialized = false;
 	static inline GameObjectPool<TimedDestroy> hitboxVisuals;
 	static inline std::vector<std::shared_ptr<GameObject>> enemyObjects_{};
 
