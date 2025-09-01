@@ -54,12 +54,9 @@ public:
 		hitboxVisuals.release(obj);
 	}
 	void Reset() {
-		std::cout << "EM PRE:" << enemyObjects_.size() << ", " << enemyObjects_.capacity();
-
 		hitboxVisuals.init(512,0);
 		enemyObjects_.clear();
-		enemyObjects_.shrink_to_fit();
-		std::cout << "EM POST:" << enemyObjects_.size() << ", " << enemyObjects_.capacity();
+		enemyObjects_.shrink_to_fit(); // actually reduces size of vector, in case many enemies were allocated before.
 	}
 	int count() {
 		return enemyObjects_.size();

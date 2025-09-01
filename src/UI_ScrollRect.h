@@ -117,9 +117,10 @@ public:
 
 	void applyBoundsConstraints() {
 		if (contentObjects.empty()) return;
+	
 
 		// Calculate total content width/height
-		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x);// -contentSpacing.x;
+		float totalContentWidth = contentObjects.size() * (contentSize.x + contentSpacing.x)-contentSpacing.x;
 		float totalContentHeight = contentObjects.size() * (contentSize.y + contentSpacing.y);// -contentSpacing.y;
 
 		// Store original content position before potentially modifying it
@@ -132,7 +133,8 @@ public:
 		// contentThatCanFitInView.x used to determine the visible range for horizontal constraints
 		size_t rightVisibleIndex = std::min(firstIndex + contentThatCanFitInView.x - 1, lastIndex);
 		size_t leftVisibleIndex = (contentThatCanFitInView.x >= contentObjects.size()) ?
-			firstIndex : lastIndex - contentThatCanFitInView.x + 1;
+			lastIndex : lastIndex - contentThatCanFitInView.x;
+		std::cout << "\nlI: " << leftVisibleIndex;
 
 		
 		auto rightVisiblePos = originalPositions[rightVisibleIndex] + contentPosition;
@@ -144,7 +146,7 @@ public:
 
 		// Horizontal constraints - using the leftmost visible element
 		auto leftVisiblePos = originalPositions[leftVisibleIndex] + contentPosition;
-		if (leftVisiblePos.x -contentSize.x < viewPortBounds.position.x) {
+		if (leftVisiblePos.x < viewPortBounds.position.x) {
 			// Too far left - adjust so leftmost visible element fits
 			contentPosition.x = viewPortBounds.position.x - originalPositions[leftVisibleIndex].x;
 		}
@@ -184,7 +186,6 @@ public:
 	virtual void update(float deltaTime) override {
 		UI_Element::update(deltaTime);
 		if (!enabled) return;
-		
 
 		auto mPosInt = Input::mousePos_Screen;
 		sf::Vector2f mousePos = { static_cast<float>(mPosInt.x) ,static_cast<float>(mPosInt.y) };
@@ -225,11 +226,22 @@ public:
 
 	}
 	void UpdateContentMaskShader() {
+		static const sf::View& view = window->getDefaultView();
+		if (contentObjects.empty()) return;
+		auto bounds = sprite->getGlobalBounds();
+		sf::Vector2i topLeft = window->mapCoordsToPixel(bounds.position, view);
+		sf::Vector2i bottomRight = window->mapCoordsToPixel(bounds.position + bounds.size, view);
+
+		sf::Vector2f screenPos = static_cast<sf::Vector2f>(topLeft);
+		sf::Vector2f screenSize = static_cast<sf::Vector2f>(bottomRight - topLeft);
+
+
 		for (auto& item : contentObjects) {
 			auto& shader = item->getRenderable()->shader;
 			if (shader) {
-				shader->setUniform("viewportPosition", viewPortBounds.position);
-				shader->setUniform("viewportSize", sprite->getGlobalBounds().size);
+
+				shader->setUniform("viewportPosition", screenPos);
+				shader->setUniform("viewportSize", screenSize);
 				shader->setUniform("fadeWidth", fadeWidth);
 				shader->setUniform("texture", sf::Shader::CurrentTexture);
 			}

@@ -19,7 +19,7 @@ std::shared_ptr<sf::View> playerView;
 std::shared_ptr<GameObject> player;
 std::shared_ptr<sf::Text> fpsText;
 std::shared_ptr<GameObject> Background;
-
+std::shared_ptr<GameObject> vignetteObject;
 
 void CreateClassSelectionScreen() {
 	auto scrollContainerRect = sf::FloatRect{ {500,300}, {800,128} };// define scroll rect size/position.
@@ -68,6 +68,7 @@ void CreateClassSelectionScreen() {
 				player = Player::CreatePlayerClass(i);
 				scrollContainer.lock()->Hide();
 				scrollContainerObj->setActive(false, true);
+				second_Timer.start();
 
 			}
 		);
@@ -86,7 +87,6 @@ void ResetAll(GameObjectManager& manager, std::shared_ptr<Renderable> fpsText) {
 	EnemyManager::getInstance().Reset();
 	elapsed_seconds = 0;
 	second_Timer.cancel();// stops and resets timer
-	second_Timer.start(); // re start the timer.
 
 	GameData::loadAllData();// technically allows hotreloading anything loaded from json
 	Input::Initialize();
@@ -112,8 +112,8 @@ void InitializeGame(GameObjectManager& manager, std::shared_ptr<Renderable> fpsT
 	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
 	Background->addComponent<BackgroundImage>();
 
-	auto vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
-	vignetteObj->addComponent<Vignette>();
+	vignetteObject = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObject->addComponent<Vignette>();
 #pragma endregion
 
 	
@@ -161,7 +161,7 @@ int main() {
 	InitializeGame(manager, fpsTextRenderable);	
 #pragma endregion
 
-	second_Timer.start();
+	
 	second_Timer.getEndEvent().subscribe([]() {elapsed_seconds++; });
 	std::ostringstream timer_stringStream;
 
@@ -178,7 +178,7 @@ int main() {
 			EnemyManager::SpawnEnemy(1, 500);
 			//EnemyManager::getInstance().Reset();
 		}
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Down)) player->getDerivativesOfComponent<Player>()->takeDamage(5);
+
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager, fpsTextRenderable);
 
 		//end of debug

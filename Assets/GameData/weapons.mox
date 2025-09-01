@@ -133,13 +133,14 @@
       "range": 750,
       "projSize": 100,
       "attackSpeed": 0.2,
+      "pierce": 15,
       "projectile data": {
         "textureStartPos": [ 32, 0],
         "spriteSize": [ 32, 32 ],
         "animation data": {
           "loop": true,
           "columns": 8,
-          "default speed": 5,
+          "default speed": 2.5,
           "frame data": {
             "0": 0,
             "1": 1,
