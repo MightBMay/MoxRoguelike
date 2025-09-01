@@ -1,8 +1,5 @@
 #pragma once
-#include <functional>
-#include <vector>
-#include <algorithm>
-#include <memory>
+#include "pch.h"
 
 // Generic MEvent with arguments
 template <typename... Args>
@@ -10,7 +7,7 @@ class MEvent {
 public:
     using Callback = std::function<void(Args...)>;
     MEvent() = default;
-    // Subscribe with any callable (free function, lambda)
+     /// <returns>returns subscription ID, which can be used to unsubscribe a specific listener.</returns>
     size_t subscribe(Callback callback) {
         size_t id = nextId++;
         callbacks.push_back({ id, callback });
@@ -20,7 +17,7 @@ public:
 
 
 
-    // Subscribe a member function with shared_ptr instance
+     /// <returns>returns subscription ID, which can be used to unsubscribe a specific listener.</returns>
     template <typename T>
     size_t subscribe(std::shared_ptr<T> instance, void (T::* method)(Args...)) {
         size_t id = nextId++;
@@ -34,7 +31,7 @@ public:
             });
         return id;
     }
-
+     /// <returns>returns subscription ID, which can be used to unsubscribe a specific listener.</returns>
     template <typename T>
     size_t subscribe(std::weak_ptr<T> instance, void (T::* method)(Args...)) {
         size_t id = nextId++;
@@ -64,6 +61,9 @@ public:
             s.callback(args...);
         }
     }
+    void clear() {
+        callbacks.clear();
+    }
 
 private:
     struct Subscription {
@@ -81,12 +81,13 @@ class MEvent<> {
 public:
     using Callback = std::function<void()>;
     MEvent() = default;
+    /// <returns>subscription ID, which can be used to unsubscribe a specific listener.</returns>
     size_t subscribe(Callback callback) {
         size_t id = nextId++;
         callbacks.push_back({ id, callback });
         return id;
     }
-
+     /// <returns>subscription ID, which can be used to unsubscribe a specific listener.</returns>
     template <typename T>
     size_t subscribe(std::shared_ptr<T> instance, void (T::* method)()) {
         size_t id = nextId++;
@@ -100,7 +101,7 @@ public:
             });
         return id;
     }
-
+     /// <returns>returns subscription ID, which can be used to unsubscribe a specific listener.</returns>
     template <typename T>
     size_t subscribe(std::shared_ptr<T> instance, void (T::* method)() const) {
         size_t id = nextId++;
@@ -126,6 +127,10 @@ public:
         for (auto& s : callbacks) {
             s.callback();
         }
+    }
+
+    void clear() {
+        callbacks.clear();
     }
 
 private:

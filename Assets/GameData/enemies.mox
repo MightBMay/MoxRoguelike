@@ -1,4 +1,9 @@
 {
+  "indextoenemy": {
+    "0": "test enemy",
+    "1": "scissor enemy"
+  },
+
   "enemies": {
 
 
@@ -11,10 +16,10 @@
       "xp": 1,
       "size": 86,
       "sprite data": {
-        "textureStartPos": [0,128],
+        "textureStartPos": [ 0, 128 ],
         "spriteSize": [ 128, 150 ]
       }
-      
+
     },
 
     "scissor enemy": {

@@ -17,6 +17,7 @@ public:
 	static const json& getPlayerClassFromIndex(const int& index);
 
 	static const json& getEnemy(const std::string& enemyType);
+	static const json& getEnemyFromIndex(const int& index);
 
 	static const json& getWeapon(const std::string& weaponName);
 	/// <summary>
@@ -34,18 +35,24 @@ public:
 	static const json& getStatFromIndex(const int statIndex);
 	static const std::string getStatNameFromIndex(const int statIndex);
 
-	// Optional: Get direct access to the shared JSON objects
+
+	static const json& getLevel(const std::string& levelName);
+	static const json& getLevelFromIndex(const int& index);
+	
+
 	static std::shared_ptr<const json> GetWeaponsData() { return s_weapons; }
 	static std::shared_ptr<const json> GetPlayerClassesData() { return s_player_classes; }
 	static std::shared_ptr<const json> GetEnemiesData() { return s_enemies; }
+
 	static std::shared_ptr<const json> GetStatUpgradeData() { return s_stat_upgrades; }
+
 
 private:
 	// Shared JSON data (static and immutable after loading)
 	static inline std::shared_ptr<const json> s_player_classes = nullptr;
 	static inline std::shared_ptr<const json> s_enemies = nullptr;
 	static inline std::shared_ptr<const json> s_weapons = nullptr;
-
 	static inline std::shared_ptr<const json> s_stat_upgrades= nullptr;
+	static inline std::shared_ptr<const json> s_levels = nullptr;
 };
 

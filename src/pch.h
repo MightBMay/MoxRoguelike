@@ -39,6 +39,7 @@
 #include "MSprite.h"
 #include "Renderable.h"
 #include "Utility.h"
+#include "Level.h"
 #include "GameObjectPool.h"
 #include "UI_AbilityBar.h"
 #include "UI_AbilityDescription.h"

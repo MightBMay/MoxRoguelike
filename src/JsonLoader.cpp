@@ -33,6 +33,13 @@ bool GameData::loadAllData() {
 			file.close();
 		}
 
+		file.open("../assets/gamedata/leveldata.mox");
+		if (file.is_open()) {
+			s_levels = std::make_shared<json>(json::parse(file));
+			file.close();
+		}
+
+
 		return true;
 	}
 	catch (const std::exception& e) {
@@ -52,6 +59,9 @@ const json& GameData::getPlayerClassFromIndex(const int& index) {
 
 const json& GameData::getEnemy(const std::string& enemyType) {
 	return (*s_enemies)["enemies"][enemyType];
+}
+const json& GameData::getEnemyFromIndex(const int& index) {
+	return getEnemy((*s_enemies)["indextoenemy"][index]);
 }
 
 const json& GameData::getWeapon(const std::string& weaponName) {
@@ -89,3 +99,10 @@ const std::string GameData::getStatNameFromIndex(const int statIndex) {
 	return (*s_stat_upgrades)["stat indices"][std::to_string(statIndex)];
 }
 
+const json& GameData::getLevel(const std::string& levelName) {
+	return (*s_levels)["levels"][levelName];
+}
+
+const json& GameData::getLevelFromIndex(const int& index) {
+	return getLevel((*s_levels)["indexToLevel"][std::to_string(index)]);
+}

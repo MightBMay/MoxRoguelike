@@ -1,0 +1,23 @@
+{
+
+  "indexToLevel": {
+    "0": "testLevel"
+  },
+
+  "levels": {
+
+    "testLevel": {
+      "spriteStartPos": [ 0, 0 ],
+      "spriteSize": [128,128],
+      "default enemies": [ 0 ],
+      "enemyMap": {
+        "0": [ 0, 1 ]
+
+
+      }
+
+    }
+
+
+  }
+}

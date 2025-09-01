@@ -73,11 +73,16 @@ void EnemyManager::SpawnEnemy(int index, int quantity, int level) {
 
 
 void EnemyManager::HandleSpawning(float deltaTime) {
-    static float delay = 0;
-    if (!playerInitialized) return;
+    static float delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
+    std::vector<int>* enemyOptions = Level::GetCurrentEnemyOptions();
+    if (!playerInitialized ||  enemyOptions == nullptr) return;
 
     if (delay <= 0) {
-        SpawnEnemy(0, rng::getInt(4, 10));
+        int index = rng::getInt(0, enemyOptions->size()-1);
+        SpawnEnemy(
+            enemyOptions->operator[](index), // enemyId
+            rng::getInt(3, 10) // quantity
+        );
         delay = rng::getInt(minSpawnInterval, maxSpawnInterval);
     }
     else {

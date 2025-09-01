@@ -26,8 +26,7 @@ float timeScale = 1.0f;
 
 
 std::shared_ptr<GameObject> player;
-std::shared_ptr<GameObject> Background;
-std::shared_ptr<GameObject> vignetteObject;
+
 
 std::shared_ptr<FPS_Counter> fpsCounter;
 
@@ -105,7 +104,7 @@ void ResetAll(GameObjectManager& manager) {
 	GameObjectManager::getInstance().clearAll();
 	EnemyManager::getInstance().Reset();
 	elapsed_seconds = 0;
-	second_Timer.cancel();// stops and resets timer
+	second_Timer.clear(); // reuse same timer, but clear its subscribers.
 
 	GameData::loadAllData();// technically allows hotreloading anything loaded from json
 	Input::Initialize();
@@ -119,6 +118,7 @@ void ResetAll(GameObjectManager& manager) {
 void InitializeGame(GameObjectManager& manager) {
 	GameData::loadAllData();
 	Input::Initialize();
+	second_Timer.getLoopEvent().subscribe([]() {++elapsed_seconds; });
 
 	if (!font.openFromFile("../assets/fonts/amazon ember.ttf"))
 		std::cerr << "font  file was not found";
@@ -126,21 +126,6 @@ void InitializeGame(GameObjectManager& manager) {
 
 	playerView->setCenter({}); // sets center to 0,0.
 	Projectile::projPool.init(512, 10);
-
-#pragma region create background and vignette
-	Background = GameObject::Create( // create gameobject for background.
-		"../assets/sprites/cardboard.png",
-		sf::IntRect{ {0,0},{1920,1080} },
-		-110// move to layer -110 to stay behind things. 
-	);      //-100 because background is set to be UI so
-	// rendering will draw it using default sf::view . 
-
-	Background->getSprite()->SetRepeated(true); // repeat over entire rect.
-	Background->addComponent<BackgroundImage>();
-
-	vignetteObject = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
-	vignetteObject->addComponent<Vignette>();
-#pragma endregion
 
 	CreateClassSelectionScreen();
 
@@ -167,11 +152,10 @@ int main() {
 #pragma endregion
 	// store reference so we dont gotta getinstance() multiple times.
 	auto& manager = GameObjectManager::getInstance(); 
+	
+	
 	InitializeGame(manager);
-
-	// increment elapsed seconds with timer.
-	second_Timer.getLoopEvent().subscribe([]() {elapsed_seconds++; });
-
+	Level level{ 0 };
 
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
@@ -188,6 +172,10 @@ int main() {
 		//Debug
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
+
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) {
+			std::cout<<"\n "<<level.GetCurrentEnemyOptions()->size();
+		}
 
 		//end of debug
 

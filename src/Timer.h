@@ -47,6 +47,14 @@ public:
         isStarted = true;
     }
 
+    inline void clear() {
+        startEvent.clear();
+        loopEvent.clear();
+        endEvent.clear();
+        isStarted = false;
+        remainingDuration = duration;
+    }
+
     /// <summary>
     /// Gets the start event. Invoked any time the timer starts, including Looping timers.
     /// </summary>
