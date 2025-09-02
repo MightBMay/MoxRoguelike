@@ -38,7 +38,7 @@ public:
 
 	static const json& getLevel(const std::string& levelName);
 	static const json& getLevelFromIndex(const int& index);
-	
+	static const int getLevelCount();
 
 	static std::shared_ptr<const json> GetWeaponsData() { return s_weapons; }
 	static std::shared_ptr<const json> GetPlayerClassesData() { return s_player_classes; }
@@ -54,5 +54,7 @@ private:
 	static inline std::shared_ptr<const json> s_weapons = nullptr;
 	static inline std::shared_ptr<const json> s_stat_upgrades= nullptr;
 	static inline std::shared_ptr<const json> s_levels = nullptr;
+
+	static inline std::vector<std::string> levelIndexArray{};
 };
 

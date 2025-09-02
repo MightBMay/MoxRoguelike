@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "StatUpgrade.h"
-
+#include "ClassSelectScreen.h"
 
 
 
@@ -26,76 +26,30 @@ float timeScale = 1.0f;
 
 
 std::shared_ptr<GameObject> player;
-
+std::unique_ptr<ClassSelectScreen> classSelectScreen;
 
 std::shared_ptr<FPS_Counter> fpsCounter;
+std::shared_ptr<Level> level;
 
-void CreateClassSelectionScreen() {
-	sf::Vector2i rectSize = { 800,128 };
-	auto scrollContainerRect = sf::FloatRect{ {500,300}, static_cast<sf::Vector2f>(rectSize) };// define scroll rect size/position.
-// make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
-	auto scrollContainerObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
-		{ {},rectSize + sf::Vector2i{8,4} },
-		130
-	);
-
-	scrollContainerObj->setPosition(scrollContainerRect.position);
-	auto scrollContainer = scrollContainerObj->addComponent<UI_ScrollContainer>(
-		window,
-		scrollContainerRect,
-		sf::Vector2f{ 128, 128 },
-		128
-		// set this to the size of the content's sprites.
-	);
-	auto scrollContainerSprite = scrollContainerObj->getSprite(); // set values for scroll container's sprite.
-	scrollContainerSprite->SetRepeated(true);
-	scrollContainerSprite->setColor(sf::Color(0, 0, 0, 64));
+std::shared_ptr<GameObject> backgroundObj;
+std::shared_ptr<GameObject> vignetteObj;
 
 
-	auto scrollRectShader = std::make_shared<sf::Shader>(); // shader needed to mask content.
-	if (!scrollRectShader->loadFromFile("../assets/shaders/ScrollRectMask.frag", sf::Shader::Type::Fragment)) {
-		std::cerr << "\nSpriteRectMask shader not found.";
-	}
-	sf::Vector2i playerSpriteSize{ 128,128 }; // again, size of the content's sprite.
-	auto scrollContainer_S = scrollContainer.lock();
-	int quantity = Player::playerClassList.size();
-	for (int i = 0; i < quantity; ++i) {
-		// create content object and do whatever you need to be done to it.
-		const json& classData = GameData::getPlayerClassFromIndex(i);
-		sf::Vector2i size;
-		sf::Vector2i pos;
-		if (classData.contains("spriteSize")) {
-			auto rawSize = classData["spriteSize"].get<std::vector<int>>();
-			size = { rawSize[0],rawSize[1] };
-		}
+void CreateBackground() {
+	backgroundObj = GameObject::Create( // create gameobject for background.
+		"../assets/sprites/cardboard.png",
+		sf::IntRect{ {0,0},{1920,1080} },
+		-110// move to layer -110 to stay behind things. 
+	);      //-100 because background is set to be UI so
+	// rendering will draw it using default sf::view . 
 
+	backgroundObj->getSprite()->SetRepeated(true); // repeat over entire rect.
+	backgroundObj->addComponent<BackgroundImage>();
 
-		if (classData.contains("textureStartPos")) {
-			auto rawSize = classData["textureStartPos"].get<std::vector<int>>();
-			pos = { rawSize[0],rawSize[1] };
-		}
-
-
-		auto& temp = GameObject::Create("../assets/sprites/atlases/playerSprites.png", { pos, size }, 131);
-		float halfHeight = size.y / 2.0f;
-		temp->setOrigin(size.x/2.0f , halfHeight);
-		temp->setShader(scrollRectShader);
-		temp->addComponent<UI_Button>(window).lock()->getOnClick().subscribe(
-			[i, scrollContainerObj, scrollContainer]() {
-				player = Player::CreatePlayerClass(i);
-				scrollContainer.lock()->Hide();
-				scrollContainerObj->setActive(false, true);
-				second_Timer.start();
-
-			}
-		);
-		// set position accordingly
-		temp->setPosition(scrollContainerRect.position.x + (playerSpriteSize.x * i), scrollContainerRect.position.y + halfHeight);
-		scrollContainer_S->addContent(temp); // be sure to actually add to the content.
-	}
-
-
+	vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObj->addComponent<Vignette>();
 }
+
 
 void InitializeGame(GameObjectManager& manager);
 
@@ -126,8 +80,8 @@ void InitializeGame(GameObjectManager& manager) {
 
 	playerView->setCenter({}); // sets center to 0,0.
 	Projectile::projPool.init(512, 10);
-
-	CreateClassSelectionScreen();
+	CreateBackground();
+	classSelectScreen = std::make_unique<ClassSelectScreen>(player, level);
 
 }
 
@@ -155,7 +109,7 @@ int main() {
 	
 	
 	InitializeGame(manager);
-	Level level{ 0 };
+
 
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
@@ -174,7 +128,7 @@ int main() {
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) {
-			std::cout<<"\n "<<level.GetCurrentEnemyOptions()->size();
+			std::cout<<"\n "<<level->GetCurrentEnemyOptions()->size();
 		}
 
 		//end of debug

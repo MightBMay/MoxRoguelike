@@ -17,7 +17,7 @@ void UI_Element::onMouseClick() {
 }
 
 void UI_Element::update(float deltaTime) {
-	if (!parent.lock()->hasSprite()) return;
+	if (!parent.lock()->hasSprite()|| !enabled) return;
 	bool currentlyHovering = isHovering();
 
 	// if you weren't hovering last update() and are now,

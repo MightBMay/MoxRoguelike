@@ -36,6 +36,8 @@ bool GameData::loadAllData() {
 		file.open("../assets/gamedata/leveldata.mox");
 		if (file.is_open()) {
 			s_levels = std::make_shared<json>(json::parse(file));
+
+			levelIndexArray = (*s_levels)["indexToLevel"].get<std::vector<std::string>>();
 			file.close();
 		}
 
@@ -104,5 +106,9 @@ const json& GameData::getLevel(const std::string& levelName) {
 }
 
 const json& GameData::getLevelFromIndex(const int& index) {
-	return getLevel((*s_levels)["indexToLevel"][std::to_string(index)]);
+	return getLevel(levelIndexArray[index]);
+}
+
+const int GameData::getLevelCount() {
+	return levelIndexArray.size();
 }

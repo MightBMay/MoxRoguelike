@@ -10,10 +10,9 @@ public:
 
 	virtual void OnHover()override;
 	virtual void OnHoverExit()override;
-
-
-
 	virtual void OnClick(const int button) override;
+
+	virtual void SetEnabled(bool value) override;
 
 private:
 	MEvent<> onClickEvent; // called on click.

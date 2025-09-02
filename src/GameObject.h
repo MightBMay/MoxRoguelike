@@ -149,9 +149,9 @@ public:
     sf::Vector2f getOrigin();
 
     /// <summary>
-    /// Sets the activity of a gameobject. Can set andRenderable to copy the original value to the renderables enabled state.
+    /// Sets the activity of a gameobject. Can set alsoRenderable to set the renderable's enabled to value.
     /// </summary>
-    void setActive(bool value, bool andRenderable = false);
+    void setActive(bool value, bool alsoRenderable = false);
 
     // Sprite management
     void setSprite(const std::string& path, const sf::IntRect& rect = sf::IntRect());

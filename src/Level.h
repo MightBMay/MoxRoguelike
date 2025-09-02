@@ -11,10 +11,6 @@ protected:
 	static inline std::vector<int>* currentEnemyOptions = nullptr;
 	int subscriptionID = -1;
 
-
-	std::shared_ptr<GameObject> Background;
-	std::shared_ptr<GameObject> vignetteObject;
-
 protected:
 	virtual const json& LoadInfoFromJson(const json& data) {
 		if (data.contains("enemyMap"))
@@ -37,7 +33,6 @@ protected:
 		currentEnemyOptions = nullptr;
 	}
 
-	virtual void CreateBackground();
 
 public:
 	Level(const std::string& levelName) {
@@ -45,7 +40,6 @@ public:
 		LoadInfoFromJson(GameData::getLevel(levelName));
 		// will check for a change in enemy types from enemyMap every second.
 		subscriptionID = second_Timer.getLoopEvent().subscribe([this]() {UpdateEnemyOptions(); });
-		CreateBackground();
 	}
 
 	Level(const int& index) {
@@ -53,7 +47,6 @@ public:
 		LoadInfoFromJson(GameData::getLevelFromIndex(index));
 		// will check for a change in enemy types from enemyMap every second.
 		subscriptionID = second_Timer.getLoopEvent().subscribe([this]() {UpdateEnemyOptions(); });
-		CreateBackground();
 	}
 	static inline std::vector<int>* GetCurrentEnemyOptions() {
 		return currentEnemyOptions;
