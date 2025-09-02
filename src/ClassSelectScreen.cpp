@@ -123,12 +123,14 @@ void ClassSelectScreen::CreateLevelSelectionRect() {
 
 void ClassSelectScreen::CreateStartButton() {
 	static constexpr sf::IntRect startButtonRect = { {},{512,128} };
-	static constexpr sf::Vector2f startButtonPosition = { 1420,540 };
+	static constexpr sf::Vector2f startButtonPosition = {500,540};//{ 1420,540 };
 	
 	startButtonRT = std::make_shared<sf::RenderTexture>(static_cast<sf::Vector2u>(startButtonRect.size));
-	startButtonText = std::make_shared<sf::Text>(font);
+	startButtonText = std::make_shared<sf::Text>(font,"Start", 52);
 	startButtonText->setOutlineThickness(2);
-	startButtonText->setString("Start");
+	auto textSize = startButtonText->getLocalBounds().size;
+	startButtonText->setPosition({ 256- (textSize.x / 2.0f), textSize.y/2.0f });
+
 	auto bgTexture = *TextureManager::getTexture("../assets/sprites/shapes/bl_square_128.png");
 	bgTexture.setRepeated(true);
 	sf::Sprite bgSprite = sf::Sprite( bgTexture, startButtonRect);
@@ -143,11 +145,10 @@ void ClassSelectScreen::CreateStartButton() {
 	startButtonObj->setSprite(startButtonRT->getTexture(), startButtonRect);
 
 	startButtonObj->setPosition(startButtonPosition);
-	GameObjectManager::getInstance().add(startButtonObj);
+	GameObjectManager::getInstance().add(startButtonObj, 130);
 
 	startButton = startButtonObj->addComponent<UI_Button>(window);
 	auto bound= startButtonObj->getSprite()->getGlobalBounds();
-	std::cout << "\n b:" << bound.position.x<<", " << bound.position.y;
 	auto buttonS = startButton.lock();
 	buttonS->SetEnabled(false);
 	buttonS->getOnClick().subscribe([this]() { StartLevel(); });

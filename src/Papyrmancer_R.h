@@ -22,7 +22,6 @@ public:
 	}
 
 	virtual void Fire()override final{
-		std::cout << "\nfired papyrmancer r";
 		remainingPullDuration = pullDuration;
 		pullPosition = Input::mousePos_World;
 
