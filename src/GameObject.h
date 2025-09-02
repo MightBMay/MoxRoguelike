@@ -133,6 +133,7 @@ public:
     // Transform interface
     void setPosition(float x, float y);
     void setPosition(const sf::Vector2f& position) { setPosition(position.x, position.y); }
+    void setPosition(const sf::Vector2i& position) { setPosition(position.x, position.y); }
     void move(float offsetX, float offsetY);
     void move(const sf::Vector2f& offset) { move(offset.x, offset.y); }
     void setRotation(float angle);

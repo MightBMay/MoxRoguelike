@@ -2,6 +2,7 @@
 #include "ClassSelectScreen.h"
 #include "Player.h"
 
+
 sf::IntRect ClassSelectScreen::CreateRectFromJson(const json& data) {
 
 	sf::Vector2i size;
@@ -21,11 +22,12 @@ sf::IntRect ClassSelectScreen::CreateRectFromJson(const json& data) {
 }
 
 void ClassSelectScreen::CreateClassSelectionRect() {
-	sf::Vector2i rectSize = { 800,128 };
-	auto scrollContainerRect = sf::FloatRect{ {500,300}, static_cast<sf::Vector2f>(rectSize) };// define scroll rect size/position.
+	static constexpr sf::Vector2i containerSize = { 1300,128 };
+	static constexpr sf::Vector2f containerPos= { 310,0 };
+	auto scrollContainerRect = sf::FloatRect{ containerPos, static_cast<sf::Vector2f>(containerSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
 	classScrollObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
-		{ {},rectSize + sf::Vector2i{8,4} },
+		{ {},containerSize + sf::Vector2i{8,4} },
 		130
 	);
 
@@ -72,11 +74,12 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 }
 
 void ClassSelectScreen::CreateLevelSelectionRect() {
-	sf::Vector2i rectSize = { 800,128 };
-	auto scrollContainerRect = sf::FloatRect{ {500,650}, static_cast<sf::Vector2f>(rectSize) };// define scroll rect size/position.
+	static constexpr sf::Vector2i containerSize = { 1300,128 };
+	static constexpr sf::Vector2f containerPos = { 310, 1080 -containerSize.y };
+	auto scrollContainerRect = sf::FloatRect{ containerPos, static_cast<sf::Vector2f>(containerSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
 	levelScrollObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
-		{ {},rectSize + sf::Vector2i{8,4} },
+		{ {},containerSize+ sf::Vector2i{8,4} },
 		130
 	);
 
@@ -122,21 +125,27 @@ void ClassSelectScreen::CreateLevelSelectionRect() {
 }
 
 void ClassSelectScreen::CreateStartButton() {
-	static constexpr sf::IntRect startButtonRect = { {},{512,128} };
-	static constexpr sf::Vector2f startButtonPosition = {500,540};//{ 1420,540 };
+	static constexpr sf::IntRect startButtonRect = { {},{310,128} };
+	static constexpr sf::Vector2f startButtonPosition = { 1610,952 };
 	
 	startButtonRT = std::make_shared<sf::RenderTexture>(static_cast<sf::Vector2u>(startButtonRect.size));
-	startButtonText = std::make_shared<sf::Text>(font,"Start", 52);
-	startButtonText->setOutlineThickness(2);
-	auto textSize = startButtonText->getLocalBounds().size;
-	startButtonText->setPosition({ 256- (textSize.x / 2.0f), textSize.y/2.0f });
+	text->setCharacterSize(52);
+	text->setString("Start");
+	text->setOutlineThickness(2);
+	auto textSize = text->getLocalBounds().size;
+	text->setPosition(
+		{
+			(startButtonRect.size.x/2.0f ) - (textSize.x / 2.0f),
+			textSize.y/2.0f 
+		}
+	);
 
 	auto bgTexture = *TextureManager::getTexture("../assets/sprites/shapes/bl_square_128.png");
 	bgTexture.setRepeated(true);
 	sf::Sprite bgSprite = sf::Sprite( bgTexture, startButtonRect);
 	
 	startButtonRT->draw(bgSprite);
-	startButtonRT->draw(*startButtonText);
+	startButtonRT->draw(*text);
 	startButtonRT->display();
 
 
@@ -153,6 +162,22 @@ void ClassSelectScreen::CreateStartButton() {
 	buttonS->SetEnabled(false);
 	buttonS->getOnClick().subscribe([this]() { StartLevel(); });
 }
+
+void ClassSelectScreen::CreateClassDescription() {
+	static constexpr sf::Vector2i descriptionPos = { 0,128 };
+	static constexpr sf::Vector2i descriptionSize = {1000,600};
+	descriptionObj = GameObject::Create(
+		"../assets/sprites/shapes/bl_square_128.png", 
+		{ {0, 0}, descriptionSize},
+		131
+	);
+
+	descriptionObj->setPosition(descriptionPos);
+
+
+
+}
+
 
 void ClassSelectScreen::UpdateStartButton() {
 	if (playerClassIndex >= 0 && levelIndex >= 0) {

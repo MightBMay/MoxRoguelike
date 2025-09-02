@@ -124,7 +124,7 @@ int main() {
 
 
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 2000);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 1000);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) {
