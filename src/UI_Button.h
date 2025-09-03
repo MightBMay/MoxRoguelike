@@ -16,4 +16,5 @@ public:
 
 private:
 	MEvent<> onClickEvent; // called on click.
+	
 };

@@ -19,6 +19,7 @@
 #include <stdexcept>
 #include <chrono>
 #include <cmath>
+#include <stack>
 #include <random>
 #include <unordered_set>
 #include <filesystem>

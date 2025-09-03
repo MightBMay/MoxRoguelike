@@ -1,4 +1,5 @@
 #pragma once
+#include <stack>
 #include <memory>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -7,6 +8,8 @@
 extern std::shared_ptr<sf::RenderWindow> window;
 extern std::shared_ptr<sf::View> playerView;
 
+
+extern std::stack<sf::Cursor::Type> cursorStack;
 
 extern  sf::Font font;
 extern  Timer second_Timer;

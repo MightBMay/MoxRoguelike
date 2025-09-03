@@ -17,6 +17,7 @@
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 sf::Font font;
+std::stack<sf::Cursor::Type> cursorStack;
 Timer second_Timer{ 1,true };
 int elapsed_seconds = 0;
 float timeScale = 1.0f;
@@ -33,6 +34,8 @@ std::shared_ptr<Level> level;
 
 std::shared_ptr<GameObject> backgroundObj;
 std::shared_ptr<GameObject> vignetteObj;
+
+
 
 
 void CreateBackground() {
@@ -70,6 +73,17 @@ void ResetAll(GameObjectManager& manager) {
 }
 
 void InitializeGame(GameObjectManager& manager) {
+
+	// create window and initialize global.h variables
+	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
+	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
+	playerView->setCenter({});// center to 0,0
+	window->setFramerateLimit(144); // cap fps
+	window->setVerticalSyncEnabled(true);
+
+	cursorStack = {};
+
+
 	GameData::loadAllData();
 	Input::Initialize();
 	second_Timer.getLoopEvent().subscribe([]() {++elapsed_seconds; });
@@ -82,22 +96,13 @@ void InitializeGame(GameObjectManager& manager) {
 	Projectile::projPool.init(512, 10);
 	CreateBackground();
 	classSelectScreen = std::make_unique<ClassSelectScreen>(player, level);
-
 }
 
 
 
 
 int main() {
-#pragma region create window and initialize global.h variables
-	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
-	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
-	playerView->setCenter({});// center to 0,0
-	window->setFramerateLimit(144); // cap fps
-	window->setVerticalSyncEnabled(true);
 
-
-#pragma endregion
 
 #pragma region create delta time dt_clock	
 	sf::Clock dt_clock;

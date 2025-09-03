@@ -66,6 +66,7 @@ private:
 	std::shared_ptr<MSprite> sprite;
 	std::vector<std::shared_ptr<GameObject>> contentObjects;
 	std::vector<sf::Vector2f> originalPositions;
+	sf::Cursor::Type entryCursorState;
 
 public:
 	UI_ScrollContainer(std::shared_ptr<sf::RenderWindow> window,
@@ -108,7 +109,6 @@ public:
 		contentObjects.clear();
 		originalPositions.clear();
 	}
-
 
 	void applyBoundsConstraints() {
 		if (contentObjects.empty()) return;
@@ -188,11 +188,13 @@ public:
 			isDragging = true;
 			dragStartPos = mousePos;
 			contentStartPos = contentPosition;
+			window->setMouseCursorGrabbed(true); // TODO DEBUG: figure out why this doesnt work
 			return; // Consume the event
 		}
 
 		else if (Input::GetMouseUp(0)) {
 			isDragging = false;
+			window->setMouseCursorGrabbed(false); // TODO DEBUG: figure out why this doesnt work
 			// Don't consume release event so buttons can still work
 			return;
 		}
@@ -250,7 +252,6 @@ public:
 		_vertical = vertical;
 	}
 	// Getters and setters
-	void setEnabled(bool value) { enabled = value; }
 	bool isEnabled() const { return enabled; }
 	sf::Vector2f getContentPosition() const { return contentPosition; }
 
@@ -265,8 +266,18 @@ public:
 	}
 
 	// not used, but we inherit UI_Element such that position is perserved when resizing window.
-	virtual void OnHover()override {}
-	virtual void OnHoverExit()override {}
+	virtual void OnHover()override { 
+		cursorStack.emplace(sf::Cursor::Type::Hand);
+		window->setMouseCursor(sf::Cursor(cursorStack.top()));
+	}
+		
+	virtual void OnHoverExit()override { 
+		cursorStack.pop();
+		if (cursorStack.empty())
+			window->setMouseCursor(sf::Cursor(sf::Cursor::Type::Arrow));
+		else
+			window->setMouseCursor(sf::Cursor(cursorStack.top()));
+	}
 	virtual void OnClick(const int button)override {}
 
 };

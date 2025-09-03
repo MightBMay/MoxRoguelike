@@ -29,6 +29,7 @@ public:
 		}
 		currentlyHovered= this;
 		UI_AbilityDescription::setDescription(weapon.lock());
+
 	}
 
 	virtual void OnHoverExit() {

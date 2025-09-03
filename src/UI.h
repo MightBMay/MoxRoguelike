@@ -15,6 +15,10 @@ public:
 	virtual void update(float deltaTime);
 	virtual void Destroy() {}
 	virtual void SetEnabled(bool value) {
+		 
+		 if (!value && isHovering())
+			 OnHoverExit(); // if u were hovering as it is set disabled, 
+							 //this would be called, but the object is disabled so update() returns early
 		 enabled = value;
 	}
 
@@ -39,6 +43,7 @@ protected:
 	bool enabled = true;
 
 	std::shared_ptr<sf::RenderWindow> window;
+	sf::Cursor::Type entryCursorState;
 private:
 	
 	bool wasHovering = false;

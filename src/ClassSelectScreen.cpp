@@ -173,8 +173,6 @@ void ClassSelectScreen::UpdateDescription(std::string& str) {
 	descriptionRT->display();
 }
 
-
-
 void ClassSelectScreen::CreateDescription() {
 	static constexpr sf::Vector2i descriptionPos = { 310,128 };
 	static constexpr sf::Vector2i descriptionSize = {1300,824};
@@ -192,7 +190,6 @@ void ClassSelectScreen::CreateDescription() {
 	GameObjectManager::getInstance().add(descriptionObj, 131);
 }
 
-
 void ClassSelectScreen::UpdateStartButton() {
 	if (playerClassIndex >= 0 && levelIndex >= 0) {
 		startButton.lock()->SetEnabled(true);
@@ -206,6 +203,7 @@ void ClassSelectScreen::StartLevel() {
 	levelScrollRect.lock()->Hide();
 	classScrollRect.lock()->Hide();
 	startButton.lock()->SetEnabled(false);
+	cursorStack = {};// clear cursor stack.
 	startButtonObj->setActive(false, true);
 	descriptionObj->setActive(false, true);
 
