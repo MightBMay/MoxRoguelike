@@ -75,8 +75,8 @@ void ResetAll(GameObjectManager& manager) {
 
 void InitializeGame(GameObjectManager& manager) {
 
-	// create window and initialize global.h variables								sf::Style::None
-	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox"); // make window
+	// create window and initialize global.h variables								
+	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox", sf::Style::None); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{2560u,1440u} });
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
@@ -127,6 +127,7 @@ int main() {
 		}
 		// done in gameplay loop so we can show fps anywhere.
 		if (Input::GetActionDown("togglefps")) fpsCounter->ToggleShowFps();
+		if (Input::GetActionDown("forceclose")) window->close();
 
 
 		//Debug
