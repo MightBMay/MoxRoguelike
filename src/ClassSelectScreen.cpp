@@ -27,7 +27,7 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 	auto scrollContainerRect = sf::FloatRect{ containerPos, static_cast<sf::Vector2f>(containerSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
 	classScrollObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
-		{ {},containerSize + sf::Vector2i{8,4} },
+		{ {},containerSize},
 		130
 	);
 
@@ -163,19 +163,33 @@ void ClassSelectScreen::CreateStartButton() {
 	buttonS->getOnClick().subscribe([this]() { StartLevel(); });
 }
 
-void ClassSelectScreen::CreateClassDescription() {
-	static constexpr sf::Vector2i descriptionPos = { 0,128 };
-	static constexpr sf::Vector2i descriptionSize = {1000,600};
-	descriptionObj = GameObject::Create(
-		"../assets/sprites/shapes/bl_square_128.png", 
-		{ {0, 0}, descriptionSize},
-		131
-	);
+void ClassSelectScreen::UpdateDescription(std::string& str) {
+	text->setPosition({});
+	text->setCharacterSize(32);
+	text->setString(str);
+
+	descriptionRT->draw(*descriptionBackground);
+	descriptionRT->draw(*text);
+	descriptionRT->display();
+}
+
+
+
+void ClassSelectScreen::CreateDescription() {
+	static constexpr sf::Vector2i descriptionPos = { 310,128 };
+	static constexpr sf::Vector2i descriptionSize = {1300,824};
+	descriptionObj = GameObject::Create();
+	descriptionRT = std::make_shared<sf::RenderTexture>(static_cast<sf::Vector2u>(descriptionSize));
+	descriptionBackground = std::make_shared<MSprite>("../assets/sprites/shapes/bl_square_128.png", sf::IntRect{ {},descriptionSize });
+	descriptionBackground->setColor(sf::Color(64, 64, 64, 92));
+	descriptionBackground->SetRepeated(true);
+	descriptionObj->setSprite(descriptionRT->getTexture(),{ {},descriptionSize });
+
+	UpdateDescription(std::string("description goes here:\n words words words"));
+
 
 	descriptionObj->setPosition(descriptionPos);
-
-
-
+	GameObjectManager::getInstance().add(descriptionObj, 131);
 }
 
 
@@ -193,6 +207,7 @@ void ClassSelectScreen::StartLevel() {
 	classScrollRect.lock()->Hide();
 	startButton.lock()->SetEnabled(false);
 	startButtonObj->setActive(false, true);
+	descriptionObj->setActive(false, true);
 
 	second_Timer.start();
 }

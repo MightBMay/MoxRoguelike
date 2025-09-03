@@ -5,15 +5,17 @@ struct ClassSelectScreen {
 		text = std::make_shared<sf::Text>(font);
 		CreateClassSelectionRect();
 		CreateLevelSelectionRect();
-		CreateClassDescription();
 		CreateStartButton();
+		CreateDescription();
+		
 	}
 	void CreateClassSelectionRect();
 	void CreateLevelSelectionRect();
 	void CreateStartButton();
 
 
-	void CreateClassDescription();
+	void CreateDescription();
+	void UpdateDescription(std::string& str);
 	
 	void UpdateStartButton();
 	void StartLevel();
@@ -27,10 +29,12 @@ struct ClassSelectScreen {
 
 
 	std::shared_ptr<sf::RenderTexture> startButtonRT;
-
 	std::shared_ptr<GameObject> classScrollObj;
 	std::weak_ptr<UI_ScrollContainer> classScrollRect;
+
+	std::shared_ptr<sf::RenderTexture> descriptionRT;
 	std::shared_ptr<GameObject> descriptionObj;
+	std::shared_ptr<MSprite> descriptionBackground;
 
 
 
