@@ -177,7 +177,7 @@ void Player::init() {
 	int maxHp = stats->MaxHp();
 	// have to set these in player because we need values from stats, and stats and playerUI need eachothers values.
 	playerUI->healthBar = playerUI->healtBarObj->addComponent<ProgressBar>(
-		sf::IntRect{ { 0,0 }, { 256,32 } },
+		sf::IntRect{ { 0,0 }, { 386,48 } },
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
 		0,

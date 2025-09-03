@@ -22,8 +22,8 @@ sf::IntRect ClassSelectScreen::CreateRectFromJson(const json& data) {
 }
 
 void ClassSelectScreen::CreateClassSelectionRect() {
-	static constexpr sf::Vector2i containerSize = { 1300,128 };
-	static constexpr sf::Vector2f containerPos= { 310,0 };
+	static constexpr sf::Vector2i containerSize = { 1800,128 };
+	static constexpr sf::Vector2f containerPos= { 380,0 };
 	auto scrollContainerRect = sf::FloatRect{ containerPos, static_cast<sf::Vector2f>(containerSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
 	classScrollObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
@@ -64,6 +64,9 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 			[i, this]() {
 				playerClassIndex = i;
 				UpdateStartButton();
+				UpdateDescription(
+					GameData::getPlayerClassFromIndex(i)
+				);
 
 			}
 		);
@@ -74,8 +77,8 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 }
 
 void ClassSelectScreen::CreateLevelSelectionRect() {
-	static constexpr sf::Vector2i containerSize = { 1300,128 };
-	static constexpr sf::Vector2f containerPos = { 310, 1080 -containerSize.y };
+	static constexpr sf::Vector2i containerSize = { 1800,128 };
+	static constexpr sf::Vector2f containerPos = { 380, 1440 -containerSize.y };
 	auto scrollContainerRect = sf::FloatRect{ containerPos, static_cast<sf::Vector2f>(containerSize) };// define scroll rect size/position.
 // make empty gameobject (prob set gameobject sprite size to same as rect size) (set layer to UI layer as well)
 	levelScrollObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png",
@@ -125,8 +128,8 @@ void ClassSelectScreen::CreateLevelSelectionRect() {
 }
 
 void ClassSelectScreen::CreateStartButton() {
-	static constexpr sf::IntRect startButtonRect = { {},{310,128} };
-	static constexpr sf::Vector2f startButtonPosition = { 1610,952 };
+	static constexpr sf::IntRect startButtonRect = { {},{380,128} };
+	static constexpr sf::Vector2f startButtonPosition = { 2180,1312 };
 	
 	startButtonRT = std::make_shared<sf::RenderTexture>(static_cast<sf::Vector2u>(startButtonRect.size));
 	text->setCharacterSize(52);
@@ -163,19 +166,9 @@ void ClassSelectScreen::CreateStartButton() {
 	buttonS->getOnClick().subscribe([this]() { StartLevel(); });
 }
 
-void ClassSelectScreen::UpdateDescription(std::string& str) {
-	text->setPosition({});
-	text->setCharacterSize(32);
-	text->setString(str);
-
-	descriptionRT->draw(*descriptionBackground);
-	descriptionRT->draw(*text);
-	descriptionRT->display();
-}
-
 void ClassSelectScreen::CreateDescription() {
-	static constexpr sf::Vector2i descriptionPos = { 310,128 };
-	static constexpr sf::Vector2i descriptionSize = {1300,824};
+	static constexpr sf::Vector2i descriptionPos = { 380,128 };
+	static constexpr sf::Vector2i descriptionSize = {1800,1184};
 	descriptionObj = GameObject::Create();
 	descriptionRT = std::make_shared<sf::RenderTexture>(static_cast<sf::Vector2u>(descriptionSize));
 	descriptionBackground = std::make_shared<MSprite>("../assets/sprites/shapes/bl_square_128.png", sf::IntRect{ {},descriptionSize });
@@ -188,6 +181,52 @@ void ClassSelectScreen::CreateDescription() {
 
 	descriptionObj->setPosition(descriptionPos);
 	GameObjectManager::getInstance().add(descriptionObj, 131);
+}
+
+
+
+void ClassSelectScreen::UpdateDescription(std::string& str) {
+	descriptionRT->clear(sf::Color::Transparent);
+	text->setPosition({});
+	text->setCharacterSize(32);
+	text->setString(str);
+
+	descriptionRT->draw(*descriptionBackground);
+	descriptionRT->draw(*text);
+	descriptionRT->display();
+}
+
+void ClassSelectScreen::UpdateDescription(const json& data) {
+	std::vector<std::string> strings;
+	static constexpr float maxTextWidth = 570;
+	if (data.contains("abilityDescriptions")) {
+		strings = data["abilityDescriptions"].get<std::vector<std::string>>();
+	}
+	else { return; }
+	descriptionRT->clear(sf::Color::Transparent);
+	descriptionRT->draw(*descriptionBackground); // bg first
+	text->setCharacterSize(32); // reset text size since we reuse the same text obj.
+
+	int size = strings.size();
+	float yOffset = 0;
+
+	for (int i = 0; i < size; ++i) {
+		// the extra units come from the true even spacing being 1300/3, = 433; i reduce the text width
+		// to add padding.
+		text->setPosition({(maxTextWidth * i) + 30 ,yOffset * i });
+		text->setString(strings[i]);
+		WrapTextH(*text, maxTextWidth);
+		descriptionRT->draw(*text);
+
+	}
+
+	descriptionRT->display();
+
+
+
+
+
+
 }
 
 void ClassSelectScreen::UpdateStartButton() {

@@ -14,17 +14,16 @@ PlayerUI::PlayerUI(std::weak_ptr<Player> player) {
 	levelUpUI = std::make_shared<UI_LevelUpSelection>(player);
 
 
-	sf::IntRect& healthBarRect = sf::IntRect{ {0,0},{256,32} };
+	sf::IntRect& healthBarRect = sf::IntRect{ {0,0},{386,48} };
 	healtBarObj = GameObject::Create("../assets/sprites/cardboard.png", healthBarRect, 130);
 	healtBarObj->getSprite()->SetRepeated(true);
-	healtBarObj->setPosition(0, 1048);
+	healtBarObj->setPosition(sf::Vector2f{0,(window->getDefaultView().getSize().y - healthBarRect.size.y) });
 
 
 
 
 	abilityDescription = GameObject::Create(120);
-	abilityDescription->setPosition(1528, 652);
-
+	//abilityDescription->setPosition(2138, 1376);
 	abilityDescription->addComponent<UI_AbilityDescription>(window);
 }
 

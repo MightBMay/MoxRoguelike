@@ -39,9 +39,10 @@ std::shared_ptr<GameObject> vignetteObj;
 
 
 void CreateBackground() {
+	sf::IntRect rect = sf::IntRect{ {},{2560,1440} };
 	backgroundObj = GameObject::Create( // create gameobject for background.
 		"../assets/sprites/cardboard.png",
-		sf::IntRect{ {0,0},{1920,1080} },
+		rect,
 		-110// move to layer -110 to stay behind things. 
 	);      //-100 because background is set to be UI so
 	// rendering will draw it using default sf::view . 
@@ -49,7 +50,7 @@ void CreateBackground() {
 	backgroundObj->getSprite()->SetRepeated(true); // repeat over entire rect.
 	backgroundObj->addComponent<BackgroundImage>();
 
-	vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", { {},{1920,1080} });
+	vignetteObj = GameObject::Create("../assets/sprites/shapes/bl_square_128.png", rect);
 	vignetteObj->addComponent<Vignette>();
 }
 
@@ -74,9 +75,9 @@ void ResetAll(GameObjectManager& manager) {
 
 void InitializeGame(GameObjectManager& manager) {
 
-	// create window and initialize global.h variables
-	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 1920u, 1080u }), "Mox"); // make window
-	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{1920u,1080u} });
+	// create window and initialize global.h variables								sf::Style::None
+	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox"); // make window
+	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{2560u,1440u} });
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
@@ -87,7 +88,7 @@ void InitializeGame(GameObjectManager& manager) {
 	GameData::loadAllData();
 	Input::Initialize();
 	second_Timer.getLoopEvent().subscribe([]() {++elapsed_seconds; });
-
+	
 	if (!font.openFromFile("../assets/fonts/amazon ember.ttf"))
 		std::cerr << "font  file was not found";
 	fpsCounter = std::make_shared<FPS_Counter>(font, true);
@@ -129,7 +130,7 @@ int main() {
 
 
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 1000);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) {

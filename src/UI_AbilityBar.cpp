@@ -80,7 +80,7 @@ void WeaponBar::LinkWeapon(int index, int weaponIndex, std::shared_ptr<WeaponBas
 	int rectPosX = (weaponIndex % columns) * spriteSize;
 	int rectPosY = (weaponIndex / columns) * spriteSize;
 
-	sf::IntRect rect = { {rectPosX, rectPosY},{64,64} };
+	sf::IntRect rect = { {rectPosX, rectPosY},{spriteSize, spriteSize}};
 	weaponSprite->setSprite(weaponSpriteTexture, rect);
 	GameObjectManager::getInstance().add(weaponSprite,110);
 	weaponSprite->setPosition(weaponBarPosition + offsetPerSprite); // set position accordingly
@@ -118,7 +118,6 @@ void StatUpgradeBar::Hide() {
 }
 
 void StatUpgradeBar::LinkStat(std::shared_ptr<StatUpgrade> stat) {
-	static constexpr int spriteWidth = 64;
 	for (int index = 0; index < 6; ++index) {
 		if (statCDSprites[index]) continue; // continue until you find a non null one.
 		// calculate offset based off how many abilities
@@ -155,7 +154,7 @@ UI_SpriteBarHolder::UI_SpriteBarHolder(std::weak_ptr<Player> player) : player(pl
 	EnableBarUI(0); // default to showing abilities.
 
 	for (int i = 0; i <3 ; ++i) {
-		std::shared_ptr<GameObject> obj = GameObject::Create("../assets/sprites/cardboard.png", { {0,0},{32,20} }, 120);
+		std::shared_ptr<GameObject> obj = GameObject::Create("../assets/sprites/cardboard.png", { {0,0},buttonSize }, 120);
 														//34 = 32px button width, + 8 px gap. +8 to offset up 8 units
 		obj->setPosition(position - sf::Vector2f(0,  ((2-i)*21.333f ) )); // as weird as this looks, it inverts the order the buttons	  
 															      	 // show up so that it goes ability, weapon, statupgrade.

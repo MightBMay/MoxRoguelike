@@ -11,6 +11,9 @@ float vectorToAngle(const sf::Vector2f& movementVector);
 /// </summary>
 void rotateVectorByAngle(sf::Vector2f& vec, float angle);
 
+void WrapTextH(sf::Text& text, float maxWidth);
+
+
 class rng {
 public:
     // Delete constructors to prevent instantiation

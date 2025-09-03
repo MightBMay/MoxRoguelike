@@ -18,9 +18,11 @@ public:
 		setDescription(weapon->getDescription());
 		
 	}
+
 	static void setDescription(std::string str) {
 		if (str.empty())return;
 		text->setString(str);
+		WrapTextH(*text, 422);
 		rt->clear(sf::Color::Transparent);
 		rt->draw(*bgSprite);
 		rt->draw(*text);
@@ -50,7 +52,7 @@ protected:
 	
 private:
 	
-	static inline const sf::Vector2f spritePosition = sf::Vector2f(1496, 716);
+	static inline const sf::Vector2f spritePosition = sf::Vector2f(2138, 1076);
 
 	static inline std::shared_ptr<Renderable> renderable;
 	

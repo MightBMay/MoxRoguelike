@@ -25,10 +25,19 @@ public:
 		remainingPullDuration = pullDuration;
 		pullPosition = Input::mousePos_World;
 
-		EnemyManager::getInRange(pullPosition, aoeSize, enemiesToPull);
-		for (auto& enemy : enemiesToPull) {
-			enemy.lock()->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(damage);
-		}
+		EnemyManager::getInRange(pullPosition, aoeSize, enemiesToPull); // get all enemies in range
+		std::vector<std::weak_ptr<GameObject>> aliveEnemies; // used to filter any enemies that died in the process.
+		int size = enemiesToPull.size(); 
+
+		aliveEnemies.reserve(size);// since its likely enemies will survive the damage.
+
+		for (auto& enemy : enemiesToPull) // iterate enemies in range of ability and damage them
+			if (!enemy.lock()->getDerivativesOfComponent<Enemies::Enemy>()->takeDamage(damage)) // if damage kills, don't add to aliveEnemies
+				aliveEnemies.push_back(enemy);
+
+		// move aliveEnemies to enemiestopull, removing any now dead enemies.
+		enemiesToPull = std::move(aliveEnemies);
+
 
 		attackTimer = attackSpeed;
 
@@ -42,16 +51,19 @@ public:
 		}
 
 		if (remainingPullDuration > 0 && !enemiesToPull.empty()) {
-			for (auto& enemy : enemiesToPull) {
-				auto enemyS = enemy.lock();
-				sf::Vector2f direction = pullPosition - enemyS->getPosition();
-				enemyS->move(direction * pullSpeed * deltaTime);
-			}
-			// decrement remainintPullDuration and compare.
-			if ((remainingPullDuration -= deltaTime) <= 0) {
+			// important we do this before pulling enemies, as if the ability kills the enemy, there isnt a 
+			// super simple way to remove it from the ETP vector, so they stay in there until it times out, then it clears.
+			if ((remainingPullDuration -= deltaTime) <= 0) { // decrement remainintPullDuration and compare.
 				enemiesToPull.clear(); // clear enemies to pull, and reset pull position.
 				pullPosition = {};
 			}
+			for (auto& enemy : enemiesToPull) {
+				auto enemyS = enemy.lock();
+				if (!enemyS) { continue; }
+				sf::Vector2f direction = pullPosition - enemyS->getPosition();
+				enemyS->move(direction * pullSpeed * deltaTime);
+			}
+
 
 		}
 

@@ -14,8 +14,12 @@
       "defence": 0,
       "speed": 300,
       "textureStartPos": [0,0],
-      "spriteSize": [ 128, 128 ]
-
+      "spriteSize": [ 128, 128 ],
+      "abilityDescriptions": [
+        "Q) \nSummon a projectile that follows your mouse, dealing damage and applying Sow to enemies hit",
+        "E) \nFor each enemy with Sow, spawn a projectile that returns towards the player.",
+        "R) \nPulls in enemies in a circle, dealing damage and grouping them"
+      ]
 
     },
 
@@ -25,8 +29,13 @@
       "healthRegen": 3,
       "defence": 0,
       "speed": 400,
-      "textureStartPos": [0,128],
-      "spriteSize": [ 128, 128 ]
+      "textureStartPos": [ 0, 128 ],
+      "spriteSize": [ 128, 128 ],
+      "abilityDescriptions": [
+        "1",
+        "2",
+        "3"
+      ]
 
 
     }

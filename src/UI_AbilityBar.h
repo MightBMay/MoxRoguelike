@@ -10,7 +10,8 @@ class Player;
 
 class AbilityBar {
 private:
-	static constexpr sf::Vector2f abilityBarPosition = sf::Vector2f(1824, 1016);
+	static constexpr sf::Vector2f abilityBarPosition = sf::Vector2f(2464, 1376);
+	static constexpr int spriteWidth = 64;
 	std::array<std::shared_ptr<GameObject>, 3> abilityCDSprites;
 	bool enabled = true;
 
@@ -33,7 +34,8 @@ public:
 };
 
 class WeaponBar {
-	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(1824, 1016);
+	static constexpr sf::Vector2f weaponBarPosition = sf::Vector2f(2464, 1376);
+	static constexpr int spriteWidth = 64;
 	std::array<std::shared_ptr<GameObject>, 6> weaponCDSprites;
 	bool enabled = false;
 	static inline std::shared_ptr<sf::Texture> weaponSpriteTexture;
@@ -54,7 +56,8 @@ public:
 };
 
 class StatUpgradeBar {
-	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(1824, 1016);
+	static constexpr sf::Vector2f statBarPosition = sf::Vector2f(2464, 1376);
+	static constexpr int spriteWidth = 64;
 	std::array<std::shared_ptr<GameObject>, 6> statCDSprites;
 	bool enabled = false;
 	// since we just move the rect for this, we only gotta get the texture once.
@@ -71,7 +74,8 @@ public:
 };
 
 class UI_SpriteBarHolder {
-	static constexpr sf::Vector2f position = sf::Vector2f(1888, 1059.777f);
+	static constexpr sf::Vector2f position = sf::Vector2f(2528, 1420);
+	static constexpr sf::Vector2i buttonSize = { 32,20 };
 	std::array<std::shared_ptr<GameObject>, 3> barToggleButtons;
 	std::weak_ptr<Player> player;
 
