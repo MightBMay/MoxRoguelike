@@ -74,16 +74,6 @@ void ResetAll(GameObjectManager& manager) {
 }
 
 void InitializeGame(GameObjectManager& manager) {
-
-	// create window and initialize global.h variables							
-		
-	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox", sf::Style::Default); // make window
-	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{2560u,1440u} });
-	//window->setSize({ 1280,720 });
-	playerView->setCenter({});// center to 0,0
-	window->setFramerateLimit(144); // cap fps
-	window->setVerticalSyncEnabled(true);
-
 	cursorStack = {};
 
 
@@ -106,6 +96,13 @@ void InitializeGame(GameObjectManager& manager) {
 
 int main() {
 
+	// create window and initialize global.h variables							
+	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox", sf::Style::None); // make window
+	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{2560u,1440u} });
+	//window->setSize({ 1280,720 });
+	playerView->setCenter({});// center to 0,0
+	window->setFramerateLimit(144); // cap fps
+	window->setVerticalSyncEnabled(true);
 
 #pragma region create delta time dt_clock	
 	sf::Clock dt_clock;

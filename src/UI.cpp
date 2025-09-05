@@ -32,7 +32,7 @@ void UI_Element::update(float deltaTime) {
 		wasHovering = false;
 	}
 
-	if (!wasHovering) return;// only call the on___() if you are actually hovering the ui_element.
+	if (!currentlyHovering) return;// only call the on___() if you are actually hovering the ui_element.
 	onMouseClick();
 	onKeyboardDown();
 	onKeyboardHold();

@@ -224,9 +224,18 @@ void Player::update(float deltatime) {
 }
 
 void Player::MovePlayer(float deltaTime) {
-	auto parentS = parent.lock();
+	
 
-	direction = { 0,0 };
+	UpdateMoveDirection(); // handles input, and modifying the direction vector.
+	auto parentS = parent.lock();
+	parentS->move(direction * stats->Speed() * deltaTime);
+	playerView->setCenter(parentS->getPosition()); // set playerView center to player
+	
+}
+
+void Player::UpdateMoveDirection() {
+	static constexpr sf::Vector2f zero = { 0,0 };
+	direction = zero;
 	if (Input::GetAction("up"))
 		direction.y = -1;
 
@@ -252,13 +261,20 @@ void Player::MovePlayer(float deltaTime) {
 	else if (Input::GetActionUp("right") && Input::GetAction("left"))
 		direction.x = -1;
 
+	if (direction.lengthSquared() < 0.05f) { //only move if direction held.
+		direction = zero; // if super small direction, just cancel movement.
+		return;
+	}
+	
+	direction = direction.normalized(); // otherwise, normalize
 
-
-	if (direction.lengthSquared() < 0.05f) return; //only move if direction held.
-	direction = direction.normalized();
-	parentS->move(direction * stats->Speed() * deltaTime);
-	playerView->setCenter(parentS->getPosition()); // set playerView center to player
-	UpdateFacingDirection();
+	//handles facing direction.
+	if (direction.x == 0) return; // dont flip if input released.
+	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
+	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
+		facingDirection = newFacingDirection; // store new facing direction
+		parent.lock()->scaleObject(-1, 1); // flip player.
+	}
 }
 
 void Player::HandleRegen(float deltatime) {
@@ -314,14 +330,6 @@ void Player::takeDamage(int _damage) {
 
 void Player::EnableBarUI(int value) { playerUI->SetSpriteBarEnabled(value); }
 
-void Player::UpdateFacingDirection() {
-	if (direction.x == 0) return; // dont flip if input released.
-	bool newFacingDirection = direction.x < 0; // signbit returns true if number is negative.
-	if (newFacingDirection != facingDirection) { // only flip if facing direction is not the same as before.
-		facingDirection = newFacingDirection; // store new facing direction
-		parent.lock()->scaleObject(-1, 1); // flip player.
-	}
-}
 
 /// <summary>
 /// iterates weapon list and adds to the first empty slot, or levels up the weapon if you already have it.

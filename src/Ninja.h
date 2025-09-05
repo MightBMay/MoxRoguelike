@@ -2,10 +2,17 @@
 #include "pch.h"
 #include "Player.h"
 #include "Ninja_Q.h"
+#include "Ninja_E.h"
 
 
 namespace playerClasses {
 	class Ninja : public Player {
+
+	private:
+		float dashSpeed = 0;
+		sf::Vector2f dashDir = {};
+		bool isDashing = false;
+
 	public:
 		Ninja() :Player("Ninja") {
 
@@ -20,9 +27,9 @@ namespace playerClasses {
 			playerUI->spriteBar->abilityBar->LinkAbility(2, weaponQ.lock());
 
 
-			//auto weaponE = parentS->addComponent<Papyrmancer_Reap>();
-			//abilityHolder[1] = weaponE;
-			//playerUI->spriteBar->abilityBar->LinkAbility(1, weaponE.lock());
+			auto weaponE = parentS->addComponent<Ninja_E>(this);
+			abilityHolder[1] = weaponE;
+			playerUI->spriteBar->abilityBar->LinkAbility(1, weaponE.lock());
 
 
 			//auto weaponR = parentS->addComponent<Papyrmancer_R>();
@@ -33,6 +40,37 @@ namespace playerClasses {
 
 
 		}
+
+
+		void MovePlayer(float deltaTime) override {
+
+			auto parentS = parent.lock();
+			float usedSpeed;
+			if (!isDashing) {
+				// since we want to check the input direction before we dash (so we cant dash holding no dir)
+				// we call UpdateMoveDirection in Ninja_E. with this if, we prevent double calling it.
+				usedSpeed = stats->Speed();
+				UpdateMoveDirection(); // handles input, and modifying the direction vector.
+			}
+			else
+				usedSpeed = dashSpeed;
+
+			parentS->move(direction * usedSpeed * deltaTime);
+			playerView->setCenter(parentS->getPosition()); // set playerView center to player
+
+
+		}
+
+		void StartDash(float& speed) {
+			dashSpeed = speed;
+			dashDir = direction;
+			isDashing = true;
+		}
+
+		void StopDash() {
+			isDashing = false;
+		}
+
 	};
 
 }

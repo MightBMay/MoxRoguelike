@@ -132,10 +132,10 @@
       "speed": 1250,
       "range": 750,
       "projSize": 100,
-      "attackSpeed": 0.2,
+      "attackSpeed": 0.45,
       "pierce": 15,
       "projectile data": {
-        "textureStartPos": [ 32, 0],
+        "textureStartPos": [ 32, 0 ],
         "spriteSize": [ 32, 32 ],
         "animation data": {
           "loop": true,
@@ -156,8 +156,16 @@
 
         }
       }
+    },
 
-
+    "Ninja E": {
+      "ability id": 4,
+      "description": "Ninja E: \nDash in a targeted direction, and become invulnrable for a moment.",
+      "speed": 2000,
+      "dash duration": 0.175,
+      "invuln duration": 1,
+      "damage": 0,
+      "attackSpeed": 0.125
 
     }
   }

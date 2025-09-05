@@ -15,8 +15,8 @@ struct ClassSelectScreen {
 
 
 	void CreateDescription();
-	void UpdateDescription(std::string& str);
-	void UpdateDescription(const json& data);
+	void UpdateDescription(std::string str);
+	void UpdateDescription(std::string className, const json& data);
 	
 	void UpdateStartButton();
 	void StartLevel();

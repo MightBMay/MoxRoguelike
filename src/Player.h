@@ -168,6 +168,10 @@ public:
 
 
 	static bool isVulnrable() { return _isVulnrable; }
+	void SetVulnrable(bool value) { 
+		_isVulnrable = value;
+	}
+
 	static std::shared_ptr<PlayerStats> getStats() { return stats; }
 	virtual void CreateAbilities(std::shared_ptr<sf::RenderWindow> window) = 0;
 	void EnableBarUI(int value);
@@ -180,7 +184,7 @@ public:
 	virtual void takeDamage(int _damage);
 	void init()override;
 	void update(float deltatime) override;
-
+	virtual void UpdateMoveDirection();
 	virtual void MovePlayer(float deltaTime);
 
 	virtual void Destroy() override {}
@@ -194,6 +198,7 @@ public:
 	bool isStatUpgradeMaxLevel(StatType type);
 
 protected:
+	static inline std::shared_ptr<PlayerStats> stats = nullptr;
 	std::string className = "";
 	std::shared_ptr<PlayerUI> playerUI;
 	Timer hitFlickerTimer{ hitFlickerDuration, false};
@@ -230,8 +235,7 @@ private:
 	static inline bool _isVulnrable = true;
 	static constexpr float hitFlickerDuration = 0.125f;
 	static constexpr sf::Color hitColour = sf::Color(255, 155, 155, 255);
-	static inline std::shared_ptr<PlayerStats> stats = nullptr;
-	void UpdateFacingDirection();
+
 
 
 };

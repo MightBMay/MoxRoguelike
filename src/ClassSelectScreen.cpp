@@ -34,10 +34,9 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 	classScrollObj->setPosition(scrollContainerRect.position);
 	classScrollRect = classScrollObj->addComponent<UI_ScrollContainer>(
 		window,
-		scrollContainerRect,
-		sf::Vector2f{ 128, 128 },
-		128
-		// set this to the size of the content's sprites.
+		scrollContainerRect, // rect of the entire scroll rect.
+		sf::Vector2f{ 128, 128 }, // size of the content sprites.
+		128 // fade width for the masking.
 	);
 	auto scrollContainerSprite = classScrollObj->getSprite(); // set values for scroll container's sprite.
 	scrollContainerSprite->SetRepeated(true);
@@ -65,6 +64,7 @@ void ClassSelectScreen::CreateClassSelectionRect() {
 				playerClassIndex = i;
 				UpdateStartButton();
 				UpdateDescription(
+					GameData::getPlayerClassNameFromIndex(i), // technically this re reads a small bit of json, but its rlly not worth optimizing.
 					GameData::getPlayerClassFromIndex(i)
 				);
 
@@ -176,16 +176,17 @@ void ClassSelectScreen::CreateDescription() {
 	descriptionBackground->SetRepeated(true);
 	descriptionObj->setSprite(descriptionRT->getTexture(),{ {},descriptionSize });
 
-	UpdateDescription(std::string("description goes here:\n words words words"));
+	
 
-
+	auto temp = std::string("description goes here:\n words words words");
 	descriptionObj->setPosition(descriptionPos);
+	UpdateDescription(std::string("^^Select a class for info^^"));
 	GameObjectManager::getInstance().add(descriptionObj, 131);
 }
 
 
 
-void ClassSelectScreen::UpdateDescription(std::string& str) {
+void ClassSelectScreen::UpdateDescription(std::string str) {
 	descriptionRT->clear(sf::Color::Transparent);
 	text->setPosition({});
 	text->setCharacterSize(32);
@@ -196,24 +197,29 @@ void ClassSelectScreen::UpdateDescription(std::string& str) {
 	descriptionRT->display();
 }
 
-void ClassSelectScreen::UpdateDescription(const json& data) {
-	std::vector<std::string> strings;
+void ClassSelectScreen::UpdateDescription(std::string className, const json& playerClassData) {
 	static constexpr float maxTextWidth = 570;
-	if (data.contains("abilityDescriptions")) {
-		strings = data["abilityDescriptions"].get<std::vector<std::string>>();
-	}
-	else { return; }
+	std::vector<std::string> strings;
+	if (playerClassData.contains("abilityDescriptions")) 
+		strings = playerClassData["abilityDescriptions"].get<std::vector<std::string>>();
+	else return;
+
 	descriptionRT->clear(sf::Color::Transparent);
 	descriptionRT->draw(*descriptionBackground); // bg first
 	text->setCharacterSize(32); // reset text size since we reuse the same text obj.
 
 	int size = strings.size();
-	float yOffset = 0;
+	float yOffset = 30;
+
+	text->setPosition({30,0});
+	text->setString(className+ ":");
+	descriptionRT->draw(*text);
+
 
 	for (int i = 0; i < size; ++i) {
 		// the extra units come from the true even spacing being 1300/3, = 433; i reduce the text width
 		// to add padding.
-		text->setPosition({(maxTextWidth * i) + 30 ,yOffset * i });
+		text->setPosition({(maxTextWidth * i) + 30 ,yOffset});
 		text->setString(strings[i]);
 		WrapTextH(*text, maxTextWidth);
 		descriptionRT->draw(*text);

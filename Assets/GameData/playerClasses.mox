@@ -32,8 +32,8 @@
       "textureStartPos": [ 0, 128 ],
       "spriteSize": [ 128, 128 ],
       "abilityDescriptions": [
-        "1",
-        "2",
+        "Q) \nThrow a shuriken. Can be recast up to three times, with each recast throwing more shurikens",
+        "E) \nDash in the direction you are moving, briefly becoming invulnrable afterwards.",
         "3"
       ]
 

@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include "Weapon.h"
 #include "Ninja_QProjectile.h"
 #include "Animation.h"
