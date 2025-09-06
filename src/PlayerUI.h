@@ -1,5 +1,5 @@
 #pragma once
-
+class PlayerHealthBar;
 class GameObject;
 class Player;
 class UI_SpriteBarHolder;
@@ -23,7 +23,7 @@ public:
 
 	//health and healthbar
 	std::shared_ptr<GameObject> healtBarObj;
-	std::weak_ptr<ProgressBar> healthBar;
+	std::weak_ptr<PlayerHealthBar> healthBar;
 
 
 	void SetSpriteBarEnabled(int value);

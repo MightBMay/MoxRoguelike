@@ -60,5 +60,5 @@ const json& Ninja_E::LoadInfoFromJson(){
 		std::cerr << "\n invuln duration not found for Ninja E";
 
 
-
+	return data;
 }

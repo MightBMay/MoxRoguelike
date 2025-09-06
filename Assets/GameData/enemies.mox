@@ -10,12 +10,12 @@
     "test enemy": {
       "hp": 5,
       "damage": 6,
-      "attack speed": 5,
-      "attack size": 6,
+      "attackSpeed": 5,
+      "attackSize": 6,
       "speed": 175,
       "xp": 1,
       "size": 86,
-      "sprite data": {
+      "spriteData": {
         "textureStartPos": [ 0, 128 ],
         "spriteSize": [ 128, 150 ]
       }
@@ -25,12 +25,12 @@
     "scissor enemy": {
       "hp": 5,
       "damage": 6,
-      "attack speed": 2.307,
-      "attack size": 6,
+      "attackSpeed": 2.307,
+      "attackSize": 6,
       "speed": 175,
       "xp": 1,
       "size": 86,
-      "sprite data": {
+      "spriteData": {
         "textureStartPos": [ 0, 0 ],
         "spriteSize": [ 128, 128 ],
         "animation data": {

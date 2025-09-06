@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "PlayerUI.h"
 #include "StatUpgrade.h"
+#include "Healthbar.h"
 
 
 #include "Papyrmancer.h"
@@ -176,7 +177,7 @@ void Player::init() {
 
 	int maxHp = stats->MaxHp();
 	// have to set these in player because we need values from stats, and stats and playerUI need eachothers values.
-	playerUI->healthBar = playerUI->healtBarObj->addComponent<ProgressBar>(
+	playerUI->healthBar = playerUI->healtBarObj->addComponent<PlayerHealthBar>(
 		sf::IntRect{ { 0,0 }, { 386,48 } },
 		"../assets/sprites/shapes/bl_square_128.png",
 		true,
@@ -187,7 +188,7 @@ void Player::init() {
 	healthBarS->updateBar(maxHp);
 	healthBarS->setFillColor(sf::Color(192, 64, 64, 128));
 
-	stats->getMaxHpChangeEvent().subscribe(playerUI->healthBar, &ProgressBar::setRange);
+	stats->getMaxHpChangeEvent().subscribe(playerUI->healthBar, &PlayerHealthBar::setRange);
 
 
 	//// DEBUG

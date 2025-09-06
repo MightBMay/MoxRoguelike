@@ -87,7 +87,10 @@ namespace Enemies {
 		inline void ResetHitFlicker();
 
 		Timer hitFlickerTimer{ hitFlickerDuration, false };
+		virtual inline float getStatIncreaseMultiplier() {
+			return std::pow(1.5, (level - 1) / 5);
 
+		}
 		virtual void LoadInfoFromJson(std::string enemyType);
 		static inline  std::shared_ptr<sf::Texture> enemyAtlasTexture;
 		static inline bool atlasLoaded;

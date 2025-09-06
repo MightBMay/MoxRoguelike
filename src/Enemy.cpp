@@ -129,24 +129,26 @@ void Enemies::Enemy::ResetHitFlicker() {
 void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	auto& json = GameData::getEnemy(enemyType);
 	auto parentS = parent.lock();
+	float increasePerLevel = getStatIncreaseMultiplier();
+
 	if (json.contains("hp")) {
-		_maxHp = json["hp"];
+		_maxHp = json["hp"]* increasePerLevel;
 		_curHp = _maxHp;
 	}
 	else { std::cerr << "\n\"hp\" not found/defined in json for " << enemyType; }
 
 	if (json.contains("damage")) {
-		_damage = json["damage"];
+		_damage = json["damage"] * increasePerLevel;
 	}
 	else { std::cerr << "\nDamage not found/defined in json for " << enemyType; }
 
-	if (json.contains("attack speed")) {
-		_attackSpeed = 1 / json["attack speed"].get<float>();
+	if (json.contains("attackSpeed")) {
+		_attackSpeed = 1 / json["attackSpeed"].get<float>();
 	}
 	else { std::cerr << " not found/defined in json for " << enemyType; }
 
-	if (json.contains("attack size")) {
-		_attackSize = json["attack size"];
+	if (json.contains("attackSize")) {
+		_attackSize = json["attackSize"];
 	}
 	else { std::cerr << " \n\"attack size\"not found/defined in json for " << enemyType; }
 
@@ -169,8 +171,8 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	else { std::cerr << "\n\"xp \" not found/defined in json for " << enemyType; }
 
 	
-	if (json.contains("sprite data")) {
-		const auto& spriteData = json["sprite data"];
+	if (json.contains("spriteData")) {
+		const auto& spriteData = json["spriteData"];
 		// if sprite data is defined, sprite size and text position MUST also be there.
 		std::vector<int> rawSize= spriteData["spriteSize"].get<std::vector<int>>();
 		sf::Vector2i size = { rawSize[0],rawSize[1] };

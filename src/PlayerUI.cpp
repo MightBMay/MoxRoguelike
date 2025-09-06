@@ -4,6 +4,7 @@
 #include "Weapon.h"
 
 #include "StatUpgrade.h"
+#include "Healthbar.h"
 #include "UI_AbilityBar.h"
 #include "UI_AbilityDescription.h"
 #include "UI_LevelUpSelection.h"

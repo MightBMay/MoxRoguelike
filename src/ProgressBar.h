@@ -17,10 +17,10 @@ public:
 	virtual void updateBar(int value);
 	virtual void updateBar(float value);
 	void setFillColor(sf::Color& colour);
-	void setRange(float min, float max);
-	void setRange(int min, int max);
+	virtual void setRange(float min, float max);
+	virtual void setRange(int min, int max);
 
-	void setRange(int max);
+	virtual void setRange(int max);
 	virtual void init() override;
 	virtual void update(float deltaTime) override{}
 	virtual void Destroy() {}
@@ -51,3 +51,5 @@ protected:
 	}
 
 };
+
+

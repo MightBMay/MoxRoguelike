@@ -3,7 +3,7 @@
 #include "Weapon.h"
 #include "PlayerUI.h"
 
-
+class PlayerHealthbar;
 class Component;
 class Timer;
 class GameObject;
