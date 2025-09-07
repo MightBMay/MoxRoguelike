@@ -1,12 +1,14 @@
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
-
 #include "Component.h"
 using sf::Mouse::Button;
 
 class GameObject;
 
-
+/// <summary>
+/// Used as a base class for all UI. positions are WINDOW SIZE RELATIVE, place and scale all elements according 
+/// to some constant, default render resolution (in my case, 2560x1440).
+/// </summary>
 class UI_Element : public Component {
 public:
 
@@ -22,6 +24,11 @@ public:
 		 enabled = value;
 	}
 
+	virtual ~UI_Element() {
+		//if (windowResizeEventID != -1)
+			//windowResizeEvent.unsubscribe(windowResizeEventID);
+	}
+
 protected:
 	/// <summary>
 	/// Checks if the mouse is currently hovering over the UI_Element's rect.
@@ -29,7 +36,7 @@ protected:
 	/// <returns> returns true if the object is being hovered over.</returns>
 	virtual bool isHovering();
 
-
+	virtual void SetRelativePosition(sf::Vector2u newSize);
 	virtual void onMouseClick();
 	virtual void onKeyboardDown() {}
 	virtual void onKeyboardHold() {}
@@ -43,7 +50,10 @@ protected:
 	bool enabled = true;
 
 	std::shared_ptr<sf::RenderWindow> window;
-	sf::Cursor::Type entryCursorState;
+	sf::Vector2f relativePosition;
+
+	//size_t windowResizeEventID = -1;
+
 private:
 	
 	bool wasHovering = false;

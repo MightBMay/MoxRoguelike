@@ -14,6 +14,14 @@ void rotateVectorByAngle(sf::Vector2f& vec, float angle);
 void WrapTextH(sf::Text& text, float maxWidth);
 
 
+void  normalizedFromRange(float& value, float min = 0.0f, float max = 1.0f);
+float normalizeFromRange(float value, float min = 0.0f, float max = 1.0f);
+
+
+void mapFromRange(sf::Vector2f& value, sf::Vector2f max, sf::Vector2f min = { 0,0 });
+void mapFromRange(sf::Vector2f& value, sf::Vector2u max, sf::Vector2f min = { 0,0 });
+void mapFromRange(float& value, float min, float max);
+
 class rng {
 public:
     // Delete constructors to prevent instantiation

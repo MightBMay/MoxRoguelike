@@ -17,6 +17,7 @@
 std::shared_ptr<sf::RenderWindow> window;
 std::shared_ptr<sf::View> playerView;
 sf::Font font;
+MEvent<sf::Vector2u> windowResizeEvent{};
 std::stack<sf::Cursor::Type> cursorStack;
 Timer second_Timer{ 1,true };
 int elapsed_seconds = 0;
@@ -99,7 +100,6 @@ int main() {
 	// create window and initialize global.h variables							
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox", sf::Style::Default); // make window
 	playerView = std::make_shared<sf::View>(sf::FloatRect{ {0, 0},{2560u,1440u} });
-	window->setSize({ 1280,720 });
 	playerView->setCenter({});// center to 0,0
 	window->setFramerateLimit(144); // cap fps
 	window->setVerticalSyncEnabled(true);
@@ -123,6 +123,10 @@ int main() {
 		while (const std::optional event = window->pollEvent()) {
 			Input::HandleEvent(event);
 			if (event->is<sf::Event::Closed>()) window->close();
+
+			if (const auto* resize = event->getIf<sf::Event::Resized>()) {
+				windowResizeEvent.invoke(resize->size);
+			}
 		}
 		// done in gameplay loop so we can show fps anywhere.
 		if (Input::GetActionDown("togglefps")) fpsCounter->ToggleShowFps();
@@ -130,13 +134,10 @@ int main() {
 
 
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scan::NumpadPlus)) elapsed_seconds += 60;
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Up)) window->setSize({ 2560,1440 });
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) window->setSize({ 1280,720 });
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
-
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) {
-			std::cout<<"\n "<<level->GetCurrentEnemyOptions()->size();
-		}
 
 		//end of debug
 

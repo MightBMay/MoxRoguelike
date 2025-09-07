@@ -9,6 +9,8 @@ extern std::shared_ptr<sf::RenderWindow> window;
 extern std::shared_ptr<sf::View> playerView;
 
 
+extern MEvent<sf::Vector2u> windowResizeEvent;
+
 extern std::stack<sf::Cursor::Type> cursorStack;
 
 extern  sf::Font font;

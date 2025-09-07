@@ -2,7 +2,13 @@
 #include "GameObject.h"
 
 
-void UI_Element::init() {  }
+void UI_Element::init() {  
+	relativePosition = parent.lock()->getPosition();
+	mapFromRange(relativePosition, window->getSize());
+	//SetRelativePosition(window->getSize());
+	//windowResizeEventID = windowResizeEvent.subscribe([this](sf::Vector2u newSize) {SetRelativePosition(newSize); });
+	
+}
 
 void UI_Element::onMouseClick() {
 	if (Input::GetMouseUp(0)) // lmb
@@ -15,6 +21,13 @@ void UI_Element::onMouseClick() {
 			OnClick(2);
 
 }
+
+void UI_Element::SetRelativePosition(sf::Vector2u newSize) {
+	auto parentS = parent.lock();
+	sf::Vector2f newPos =  relativePosition.componentWiseMul(static_cast<sf::Vector2f>(newSize));
+	parentS->setPosition(newPos);
+}
+
 
 void UI_Element::update(float deltaTime) {
 	if (!parent.lock()->hasSprite()|| !enabled) return;

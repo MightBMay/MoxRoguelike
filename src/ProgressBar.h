@@ -35,20 +35,7 @@ protected:
 	float maxValue;
 	float curValue =0;
 	
-	/// <summary>
-	/// normalizes a number from a given range to a range of 0-1.
-	/// </summary>
-	/// <param name="value"> value to be normalized.</param>
-	/// <param name="min">minimum range value. if value < min, returns 0.</param>
-	/// <param name="max">maximum range value. if value > max, returns 1.</param>
-	inline float normalizeFromRange(float value, float min = 0.0f, float max = 1.0f) {
-		if (max == min) {
-			std::cerr << "\n tried to normalize number with min and max equal.";
-			return -1;
-		}
-		value = std::clamp(value, min, max);
-		return (value - min) / (max - min);
-	}
+
 
 };
 

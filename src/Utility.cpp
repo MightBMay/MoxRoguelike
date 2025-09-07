@@ -130,6 +130,78 @@ void rotateVectorByAngle(sf::Vector2f& vec, float angle) {
 
 }
 
+/// <summary>
+/// Take a value and map it to range 0-1, based on a minimum and maximum range.
+/// directly modifies float value, instead of returning a new float.
+/// </summary>
+/// <param name="value">the value to be changed</param>
+/// <param name="min">minimum range of value</param>
+/// <param name="max">maximum range of value</param>
+void normalizedFromRange(float& value, float min, float max) {
+    if (max == min) {
+        std::cerr << "\n tried to normalize number with min and max equal.";
+        return;
+    }
+    value = std::clamp(value, min, max);
+    value =  (value - min) / (max - min);
+}
+
+
+/// <summary>
+/// Take a value and map it to range 0-1, based on a minimum and maximum range.
+/// </summary>
+/// <param name="value">the value to be changed</param>
+/// <param name="min">minimum range of value</param>
+/// <param name="max">maximum range of value</param>
+/// <returns>value clamped to the range 0-1, relative to min and max.</returns>
+float normalizeFromRange(float value, float min, float max) {
+    if (max == min) {
+        std::cerr << "\n tried to normalize number with min and max equal.";
+        return -1;
+    }
+    value = std::clamp(value, min, max);
+    return (value - min) / (max - min);
+}
+
+/// <summary>
+/// Take a value and map it to range 0-1, based on a minimum and maximum range.
+/// directly modifies float value, instead of returning a new float.
+/// </summary>
+/// <param name="value">the value to be changed</param>
+/// <param name="min">minimum range of value</param>
+/// <param name="max">maximum range of value</param>
+void mapFromRange(float& value, float min, float max) {
+    if (max == min) {
+        std::cerr << "\n tried to normalize number with min and max equal.";
+        return;
+    }
+    value = (value - min) / (max - min);
+}
+
+/// <summary>
+/// Normalizes the X/Y values of a vector to within range 0-1. used to scale UI positions 
+/// </summary>
+/// <param name="value"> value to be normalized.</param>
+/// <param name="min">minimum range value. if value < min, returns 0.</param>
+/// <param name="max">maximum range value. if value > max, returns 1.</param>
+void mapFromRange(sf::Vector2f& value, sf::Vector2f max, sf::Vector2f min) {
+    mapFromRange(value.x, min.x, max.x);
+    mapFromRange(value.y, min.y, max.y);
+}
+
+
+/// <summary>
+/// Normalizes the X/Y values of a vector to within range 0-1. used to scale UI positions 
+/// </summary>
+/// <param name="value"> value to be normalized.</param>
+/// <param name="min">minimum range value. if value < min, returns 0.</param>
+/// <param name="max">maximum range value. if value > max, returns 1.</param>
+void mapFromRange(sf::Vector2f& value, sf::Vector2u max, sf::Vector2f min) {
+    mapFromRange(value.x, min.x, max.x);
+    mapFromRange(value.y, min.y, max.y);
+}
+
+
 std::mt19937& rng::getEngine() {
     static std::mt19937 engine(std::random_device{}());
     return engine;
