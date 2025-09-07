@@ -9,6 +9,7 @@
 #include "Enemy.h"
 #include "StatUpgrade.h"
 #include "ClassSelectScreen.h"
+#include "fmod.hpp"
 
 
 
@@ -96,6 +97,11 @@ void InitializeGame(GameObjectManager& manager) {
 
 
 int main() {
+	// move to audio class prob.
+	FMOD_RESULT result;
+	FMOD::System* pSystem = nullptr;
+	result = FMOD::System_Create(&pSystem);
+	std::cout << result;
 
 	// create window and initialize global.h variables							
 	window = std::make_shared<sf::RenderWindow>(sf::VideoMode({ 2560u, 1440u }), "Mox", sf::Style::Default); // make window
