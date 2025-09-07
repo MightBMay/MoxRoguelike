@@ -130,6 +130,7 @@ int main() {
 
 
 		//Debug
+		if (Input::GetKeyDown(sf::Keyboard::Scan::NumpadPlus)) elapsed_seconds += 60;
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 

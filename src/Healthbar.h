@@ -41,7 +41,7 @@ public:
 	}
 	void updateBar(float value)override {
 		ProgressBar::updateBar(value);
-		std::string& newStr = std::to_string(std::lround(value)) + "/ " + std::to_string(std::lround(maxValue));
+		std::string& newStr = std::to_string(std::lround(value)) + " / " + std::to_string(std::lround(maxValue));
 		text->setString(newStr);
 
 

@@ -88,7 +88,7 @@ namespace Enemies {
 
 		Timer hitFlickerTimer{ hitFlickerDuration, false };
 		virtual inline float getStatIncreaseMultiplier() {
-			return std::pow(1.5, (level - 1) / 5);
+			return std::pow(1.5, (level - 1) / 5.0f);
 
 		}
 		virtual void LoadInfoFromJson(std::string enemyType);
