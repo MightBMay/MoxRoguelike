@@ -2,7 +2,7 @@
 
 class Audio {
 private:
-
+    
     struct BankEntry {
         FMOD::Studio::Bank* bank;
         size_t referenceCount = 1; 
@@ -127,29 +127,34 @@ public:
         }
     }
 
+    static FMOD::Studio::EventInstance* CreateFMODEvent(const std::string& eventPath) {
+        if (!pStudioSystem) return nullptr;
 
-    static void PlayFMODEvent(const std::string& eventPath) {
         FMOD::Studio::EventDescription* eDescription = nullptr;
-        FMOD::Studio::EventInstance* eInstance = nullptr;
-
         FMOD_RESULT result = pStudioSystem->getEvent(eventPath.c_str(), &eDescription);
-        if (result != FMOD_OK) {
-            std::cerr << "Error getting event with path: " << eventPath;
-            return;
+        if(result != FMOD_OK) {
+            std::cerr << "Error getting event: " << eventPath << " - " << FMOD_ErrorString(result) << std::endl;
+            return nullptr;
         }
 
+        FMOD::Studio::EventInstance* eInstance = nullptr;
         result = eDescription->createInstance(&eInstance);
-
         if (result != FMOD_OK) {
-            std::cerr << "Error creating event instance with path: " << eventPath;
-            return;
+            std::cerr << "Error creating event instance: " << eventPath << " - " << FMOD_ErrorString(result) << std::endl;
+            return nullptr;
         }
 
-        result = eInstance->start();
-        if (result != FMOD_OK) {
-            std::cerr << "Error creating event instance with path: " << eventPath;
-        }
+        return eInstance; // Caller now owns this instance and must release it!
+        
 
+ 
+
+    }
+
+    static void PlayOneShot(const std::string& eventPath) {
+        auto eInstance = CreateFMODEvent(eventPath);
+        if (eInstance == nullptr) return;
+        eInstance->start();
         eInstance->release();
 
     }

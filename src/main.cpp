@@ -116,6 +116,7 @@ int main() {
 	Audio::Initialize();
 	InitializeGame(manager);
 
+	float volume = 0.5f;
 
 	while (window->isOpen()) {
 		Delta_Timer = dt_clock.restart();
@@ -135,8 +136,16 @@ int main() {
 
 
 		//Debug
-		//if (Input::GetKeyDown(sf::Keyboard::Scan::Up)) Audio::UnloadBank("master.bank");
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) Audio::PlayFMODEvent("event:/TestEvent");
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Up)) volume += 0.05f;
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) volume -= 0.05f;
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Right)) {
+			auto eInst = Audio::CreateFMODEvent("event:/TestEvent");
+			if (eInst != nullptr) {
+				eInst->setParameterByName("volume", volume);
+				eInst->start();
+				eInst->release();
+			}
+		}
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
