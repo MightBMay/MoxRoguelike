@@ -126,8 +126,8 @@ void Enemies::Enemy::ResetHitFlicker() {
 }
 
 
-void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
-	auto& json = GameData::getEnemy(enemyType);
+const json& Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
+	const auto& json = GameData::getEnemy(enemyType);
 	auto parentS = parent.lock();
 	float increasePerLevel = getStatIncreaseMultiplier();
 
@@ -199,6 +199,13 @@ void Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	}
 	parentS->setOrigin(spriteRect.size.x / 2.0f, spriteRect.size.y / 2.0f);
 
+	if (json.contains("audioData")) {
+		LoadAudioDataFromJson(json["audioData"]);
+	}
+	else
+		std::cout << "\nenemy \"" << enemyType << "\" contains no audio data.";
+
+	return json;
 
 }
 

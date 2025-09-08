@@ -58,6 +58,10 @@ private:
 	int frameCounter = 0;
 	bool isPlaying = true;
 
+	MEvent<> onAnimationEnd{};
+	MEvent<> onAnimationStart{};
+	MEvent<> onAnimationLoop{};
+
 public:
 
 	SpriteAnimator(SpriteAnimation animation) :
@@ -66,6 +70,11 @@ public:
 		frameDuration = animationFrameRate * (1.0f / animationSpeed);
 
 	}
+
+
+	MEvent<>& getAnimationEndEvent() { return onAnimationEnd; }
+	MEvent<>& getAnimationLoopEvent() { return onAnimationLoop; }
+	MEvent<>& getAnimationStartEvent() { return onAnimationStart; }
 
 
 	void SetRectSize(sf::Vector2i newSize) {
@@ -105,12 +114,14 @@ public:
 					frameCounter = 0;
 					currentFrame = 0;
 					UpdateSprite(); // force update sprite to go back to frame 0.
+					onAnimationLoop.invoke();
 				}
 				else { // otherwise, 
 					frameCounter = 0;
 					currentFrame = animation.columns- 1; // stop at last frame of animation.
 					UpdateSprite();
 					isPlaying = false;
+					onAnimationEnd.invoke();
 				}
 			}
 			
@@ -124,8 +135,16 @@ public:
 	}
 
 
-	void Play() { isPlaying = true; }
+	void Play() { 
+		onAnimationStart.invoke();
+		isPlaying = true; 
+	}
 	void Pause() { isPlaying = false; }
+
+	void Stop() { 
+		isPlaying = false; 
+		onAnimationEnd.invoke();
+	}
 	void Reset() {
 		isPlaying = false;
 		currentFrame = 0;

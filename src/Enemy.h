@@ -91,7 +91,8 @@ namespace Enemies {
 			return std::pow(1.5, (level - 1) / 5.0f);
 
 		}
-		virtual void LoadInfoFromJson(std::string enemyType);
+		virtual const json& LoadInfoFromJson(std::string enemyType);
+		virtual void LoadAudioDataFromJson(const json& audioData) {}
 		static inline  std::shared_ptr<sf::Texture> enemyAtlasTexture;
 		static inline bool atlasLoaded;
 

@@ -55,6 +55,12 @@ public:
         LoadBank("master.bank");
         LoadBank("master.strings.bank");
 
+        LoadBank("enemies.bank");
+        LoadBank("player.bank");
+        LoadBank("ui.bank");
+        LoadBank("weapons.bank");
+
+
         std::cout << "Audio system initialized successfully." << std::endl;
     }
 
@@ -145,9 +151,6 @@ public:
         }
 
         return eInstance; // Caller now owns this instance and must release it!
-        
-
- 
 
     }
 

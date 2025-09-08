@@ -18,13 +18,7 @@
       "spriteData": {
         "textureStartPos": [ 0, 128 ],
         "spriteSize": [ 128, 150 ]
-      },
-      "audioData": {
-        "fmodBank": "master.bank",
-        "attackSound1": "event:/Attack1"
       }
-
-
     },
 
     "scissor enemy": {
@@ -70,8 +64,10 @@
 
 
 
+      },
+      "audioData": {
+        "snip": "event:/Enemies/Scissor Enemy/Snip"
       }
-
 
 
     }

@@ -9,7 +9,7 @@
 #include "Enemy.h"
 #include "StatUpgrade.h"
 #include "ClassSelectScreen.h"
-#include "Audio.h"
+
 
 
 #pragma region global.h extern definitions
@@ -146,7 +146,7 @@ int main() {
 				eInst->release();
 			}
 		}
-		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
+		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 1);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
 
 
@@ -156,10 +156,10 @@ int main() {
 
 		// Update and render
 
-		manager.updateAll(deltaTime); // call updatme() on all gameobjects
+		manager.updateAll(deltaTime); // call update() on all gameobjects
 		Input::Update();// input updated for next frame.
 		Audio::Update();
-		EnemyManager::HandleSpawning(deltaTime);
+		//EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 
 		fpsCounter->Update();
