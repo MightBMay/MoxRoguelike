@@ -91,7 +91,6 @@ public:
 
 	virtual void LevelUp() {
 		++level;
-		std::cout << "\nLevel: " << level;
 		UpdateStats();
 	}
 

@@ -134,9 +134,8 @@ const json& Enemies::Enemy::LoadInfoFromJson(std::string enemyType) {
 	if (json.contains("hp")) {
 		_maxHp = json["hp"]* increasePerLevel;
 		_curHp = _maxHp;
-		std::cout << "\n level:" << level << ", maxHp: " << _maxHp;
 	}
-	else { std::cerr << "\n\"hp\" not found/defined in json for " << enemyType; }
+	else { std::cerr << "\nhp not found/defined in json for " << enemyType; }
 
 	if (json.contains("damage")) {
 		_damage = json["damage"] * increasePerLevel;

@@ -8,7 +8,7 @@
 namespace Enemies {
 	class ScissorEnemy : public Enemy {
 
-		static inline FMOD::Studio::EventInstance* snipEvent = nullptr;
+		FMOD::Studio::EventInstance* snipEvent = nullptr;
 
 	public:
 		ScissorEnemy(int level) : Enemy(level, "scissor enemy") {}
@@ -33,7 +33,7 @@ namespace Enemies {
 
 
 		virtual void LoadAudioDataFromJson(const json& audioData) override{
-						if (audioData.contains("snip")) {
+			if (audioData.contains("snip")) {
 				snipEvent = Audio::CreateFMODEvent(audioData["snip"]);
 			}
 			else

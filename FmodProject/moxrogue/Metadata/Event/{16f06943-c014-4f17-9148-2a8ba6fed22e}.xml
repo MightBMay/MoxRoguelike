@@ -60,8 +60,8 @@
 		<property name="maxVoices">
 			<value>2</value>
 		</property>
-		<property name="voiceStealing">
-			<value>2</value>
+		<property name="triggerCooldown">
+			<value>140</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{4c8f219a-4f6f-4a0c-9c50-f4249451a8b0}" />
