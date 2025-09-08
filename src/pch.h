@@ -23,7 +23,9 @@
 #include <random>
 #include <unordered_set>
 #include <filesystem>
-
+#include "fmod.hpp"
+#include "fmod_studio.hpp"
+#include "fmod_errors.h"
 
 #include "FPS_Counter.h"
 #include "json.hpp"
