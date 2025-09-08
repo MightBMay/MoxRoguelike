@@ -2,30 +2,29 @@
 
 class Audio {
 private:
+
+    struct BankEntry {
+        FMOD::Studio::Bank* bank;
+        size_t referenceCount = 1; 
+        BankEntry(FMOD::Studio::Bank* bank) :bank(bank){}
+    };
+
     // Private constructor and destructor
-    Audio() = default;
-    ~Audio() = default;
+    Audio() = delete;
+    ~Audio() = delete;
 
     // Delete copy constructor and assignment operator
     Audio(const Audio&) = delete;
     Audio& operator=(const Audio&) = delete;
 
     // FMOD System pointer
-    FMOD::System* pSystem = nullptr;
-    FMOD::Studio::System* pStudioSystem = nullptr; // Added Studio System
-
-    std::unordered_map<std::string, FMOD::Studio::Bank*> loadedBanks;
-   
+    static inline FMOD::System* pSystem = nullptr;
+    static inline FMOD::Studio::System* pStudioSystem = nullptr; // Added Studio System
+    static inline std::unordered_map<std::string, BankEntry> loadedBanks;
+    static inline const std::string fmod_bank_path = "../assets/audio/banks/";
 
 public:
-    // Static method to get the single instance (Meyer's Singleton)
-    static Audio& get() {
-        static Audio instance;
-        return instance;
-    }
-
-    // Initialize the audio system
-    void Initialize() {
+    static void Initialize() {
         FMOD_RESULT result;
 
         // Initialize the Core System (for low-level audio)
@@ -53,20 +52,21 @@ public:
             std::cerr << "FMOD Studio error: System init failed - " << FMOD_ErrorString(result) << std::endl;
             return;
         }
+        LoadBank("master.bank");
+        LoadBank("master.strings.bank");
 
         std::cout << "Audio system initialized successfully." << std::endl;
     }
 
-    // Update the audio system (MUST be called once per frame)
-    void Update() {
+    // update audio system (MUST be called once per frame)
+    static void Update() {
         if (pStudioSystem) {
             pStudioSystem->update();
         }
         // The core system (pSystem) is updated by the studio system
     }
 
-    // Clean up and shutdown
-    void Shutdown() {
+    static void Shutdown() {
         if (pStudioSystem) {
             pStudioSystem->release();
             pStudioSystem = nullptr;
@@ -79,47 +79,83 @@ public:
     }
 
     // Getter for the core system (for low-level audio)
-    FMOD::System* GetSystem() const {
+    static FMOD::System* GetSystem() {
         assert(pSystem != nullptr && "Audio system not initialized!");
         return pSystem;
     }
 
     // Getter for the studio system (for FMOD Studio events)
-    FMOD::Studio::System* GetStudioSystem() const {
+    static FMOD::Studio::System* GetStudioSystem() {
         assert(pStudioSystem != nullptr && "Audio Studio system not initialized!");
         return pStudioSystem;
     }
 
-    // Example method to load a bank (FMOD Studio)
-    void LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags = FMOD_STUDIO_LOAD_BANK_NORMAL) {     
-        static const std::string fmod_bank_path = "../assets/audio/banks/";
+    
+    static void LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags = FMOD_STUDIO_LOAD_BANK_NORMAL) {     
         if (!pStudioSystem) return;
-
         std::string fullPath = fmod_bank_path + bankName;
+        
+        // check if bank already loaded.
+        auto it = loadedBanks.find(bankName);
+        if (it != loadedBanks.end()) {
+            it->second.referenceCount++;
+            return;
+        }
 
         FMOD::Studio::Bank* bank = nullptr;
         FMOD_RESULT result = pStudioSystem->loadBankFile(fullPath.c_str(), flags, &bank);
 
         if (result != FMOD_OK) {
             std::cerr << "FMOD error: Failed to load bank '" << bankName << "' - " << FMOD_ErrorString(result) << std::endl;
+            
         }
         else {
             std::cout << "Loaded bank: " << bankName << std::endl;
+            loadedBanks.emplace(bankName, bank);
         }
     }
 
-
-    void UnloadBank(const std::string& bankName) {
+    static void UnloadBank(const std::string& bankName) {
         auto it = loadedBanks.find(bankName);
         if (it != loadedBanks.end()) {
-            it->second->unload();
+            it->second.referenceCount--; // decrement reference count
+            if (it->second.referenceCount >= 1) return; // if bank still referenced, don't unload.
+
+            it->second.bank->unload();
             loadedBanks.erase(it);
             std::cout << "\nUnloaded bank: " << bankName;
         }
     }
 
+
+    static void PlayFMODEvent(const std::string& eventPath) {
+        FMOD::Studio::EventDescription* eDescription = nullptr;
+        FMOD::Studio::EventInstance* eInstance = nullptr;
+
+        FMOD_RESULT result = pStudioSystem->getEvent(eventPath.c_str(), &eDescription);
+        if (result != FMOD_OK) {
+            std::cerr << "Error getting event with path: " << eventPath;
+            return;
+        }
+
+        result = eDescription->createInstance(&eInstance);
+
+        if (result != FMOD_OK) {
+            std::cerr << "Error creating event instance with path: " << eventPath;
+            return;
+        }
+
+        result = eInstance->start();
+        if (result != FMOD_OK) {
+            std::cerr << "Error creating event instance with path: " << eventPath;
+        }
+
+        eInstance->release();
+
+    }
+
     // Example method to play a simple sound (low-level)
-    void PlaySound(FMOD::Sound* sound) {
+    static void PlaySound(FMOD::Sound* sound) {
         if (!pSystem || !sound) return;
 
         FMOD::Channel* channel = nullptr;

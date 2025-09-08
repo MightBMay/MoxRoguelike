@@ -113,9 +113,7 @@ int main() {
 #pragma endregion
 	// store reference so we dont gotta getinstance() multiple times.
 	auto& manager = GameObjectManager::getInstance(); 
-	auto& audio = Audio::get();
-	audio.Initialize();
-	
+	Audio::Initialize();
 	InitializeGame(manager);
 
 
@@ -137,10 +135,13 @@ int main() {
 
 
 		//Debug
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Up)) window->setSize({ 2560,1440 });
-		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) window->setSize({ 1280,720 });
+		//if (Input::GetKeyDown(sf::Keyboard::Scan::Up)) Audio::UnloadBank("master.bank");
+		if (Input::GetKeyDown(sf::Keyboard::Scan::Down)) Audio::PlayFMODEvent("event:/TestEvent");
 		if (Input::GetKeyDown(sf::Keyboard::Scancode::Equal)) EnemyManager::SpawnEnemy(1, 100);
 		if (Input::GetKeyDown(sf::Keyboard::Scan::Delete)) ResetAll(manager);
+
+
+		
 
 		//end of debug
 
@@ -148,7 +149,7 @@ int main() {
 
 		manager.updateAll(deltaTime); // call updatme() on all gameobjects
 		Input::Update();// input updated for next frame.
-		audio.Update();
+		Audio::Update();
 		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 

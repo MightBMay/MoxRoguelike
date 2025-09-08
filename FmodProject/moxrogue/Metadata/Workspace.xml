@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.03.00">
 	<object class="Workspace" id="{9a5597d2-de1e-4129-9862-57f161312321}">
+		<property name="builtBanksOutputDirectory">
+			<value>../../Assets/Audio/Banks</value>
+		</property>
+		<property name="builtBanksEncryptionKey" />
+		<property name="builtBanksMirrorBrowserFolderHierarchy">
+			<value>true</value>
+		</property>
 		<relationship name="masterEventFolder">
 			<destination>{1db8d4bd-989f-44c2-a0ce-9cf9543ff53a}</destination>
 		</relationship>
