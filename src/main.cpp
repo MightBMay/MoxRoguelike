@@ -159,7 +159,7 @@ int main() {
 		manager.updateAll(deltaTime); // call update() on all gameobjects
 		Input::Update();// input updated for next frame.
 		Audio::Update();
-		//EnemyManager::HandleSpawning(deltaTime);
+		EnemyManager::HandleSpawning(deltaTime);
 		second_Timer.update(deltaTime);
 
 		fpsCounter->Update();
