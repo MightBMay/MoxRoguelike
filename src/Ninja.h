@@ -55,7 +55,9 @@ namespace playerClasses {
 			else
 				usedSpeed = dashSpeed;
 
-			parentS->move(direction * usedSpeed * deltaTime);
+			sf::Vector2f moveAmount = direction * usedSpeed * deltaTime;
+			parentS->move(moveAmount);
+			HandleWalkSound(moveAmount.lengthSquared());
 			playerView->setCenter(parentS->getPosition()); // set playerView center to player
 
 

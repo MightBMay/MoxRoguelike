@@ -28,6 +28,9 @@
 		<relationship name="timeline">
 			<destination>{fee453ff-5ec8-4a6b-81b6-bc5adfdbb5cb}</destination>
 		</relationship>
+		<relationship name="parameters">
+			<destination>{c8856a70-fc64-42b4-b92a-1f4b88fd66de}</destination>
+		</relationship>
 		<relationship name="banks">
 			<destination>{c81c4756-231b-431d-b379-7beb28ffa54f}</destination>
 		</relationship>
@@ -38,6 +41,9 @@
 		</relationship>
 	</object>
 	<object class="MasterTrack" id="{d1489293-fe9a-43ec-8802-49738399b917}">
+		<relationship name="automationTracks">
+			<destination>{43731b9f-7c8a-4587-b172-7a21017e82c8}</destination>
+		</relationship>
 		<relationship name="modules">
 			<destination>{af9f215e-8179-489e-8527-6235933ebba8}</destination>
 		</relationship>
@@ -53,12 +59,15 @@
 			<destination>{e1f85daa-85f4-4599-b146-19e321e63c34}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{13e72371-c68b-48c2-afdf-79e5278aa9de}</destination>
+			<destination>{c1662842-e20e-40e8-868d-5b89b8263025}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{b4bfb79d-de63-49ef-934a-4e8d69904b58}">
 		<property name="maxVoices">
 			<value>2</value>
+		</property>
+		<property name="voiceStealing">
+			<value>3</value>
 		</property>
 		<property name="triggerCooldown">
 			<value>140</value>
@@ -68,6 +77,11 @@
 	<object class="Timeline" id="{fee453ff-5ec8-4a6b-81b6-bc5adfdbb5cb}">
 		<relationship name="modules">
 			<destination>{af9f215e-8179-489e-8527-6235933ebba8}</destination>
+		</relationship>
+	</object>
+	<object class="ParameterProxy" id="{c8856a70-fc64-42b4-b92a-1f4b88fd66de}">
+		<relationship name="preset">
+			<destination>{82fb9e46-d36f-4e68-a0ac-1b415d83b60c}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{261335fc-258a-42f8-92c5-b56adf2b5abc}">
@@ -81,10 +95,27 @@
 			<destination>{01680e4f-2d64-48ec-b706-3970201a0d00}</destination>
 		</relationship>
 	</object>
+	<object class="AutomationTrack" id="{43731b9f-7c8a-4587-b172-7a21017e82c8}">
+		<relationship name="automator">
+			<destination>{20118bd8-39ef-4094-a3c7-ed5ee2346854}</destination>
+		</relationship>
+	</object>
 	<object class="SingleSound" id="{af9f215e-8179-489e-8527-6235933ebba8}">
+		<property name="triggerProbabilityEnabled">
+			<value>true</value>
+		</property>
+		<property name="triggerProbability">
+			<value>24.5</value>
+		</property>
 		<property name="length">
 			<value>0.26113378684807254</value>
 		</property>
+		<property name="voiceStealing">
+			<value>3</value>
+		</property>
+		<relationship name="automators">
+			<destination>{20118bd8-39ef-4094-a3c7-ed5ee2346854}</destination>
+		</relationship>
 		<relationship name="audioFile">
 			<destination>{54a21245-8dda-4bcb-aac9-a8b7b985b06c}</destination>
 		</relationship>
@@ -101,6 +132,39 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{de1b724a-9c1d-4130-a2fb-76db097f6ac6}" />
+	<object class="Automator" id="{20118bd8-39ef-4094-a3c7-ed5ee2346854}">
+		<property name="nameOfPropertyBeingAutomated">
+			<value>pitch</value>
+		</property>
+		<relationship name="automationCurves">
+			<destination>{e689efa6-ebcd-4fb6-b6db-cfec2c1d8a34}</destination>
+		</relationship>
+	</object>
 	<object class="MixerBusFader" id="{27f1f0c7-5c0a-43e1-8b9e-71046d6bfcbe}" />
 	<object class="MixerBusFader" id="{7570d11f-3109-4096-ade0-d048c70704c1}" />
+	<object class="AutomationCurve" id="{e689efa6-ebcd-4fb6-b6db-cfec2c1d8a34}">
+		<relationship name="parameter">
+			<destination>{82fb9e46-d36f-4e68-a0ac-1b415d83b60c}</destination>
+		</relationship>
+		<relationship name="automationPoints">
+			<destination>{f06f74d1-8d10-40cf-b371-f010d577e323}</destination>
+			<destination>{e5979a04-9e42-479d-b061-3560d0f26702}</destination>
+		</relationship>
+	</object>
+	<object class="AutomationPoint" id="{f06f74d1-8d10-40cf-b371-f010d577e323}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="value">
+			<value>-1</value>
+		</property>
+	</object>
+	<object class="AutomationPoint" id="{e5979a04-9e42-479d-b061-3560d0f26702}">
+		<property name="position">
+			<value>1</value>
+		</property>
+		<property name="value">
+			<value>0.5</value>
+		</property>
+	</object>
 </objects>

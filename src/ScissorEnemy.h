@@ -8,7 +8,7 @@
 namespace Enemies {
 	class ScissorEnemy : public Enemy {
 
-		FMOD::Studio::EventInstance* snipEvent = nullptr;
+		static inline FMOD::Studio::EventInstance* snipEvent = nullptr;
 
 	public:
 		ScissorEnemy(int level) : Enemy(level, "scissor enemy") {}
@@ -20,6 +20,7 @@ namespace Enemies {
 			auto animator = parent.lock()->getComponent<SpriteAnimator>();
 
 			animator->getAnimationLoopEvent().subscribe([this]() {
+				snipEvent->setParameterByName("pitch", rng::getFloat(0, 1));
 				snipEvent->start();
 				}
 			);

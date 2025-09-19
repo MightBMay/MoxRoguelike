@@ -186,6 +186,7 @@ public:
 	void update(float deltatime) override;
 	virtual void UpdateMoveDirection();
 	virtual void MovePlayer(float deltaTime);
+	virtual void HandleWalkSound(float moveAmount);
 
 	virtual void Destroy() override {}
 
@@ -230,6 +231,7 @@ protected:
 
 	virtual const json& LoadInfoFromJson(std::string className);
 
+	FMOD::Studio::EventInstance* walkingEvent = nullptr;
 
 private:
 	static inline bool _isVulnrable = true;

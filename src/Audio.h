@@ -25,6 +25,7 @@ private:
 
 public:
     static void Initialize() {
+        loadedBanks.clear(); // just in case you re call this for whatever reason, prevents perma loading banks
         FMOD_RESULT result;
 
         // Initialize the Core System (for low-level audio)
@@ -54,7 +55,6 @@ public:
         }
         LoadBank("master.bank");
         LoadBank("master.strings.bank");
-
         LoadBank("enemies.bank");
         LoadBank("player.bank");
         LoadBank("ui.bank");

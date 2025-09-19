@@ -113,9 +113,9 @@ int main() {
 #pragma endregion
 	// store reference so we dont gotta getinstance() multiple times.
 	auto& manager = GameObjectManager::getInstance(); 
-	Audio::Initialize();
+	
 	InitializeGame(manager);
-
+	Audio::Initialize();
 	float volume = 0.5f;
 
 	while (window->isOpen()) {

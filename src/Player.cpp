@@ -172,6 +172,7 @@ void Player::init() {
 	stats = std::make_shared<PlayerStats>(className, statUpgradeHolder);
 	LoadInfoFromJson(className);
 	hitFlickerTimer.getEndEvent().subscribe(sharedThis, &Player::ResetHitFlicker);
+	walkingEvent = Audio::CreateFMODEvent("event:/Player/General/Walking");
 
 	stats->RecalculateStats();// unlikely, but in case something changes before init call.
 
@@ -229,9 +230,23 @@ void Player::MovePlayer(float deltaTime) {
 
 	UpdateMoveDirection(); // handles input, and modifying the direction vector.
 	auto parentS = parent.lock();
-	parentS->move(direction * stats->Speed() * deltaTime);
+	sf::Vector2f moveAmount = direction * stats->Speed() * deltaTime;
+	parentS->move(moveAmount);
+	HandleWalkSound(moveAmount.lengthSquared());
 	playerView->setCenter(parentS->getPosition()); // set playerView center to player
+
+
 	
+}
+
+void Player::HandleWalkSound(float moveAmount) {
+	static constexpr float walkDistPerFootstep = 500;
+	static float walkSoundTrackDistance = 0;
+	walkSoundTrackDistance += moveAmount;
+	if (walkSoundTrackDistance >= walkDistPerFootstep) {
+		walkSoundTrackDistance -= walkDistPerFootstep;
+		walkingEvent->start();
+	}
 }
 
 void Player::UpdateMoveDirection() {

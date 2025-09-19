@@ -96,6 +96,8 @@ namespace Enemies {
 		static inline  std::shared_ptr<sf::Texture> enemyAtlasTexture;
 		static inline bool atlasLoaded;
 
+		FMOD::Studio::EventInstance* hitmarker = nullptr;
+
 	private:
 		static inline const sf::Vector2f* playerPos;
 		static constexpr float hitFlickerDuration = 0.125f;

@@ -8,6 +8,9 @@
 static const std::string& enemyAtlasPath = "../assets/sprites/atlases/enemyatlas.png";
 
 Enemies::Enemy::Enemy(int level, std::string enemyType) :level(level), enemyType(enemyType) {
+	static const std::string& hitMarkerPath = "event:/Weapons/General/HitMarker";
+	hitmarker = Audio::CreateFMODEvent(hitMarkerPath);
+
 	if (!atlasLoaded) {
 		enemyAtlasTexture = TextureManager::getTexture(enemyAtlasPath);
 		atlasLoaded = true;
@@ -34,6 +37,7 @@ void Enemies::Enemy::Destroy() {
 	auto& parentPTR = parent;
 	EnemyManager::getInstance().remove(parentPTR, true);
 	EnemyManager::removeHitboxVisual(parentPTR);
+	if (hitmarker != nullptr) hitmarker->release();
 
 }
 
@@ -103,6 +107,10 @@ void Enemies::Enemy::Attack(float deltaTime, GameObject* playerObj) {
 bool Enemies::Enemy::takeDamage(int _damage) {
 	int finalDamage = Player::getStats()->Damage(_damage);
 	_curHp -= finalDamage;
+
+	hitmarker->setParameterByName("pitch", rng::getFloat(0.3f, .7f));
+	hitmarker->start();
+
 	
 	if (_curHp <= 0) {
 		OnDeath();

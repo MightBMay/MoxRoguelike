@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.03.00">
+	<object class="AudioFile" id="{cb6e7df5-5f30-40a8-8d8e-361f39f9a071}">
+		<property name="assetPath">
+			<value>Weapons/General/hit.mp3</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>0.26122448979591839</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{95d4a14e-ec1b-4226-b902-fdd6bf9f1dab}</destination>
+		</relationship>
+	</object>
+</objects>
