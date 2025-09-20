@@ -5,6 +5,9 @@ MoxEngine is a basic game engine i am making for more experiance with game engin
 ## Moxrogue
 Moxrouge is an idea i had for quite a while of a simple roguelike game, akin to vampire survivors, with a heavy theme around a DND character i made, which is a sentient cardboard box.
 
+the gameplay loop revovles around using abilities to kill enemies, which grant xp to level up. when you level up you will be able to select from different stats and weapons to upgrade/unlock.
+the goal is to survive as long as possible.
+
 
 # for class ( INFR-3110U)
 
