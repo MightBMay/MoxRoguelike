@@ -9,6 +9,12 @@ the gameplay loop revovles around using abilities to kill enemies, which grant x
 the goal is to survive as long as possible.
 
 
+When starting the game, select from one of two classes at the top, and select the map at the bottom ( will be more options later obv).
+
+controls are WASD for movement, use your mouse to aim, and Q, E and R for your classes abilities.
+you can click the three buttons on the bottom right to look at your Weapons, stat upgrades, and abilities (in that order, top to botttom).
+
+
 # for class ( INFR-3110U)
 
 May (marcus) Yorke, 100874913
@@ -27,3 +33,11 @@ To avoid trying to draw any gameobject that does not have a valid sprite assigne
 This can be seen in the remove/addExternalRenderable(), which allows me to add renderables which may not be attached to a gameobject ( commonly used to contain multiple sprites for ui all in one component on one gameobject, instead of like 10 different objects). 
 
 [Diagram of my most common use case for my GameObjectManager's singleton pattern](Diagrams/ILA1_Diagram.png)
+
+
+
+
+
+
+## In Lab Assignment 2 (oct 3rd 2025):
+Elaborated on more in the release notes for oct 3rd, as to not clutter the ReadMe.
